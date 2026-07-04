@@ -288,6 +288,31 @@
       color: #c44536;
     }
 
+    .load-panel {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .load-bar {
+      width: 100%;
+      height: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    .load-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 160ms ease;
+    }
+
     .site-links {
       margin: 0;
       color: var(--muted);
@@ -363,6 +388,10 @@
           <button id="startBtn" class="button" type="button">시작</button>
           <button id="rankingBtn" class="button secondary" type="button">랭킹</button>
         </div>
+        <div id="loadPanel" class="load-panel hidden">
+          <div class="load-bar" aria-hidden="true"><div id="loadFill" class="load-fill"></div></div>
+          <span id="loadStatus">사전을 불러오는 중...</span>
+        </div>
         <div id="rankingPanel" class="ranking-panel hidden">
           <div class="leaderboard-title">
             <span>랭킹</span>
@@ -374,7 +403,7 @@
       </div>
 
       <p class="site-links">
-        Dictionary data includes NIKL Standard Korean Dictionary and Kaikki/Wiktionary-derived data.
+        Dictionary data includes NIKL Standard Korean Dictionary, Urimalsaem, and Kaikki/Wiktionary-derived data.
         <a href="/wordsnake/NOTICE.md">Notice</a> · <a href="/wordsnake/privacy.html">Privacy</a>
       </p>
     </section>
@@ -388,6 +417,9 @@
     const rankingScope = document.querySelector("#rankingScope");
     const leaderboardList = document.querySelector("#leaderboardList");
     const rankingStatus = document.querySelector("#rankingStatus");
+    const loadPanel = document.querySelector("#loadPanel");
+    const loadFill = document.querySelector("#loadFill");
+    const loadStatus = document.querySelector("#loadStatus");
 
     function selectedSize() {
       return Number(sizeSelect.value) || 8;
@@ -437,8 +469,44 @@
       }
     }
 
-    startBtn.addEventListener("click", () => {
+    function setLoadProgress(percent, message) {
+      loadPanel.classList.remove("hidden");
+      loadFill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+      loadStatus.textContent = message;
+    }
+
+    async function preloadDictionary() {
+      const response = await fetch("/wordsnake/public/words-data.js", { cache: "force-cache" });
+      if (!response.ok) throw new Error("dictionary");
+      const total = Number(response.headers.get("content-length")) || 0;
+      if (!response.body || !total) {
+        await response.text();
+        setLoadProgress(100, "사전 준비 완료");
+        return;
+      }
+
+      const reader = response.body.getReader();
+      let received = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        received += value.length;
+        const percent = Math.round((received / total) * 100);
+        setLoadProgress(percent, `사전 불러오는 중... ${percent}%`);
+      }
+      setLoadProgress(100, "사전 준비 완료");
+    }
+
+    startBtn.addEventListener("click", async () => {
       const size = selectedSize();
+      startBtn.disabled = true;
+      rankingBtn.disabled = true;
+      setLoadProgress(4, "사전 불러오는 중...");
+      try {
+        await preloadDictionary();
+      } catch {
+        setLoadProgress(100, "게임으로 이동합니다.");
+      }
       window.location.href = `/wordsnake/?start=1&size=${size}`;
     });
     rankingBtn.addEventListener("click", () => {
