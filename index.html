@@ -174,7 +174,7 @@
 
     .action-row {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
     }
 
@@ -385,7 +385,8 @@
           </select>
         </label>
         <div class="action-row">
-          <button id="startBtn" class="button" type="button">시작</button>
+          <button id="startBtn" class="button" type="button">한국어 시작</button>
+          <button id="englishStartBtn" class="button secondary" type="button">English</button>
           <button id="rankingBtn" class="button secondary" type="button">랭킹</button>
         </div>
         <div id="loadPanel" class="load-panel hidden">
@@ -412,6 +413,7 @@
     const SUGGEST_API = "https://wordsnake-suggestions.magentmagent.workers.dev";
     const sizeSelect = document.querySelector("#sizeSelect");
     const startBtn = document.querySelector("#startBtn");
+    const englishStartBtn = document.querySelector("#englishStartBtn");
     const rankingBtn = document.querySelector("#rankingBtn");
     const rankingPanel = document.querySelector("#rankingPanel");
     const rankingScope = document.querySelector("#rankingScope");
@@ -475,13 +477,13 @@
       loadStatus.textContent = message;
     }
 
-    async function preloadDictionary() {
-      const response = await fetch("/wordsnake/public/words-data.js", { cache: "force-cache" });
+    async function preloadDictionary(path, readyMessage = "사전 준비 완료") {
+      const response = await fetch(path, { cache: "force-cache" });
       if (!response.ok) throw new Error("dictionary");
       const total = Number(response.headers.get("content-length")) || 0;
       if (!response.body || !total) {
         await response.text();
-        setLoadProgress(100, "사전 준비 완료");
+        setLoadProgress(100, readyMessage);
         return;
       }
 
@@ -494,20 +496,28 @@
         const percent = Math.round((received / total) * 100);
         setLoadProgress(percent, `사전 불러오는 중... ${percent}%`);
       }
-      setLoadProgress(100, "사전 준비 완료");
+      setLoadProgress(100, readyMessage);
     }
 
-    startBtn.addEventListener("click", async () => {
+    async function launchGame(gamePath, dictionaryPath, readyMessage) {
       const size = selectedSize();
       startBtn.disabled = true;
+      englishStartBtn.disabled = true;
       rankingBtn.disabled = true;
       setLoadProgress(4, "사전 불러오는 중...");
       try {
-        await preloadDictionary();
+        await preloadDictionary(dictionaryPath, readyMessage);
       } catch {
         setLoadProgress(100, "게임으로 이동합니다.");
       }
-      window.location.href = `/wordsnake/?start=1&size=${size}`;
+      window.location.href = `${gamePath}?start=1&size=${size}`;
+    }
+
+    startBtn.addEventListener("click", () => {
+      launchGame("/wordsnake/", "/wordsnake/public/words-data.js", "사전 준비 완료");
+    });
+    englishStartBtn.addEventListener("click", () => {
+      launchGame("/wordsnake/en/", "/wordsnake/public/words-en-data.js", "English dictionary ready");
     });
     rankingBtn.addEventListener("click", () => {
       if (!rankingPanel.classList.contains("hidden")) {
