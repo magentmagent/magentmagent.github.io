@@ -924,6 +924,14 @@
       <div class="panel controls">
         <div class="settings-row">
           <label class="field">
+            言語
+            <select id="languageSelect">
+              <option value="en">English</option>
+              <option value="ko">한국어</option>
+              <option value="ja" selected>日本語</option>
+            </select>
+          </label>
+          <label class="field">
             盤面
             <select id="sizeSelect">
               <option value="6">6 x 6</option>
@@ -1303,6 +1311,7 @@
       resultAd: document.querySelector("#resultAd"),
       undoBtn: document.querySelector("#undoBtn"),
       newBtn: document.querySelector("#newBtn"),
+      languageSelect: document.querySelector("#languageSelect"),
       sizeSelect: document.querySelector("#sizeSelect"),
       modeSelect: document.querySelector("#modeSelect"),
       startBtn: document.querySelector("#startBtn"),
@@ -1722,6 +1731,31 @@
       const snakeMode = normalizeMode(els.modeSelect.value) === "snake";
       els.classicRuleList.classList.toggle("hidden", snakeMode);
       els.snakeRuleList.classList.toggle("hidden", !snakeMode);
+    }
+
+    function languagePath(lang) {
+      if (lang === "ko") return "/ko/";
+      if (lang === "ja") return "/ja/";
+      return "/";
+    }
+
+    function applyIntroParams() {
+      const requestedSize = Number(START_PARAMS.get("size"));
+      if (requestedSize >= 6 && requestedSize <= 12) {
+        els.sizeSelect.value = String(requestedSize);
+      }
+      els.modeSelect.value = normalizeMode(START_PARAMS.get("mode"));
+      els.languageSelect.value = GAME_LANG;
+      updateIntroRules();
+    }
+
+    function switchLanguage() {
+      const lang = els.languageSelect.value;
+      if (lang === GAME_LANG) return;
+      const params = new URLSearchParams();
+      params.set("size", String(selectedIntroBoardSize()));
+      params.set("mode", selectedIntroMode());
+      window.location.href = `${languagePath(lang)}?${params.toString()}`;
     }
 
     function undo() {
@@ -2763,6 +2797,7 @@
 
     els.startBtn.addEventListener("click", startGame);
     els.introRankingBtn.addEventListener("click", toggleIntroRanking);
+    els.languageSelect.addEventListener("change", switchLanguage);
     els.sizeSelect.addEventListener("change", () => {
       if (!els.introRankingPanel.classList.contains("hidden")) showIntroRanking();
     });
@@ -2804,6 +2839,7 @@
     initAds();
     const startedFromUrl = startFromUrlParams();
     if (!startedFromUrl) {
+      applyIntroParams();
       els.introScreen.classList.remove("hidden");
       updateIntroRules();
       render();
