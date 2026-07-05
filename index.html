@@ -372,6 +372,13 @@
             <option value="12">12 x 12</option>
           </select>
         </label>
+        <label class="field">
+          <span id="modeLabel">Mode</span>
+          <select id="modeSelect">
+            <option value="classic" selected>Classic</option>
+            <option value="snake">Snake</option>
+          </select>
+        </label>
         <div class="action-row">
           <button id="startBtn" class="button" type="button">Start</button>
           <button id="rankingBtn" class="button secondary" type="button">Ranking</button>
@@ -404,6 +411,8 @@
     const languageLabel = document.querySelector("#languageLabel");
     const sizeLabel = document.querySelector("#sizeLabel");
     const sizeSelect = document.querySelector("#sizeSelect");
+    const modeLabel = document.querySelector("#modeLabel");
+    const modeSelect = document.querySelector("#modeSelect");
     const startBtn = document.querySelector("#startBtn");
     const rankingBtn = document.querySelector("#rankingBtn");
     const rankingTitle = document.querySelector("#rankingTitle");
@@ -439,6 +448,9 @@
         intro: "Chain words by their last and first letters while moving like a snake.",
         language: "Language",
         size: "Board size",
+        mode: "Mode",
+        classicMode: "Classic",
+        snakeMode: "Snake",
         start: "Start",
         ranking: "Ranking",
         loading: "Loading dictionary...",
@@ -464,6 +476,9 @@
         intro: "끝말잇기처럼 이어 붙이고, 스네이크처럼 칸을 타고 움직입니다.",
         language: "언어",
         size: "칸 수",
+        mode: "모드",
+        classicMode: "일반",
+        snakeMode: "스네이크",
         start: "시작",
         ranking: "랭킹",
         loading: "사전을 불러오는 중...",
@@ -489,6 +504,9 @@
         intro: "ひらがなでしりとりをしながら、スネークのように盤面を進みます。",
         language: "言語",
         size: "盤面",
+        mode: "モード",
+        classicMode: "通常",
+        snakeMode: "スネーク",
         start: "開始",
         ranking: "ランキング",
         loading: "辞書を読み込み中...",
@@ -514,6 +532,15 @@
 
     function selectedSize() {
       return Number(sizeSelect.value) || 8;
+    }
+
+    function selectedMode() {
+      return modeSelect.value === "snake" ? "snake" : "classic";
+    }
+
+    function selectedModeLabel() {
+      const copy = currentCopy();
+      return selectedMode() === "snake" ? copy.snakeMode : copy.classicMode;
     }
 
     function selectedLang() {
@@ -554,12 +581,13 @@
     async function showRanking() {
       const size = selectedSize();
       const lang = selectedLang();
+      const mode = selectedMode();
       const copy = currentCopy();
-      rankingScope.textContent = `${size} x ${size}`;
+      rankingScope.textContent = `${size} x ${size} · ${selectedModeLabel()}`;
       rankingPanel.classList.remove("hidden");
       setRankingStatus(copy.loadRanking);
       try {
-        const params = new URLSearchParams({ boardSize: String(size), limit: "10", lang });
+        const params = new URLSearchParams({ boardSize: String(size), limit: "10", lang, mode });
         const response = await fetch(`${SUGGEST_API}/scores?${params.toString()}`, { cache: "no-store" });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || copy.rankError);
@@ -613,6 +641,7 @@
       const copy = currentCopy();
       const config = languageConfig();
       const size = selectedSize();
+      const mode = selectedMode();
       startBtn.disabled = true;
       rankingBtn.disabled = true;
       setLoadProgress(4, copy.loading);
@@ -621,7 +650,7 @@
       } catch {
         setLoadProgress(100, copy.moving);
       }
-      window.location.href = `${config.gamePath}?start=1&size=${size}`;
+      window.location.href = `${config.gamePath}?start=1&size=${size}&mode=${mode}`;
     }
 
     function renderMiniBoard(cells) {
@@ -633,6 +662,9 @@
       introCopy.textContent = copy.intro;
       languageLabel.textContent = copy.language;
       sizeLabel.textContent = copy.size;
+      modeLabel.textContent = copy.mode;
+      modeSelect.options[0].textContent = copy.classicMode;
+      modeSelect.options[1].textContent = copy.snakeMode;
       startBtn.textContent = copy.start;
       rankingBtn.textContent = copy.ranking;
       rankingTitle.textContent = copy.ranking;
@@ -656,6 +688,9 @@
       showRanking();
     });
     sizeSelect.addEventListener("change", () => {
+      if (!rankingPanel.classList.contains("hidden")) showRanking();
+    });
+    modeSelect.addEventListener("change", () => {
       if (!rankingPanel.classList.contains("hidden")) showRanking();
     });
     languageSelect.addEventListener("change", applyLanguage);
