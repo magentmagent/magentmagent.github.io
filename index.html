@@ -167,6 +167,22 @@
       outline-offset: -2px;
     }
 
+    .mini-cell.apple {
+      position: relative;
+    }
+
+    .mini-cell.apple::after {
+      content: "";
+      position: absolute;
+      right: 10%;
+      bottom: 10%;
+      width: 24%;
+      height: 24%;
+      border-radius: 999px;
+      background: var(--accent-2);
+      border: 1px solid #fffdf8;
+    }
+
     .mini-cell.next,
     .mini-cell.back {
       background: #edf6e8;
@@ -530,6 +546,24 @@
       }
     };
 
+    const SNAKE_RULES = {
+      en: [
+        ["Apple Setup", "Random letters appear as apples across the board at the start. Apples are never adjacent to each other.", ["", { text: "A", className: "apple" }, "", "", { text: "R", className: "apple" }, "", "", "", "", "", { text: "T", className: "apple" }, "", "", { text: "E", className: "apple" }, "", "", "", "", "", "", "", { text: "S", className: "apple" }, "", "", ""]],
+        ["Passing Apples", "If your word matches the apple tile's letter, you may pass through it and collect that apple.", ["S", "T", { text: "O", className: "apple" }, "N", "E", "", "", "", "", "A", "", "", "", "", "G", "", "", "", "", "L", "", "", "", "", "E"]],
+        ["Apple Bonus", "Each newly collected apple gives a growing bonus: first +10, second +20, third +30.", [{ text: "A", className: "apple" }, "P", "", { text: "E", className: "apple" }, "", "", "", "", "A", "", { text: "R", className: "apple" }, "", "", "", "", "", { text: "S", className: "apple" }, "", "", "", "", "", "", "", ""]]
+      ],
+      ko: [
+        ["사과 배치", "시작할 때 단어에 쓸 수 있는 글자들이 맵 곳곳에 사과로 놓입니다. 사과끼리는 서로 붙지 않습니다.", ["", { text: "사", className: "apple" }, "", "", { text: "과", className: "apple" }, "", "", "", "", "", { text: "자", className: "apple" }, "", "", { text: "바", className: "apple" }, "", "", "", "", "", "", "", { text: "람", className: "apple" }, "", "", ""]],
+        ["지나가기", "단어가 사과 칸의 글자와 맞으면 그 칸을 지나갈 수 있고, 그 사과를 획득합니다.", ["바", "다", { text: "사", className: "apple" }, "자", "", "", "", "", "가", "", "", "", "", "용", "", "", "", "", "", "", "", "", "", "", ""]],
+        ["사과 점수", "처음 지나간 사과마다 누적 보너스를 받습니다. 1번째 +10점, 2번째 +20점, 3번째 +30점입니다.", [{ text: "사", className: "apple" }, "과", "", { text: "자", className: "apple" }, "", "", "", "", "전", "", { text: "바", className: "apple" }, "", "", "", "", "", { text: "람", className: "apple" }, "", "", "", "", "", "", "", ""]]
+      ],
+      ja: [
+        ["りんご配置", "開始時に、単語で使える文字がりんごとして盤面に置かれます。りんご同士は隣り合いません。", ["", { text: "り", className: "apple" }, "", "", { text: "ご", className: "apple" }, "", "", "", "", "", { text: "ね", className: "apple" }, "", "", { text: "こ", className: "apple" }, "", "", "", "", "", "", "", { text: "す", className: "apple" }, "", "", ""]],
+        ["通過", "単語の文字がりんごマスと合えば、そのマスを通過してりんごを取れます。", ["り", "ん", { text: "ご", className: "apple" }, "", "", "", "", "り", "", "", "", "", "ら", "", "", "", "", "", "", "", "", "", "", "", ""]],
+        ["りんご得点", "新しく取ったりんごごとにボーナスが増えます。1個目+10、2個目+20、3個目+30です。", [{ text: "り", className: "apple" }, "ん", "", { text: "ご", className: "apple" }, "", "", "", "", "り", "", { text: "ね", className: "apple" }, "", "", "", "", "", { text: "こ", className: "apple" }, "", "", "", "", "", "", "", ""]]
+      ]
+    };
+
     function selectedSize() {
       return Number(sizeSelect.value) || 8;
     }
@@ -549,6 +583,10 @@
 
     function currentCopy() {
       return COPY[selectedLang()];
+    }
+
+    function currentRules() {
+      return selectedMode() === "snake" ? SNAKE_RULES[selectedLang()] : currentCopy().rules;
     }
 
     function setRankingStatus(message, isError = false) {
@@ -654,7 +692,11 @@
     }
 
     function renderMiniBoard(cells) {
-      return cells.map(letter => `<i class="mini-cell${letter ? " fill" : ""}">${letter || ""}</i>`).join("");
+      return cells.map(cell => {
+        const data = typeof cell === "object" && cell ? cell : { text: cell || "", className: "" };
+        const className = data.text ? ` fill ${data.className || ""}` : "";
+        return `<i class="mini-cell${className}">${data.text || ""}</i>`;
+      }).join("");
     }
 
     function applyLanguage() {
@@ -669,7 +711,7 @@
       rankingBtn.textContent = copy.ranking;
       rankingTitle.textContent = copy.ranking;
       loadStatus.textContent = copy.loading;
-      ruleList.innerHTML = copy.rules.map(rule => `
+      ruleList.innerHTML = currentRules().map(rule => `
         <li>
           <div class="mini-board" aria-hidden="true">${renderMiniBoard(rule[2])}</div>
           <p><b>${rule[0]}</b><span>${rule[1]}</span></p>
@@ -691,6 +733,7 @@
       if (!rankingPanel.classList.contains("hidden")) showRanking();
     });
     modeSelect.addEventListener("change", () => {
+      applyLanguage();
       if (!rankingPanel.classList.contains("hidden")) showRanking();
     });
     languageSelect.addEventListener("change", applyLanguage);
