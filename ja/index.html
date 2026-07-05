@@ -1753,6 +1753,7 @@
       const lang = els.languageSelect.value;
       if (lang === GAME_LANG) return;
       const params = new URLSearchParams();
+      params.set("lang", lang);
       params.set("size", String(selectedIntroBoardSize()));
       params.set("mode", selectedIntroMode());
       window.location.href = `${languagePath(lang)}?${params.toString()}`;
