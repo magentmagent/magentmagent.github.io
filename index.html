@@ -174,7 +174,7 @@
 
     .action-row {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
     }
 
@@ -333,47 +333,23 @@
     <section class="screen">
       <div>
         <h1>word chain snake</h1>
-        <p class="intro-copy">끝말잇기처럼 이어 붙이고, 스네이크처럼 칸을 타고 움직입니다.</p>
+        <p id="introCopy" class="intro-copy">Chain words by their last and first letters while moving like a snake.</p>
       </div>
 
       <div class="panel">
-        <ul class="rule-list">
-          <li>
-            <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell start fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill">사</i><i class="mini-cell head fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">가</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">용</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-            </div>
-            <p><b>기본 규칙</b><span>바다사자 다음에는 머리 글자 자가 자동으로 붙고, 가용만 입력해 자가용을 놓습니다.</span></p>
-          </li>
-          <li>
-            <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">상</i><i class="mini-cell next">석</i><i class="mini-cell"></i>
-              <i class="mini-cell fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill pass">사</i><i class="mini-cell head fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">병</i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-            </div>
-            <p><b>통과하기</b><span>상사병처럼 새 단어가 기존 사 칸을 지나도, 글자가 같으면 통과할 수 있습니다.</span></p>
-          </li>
-          <li>
-            <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell back">미</i><i class="mini-cell"></i>
-              <i class="mini-cell fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill">사</i><i class="mini-cell head fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell back">가</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-            </div>
-            <p><b>되돌아가기</b><span>직전 방향을 반복할 수는 없지만, 반대쪽으로 돌아가며 이어 붙일 수 있습니다.</span></p>
-          </li>
-        </ul>
+        <ul id="ruleList" class="rule-list"></ul>
       </div>
 
       <div class="panel controls">
         <label class="field">
-          칸 수
+          <span id="languageLabel">Language</span>
+          <select id="languageSelect">
+            <option value="en" selected>English</option>
+            <option value="ko">한국어</option>
+          </select>
+        </label>
+        <label class="field">
+          <span id="sizeLabel">Board size</span>
           <select id="sizeSelect">
             <option value="6">6 x 6</option>
             <option value="7">7 x 7</option>
@@ -385,17 +361,16 @@
           </select>
         </label>
         <div class="action-row">
-          <button id="startBtn" class="button" type="button">한국어 시작</button>
-          <button id="englishStartBtn" class="button secondary" type="button">English</button>
-          <button id="rankingBtn" class="button secondary" type="button">랭킹</button>
+          <button id="startBtn" class="button" type="button">Start</button>
+          <button id="rankingBtn" class="button secondary" type="button">Ranking</button>
         </div>
         <div id="loadPanel" class="load-panel hidden">
           <div class="load-bar" aria-hidden="true"><div id="loadFill" class="load-fill"></div></div>
-          <span id="loadStatus">사전을 불러오는 중...</span>
+          <span id="loadStatus">Loading dictionary...</span>
         </div>
         <div id="rankingPanel" class="ranking-panel hidden">
           <div class="leaderboard-title">
-            <span>랭킹</span>
+            <span id="rankingTitle">Ranking</span>
             <span id="rankingScope">8 x 8</span>
           </div>
           <ol id="leaderboardList" class="leaderboard-list"></ol>
@@ -403,18 +378,23 @@
         </div>
       </div>
 
-      <p class="site-links">
-        Dictionary data includes NIKL Standard Korean Dictionary, Urimalsaem, and Kaikki/Wiktionary-derived data.
+      <p id="siteLinks" class="site-links">
+        English dictionary data is derived from Wiktionary/Wiktextract. Korean dictionary data includes NIKL, Urimalsaem, and Wiktionary-derived data.
         <a href="/wordsnake/NOTICE.md">Notice</a> · <a href="/wordsnake/privacy.html">Privacy</a>
       </p>
     </section>
   </div>
   <script>
     const SUGGEST_API = "https://wordsnake-suggestions.magentmagent.workers.dev";
+    const languageSelect = document.querySelector("#languageSelect");
+    const introCopy = document.querySelector("#introCopy");
+    const ruleList = document.querySelector("#ruleList");
+    const languageLabel = document.querySelector("#languageLabel");
+    const sizeLabel = document.querySelector("#sizeLabel");
     const sizeSelect = document.querySelector("#sizeSelect");
     const startBtn = document.querySelector("#startBtn");
-    const englishStartBtn = document.querySelector("#englishStartBtn");
     const rankingBtn = document.querySelector("#rankingBtn");
+    const rankingTitle = document.querySelector("#rankingTitle");
     const rankingPanel = document.querySelector("#rankingPanel");
     const rankingScope = document.querySelector("#rankingScope");
     const leaderboardList = document.querySelector("#leaderboardList");
@@ -423,8 +403,69 @@
     const loadFill = document.querySelector("#loadFill");
     const loadStatus = document.querySelector("#loadStatus");
 
+    const COPY = {
+      en: {
+        intro: "Chain words by their last and first letters while moving like a snake.",
+        language: "Language",
+        size: "Board size",
+        start: "Start",
+        ranking: "Ranking",
+        loading: "Loading dictionary...",
+        loadingProgress: percent => `Loading dictionary... ${percent}%`,
+        ready: "English dictionary ready",
+        moving: "Opening game.",
+        emptyRank: "No scores yet",
+        points: "pts",
+        clear: "Clear",
+        surrender: "Surrender",
+        player: "Player",
+        loadRanking: "Loading rankings...",
+        rankError: "Could not load rankings.",
+        rules: [
+          ["Basic Rule", "STONE ends with E. Type AGLE and EAGLE is placed from the head tile.", ["", "", "", "", "", "S", "T", "O", "N", "", "", "", "", "E", "", "", "", "", "A", "", "", "", "", "G", ""]],
+          ["Crossing", "MOUSE can pass through an existing O when the letters match.", ["", "M", "O", "U", "", "S", "T", "O", "N", "", "", "", "S", "", "", "", "", "E", "", "", "", "", "", "", ""]],
+          ["Turning Back", "You cannot repeat the previous direction, but you may turn back the other way.", ["", "", "", "L", "", "S", "T", "O", "N", "", "", "", "", "E", "", "", "", "", "W", "", "", "", "", "", ""]],
+          ["Scoring", "Longer words score more, and crossing another word gives an extra bonus.", ["S", "C", "O", "R", "E", "", "", "", "", "", "C", "R", "O", "S", "S", "", "", "", "", "", "", "", "", "", ""]],
+          ["Forbidden", "The same word cannot be used more than once.", ["N", "O", "", "", "", "R", "E", "P", "E", "A", "T", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]]
+        ]
+      },
+      ko: {
+        intro: "끝말잇기처럼 이어 붙이고, 스네이크처럼 칸을 타고 움직입니다.",
+        language: "언어",
+        size: "칸 수",
+        start: "시작",
+        ranking: "랭킹",
+        loading: "사전을 불러오는 중...",
+        loadingProgress: percent => `사전 불러오는 중... ${percent}%`,
+        ready: "사전 준비 완료",
+        moving: "게임으로 이동합니다.",
+        emptyRank: "아직 기록이 없습니다",
+        points: "점",
+        clear: "클리어",
+        surrender: "항복",
+        player: "익명",
+        loadRanking: "랭킹을 불러오는 중...",
+        rankError: "랭킹을 불러오지 못했습니다.",
+        rules: [
+          ["기본 규칙", "바다사자 다음에는 머리 글자 자가 자동으로 붙고, 가용만 입력해 자가용을 놓습니다.", ["", "", "", "", "", "바", "다", "사", "자", "", "", "", "", "가", "", "", "", "", "용", "", "", "", "", "", ""]],
+          ["통과하기", "상사병처럼 새 단어가 기존 사 칸을 지나도, 글자가 같으면 통과할 수 있습니다.", ["", "", "상", "석", "", "바", "다", "사", "자", "", "", "", "병", "", "", "", "", "", "", "", "", "", "", "", ""]],
+          ["되돌아가기", "직전 방향을 반복할 수는 없지만, 반대쪽으로 돌아가며 이어 붙일 수 있습니다.", ["", "", "", "", "", "", "", "", "미", "", "바", "다", "사", "자", "", "", "", "", "가", "", "", "", "", "", ""]],
+          ["점수 규칙", "긴 단어일수록 점수를 더 받고, 다른 단어를 가로지르면 추가 점수를 받습니다.", ["점", "수", "", "", "", "", "", "", "", "", "교", "차", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+          ["금지 규칙", "같은 단어를 여러 번 사용하는 것은 금지됩니다.", ["반", "복", "", "", "", "금", "지", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]]
+        ]
+      }
+    };
+
     function selectedSize() {
       return Number(sizeSelect.value) || 8;
+    }
+
+    function selectedLang() {
+      return languageSelect.value === "ko" ? "ko" : "en";
+    }
+
+    function currentCopy() {
+      return COPY[selectedLang()];
     }
 
     function setRankingStatus(message, isError = false) {
@@ -434,40 +475,43 @@
 
     function renderLeaderboard(items) {
       leaderboardList.innerHTML = "";
+      const copy = currentCopy();
       if (!items.length) {
         const empty = document.createElement("li");
-        empty.innerHTML = `<span class="rank">-</span><span class="name">아직 기록이 없습니다</span><span class="score-value">0점</span>`;
+        empty.innerHTML = `<span class="rank">-</span><span class="name">${copy.emptyRank}</span><span class="score-value">0${copy.points}</span>`;
         leaderboardList.appendChild(empty);
         return;
       }
       items.forEach((item, index) => {
         const row = document.createElement("li");
-        const finish = item.finishType === "clear" ? "클리어" : "항복";
+        const finish = item.finishType === "clear" ? copy.clear : copy.surrender;
         row.innerHTML = `
           <span class="rank">${index + 1}</span>
           <span class="name"></span>
-          <span class="score-value">${Number(item.score || 0).toLocaleString("ko-KR")}점</span>
+          <span class="score-value">${Number(item.score || 0).toLocaleString(selectedLang() === "en" ? "en-US" : "ko-KR")}${copy.points}</span>
         `;
-        row.querySelector(".name").textContent = `${item.name || "익명"} · ${finish}`;
+        row.querySelector(".name").textContent = `${item.name || copy.player} · ${finish}`;
         leaderboardList.appendChild(row);
       });
     }
 
     async function showRanking() {
       const size = selectedSize();
+      const lang = selectedLang();
+      const copy = currentCopy();
       rankingScope.textContent = `${size} x ${size}`;
       rankingPanel.classList.remove("hidden");
-      setRankingStatus("랭킹을 불러오는 중...");
+      setRankingStatus(copy.loadRanking);
       try {
-        const params = new URLSearchParams({ boardSize: String(size), limit: "10" });
+        const params = new URLSearchParams({ boardSize: String(size), limit: "10", lang });
         const response = await fetch(`${SUGGEST_API}/scores?${params.toString()}`, { cache: "no-store" });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "랭킹을 불러오지 못했습니다.");
+        if (!response.ok) throw new Error(data.error || copy.rankError);
         renderLeaderboard(Array.isArray(data.items) ? data.items : []);
         setRankingStatus("");
       } catch (error) {
         renderLeaderboard([]);
-        setRankingStatus(error.message || "랭킹을 불러오지 못했습니다.", true);
+        setRankingStatus(error.message || copy.rankError, true);
       }
     }
 
@@ -494,31 +538,55 @@
         if (done) break;
         received += value.length;
         const percent = Math.round((received / total) * 100);
-        setLoadProgress(percent, `사전 불러오는 중... ${percent}%`);
+        setLoadProgress(percent, currentCopy().loadingProgress(percent));
       }
       setLoadProgress(100, readyMessage);
     }
 
-    async function launchGame(gamePath, dictionaryPath, readyMessage) {
-      const size = selectedSize();
-      startBtn.disabled = true;
-      englishStartBtn.disabled = true;
-      rankingBtn.disabled = true;
-      setLoadProgress(4, "사전 불러오는 중...");
-      try {
-        await preloadDictionary(dictionaryPath, readyMessage);
-      } catch {
-        setLoadProgress(100, "게임으로 이동합니다.");
-      }
-      window.location.href = `${gamePath}?start=1&size=${size}`;
+    function languageConfig() {
+      return selectedLang() === "en"
+        ? { gamePath: "/wordsnake/en/", dictionaryPath: "/wordsnake/public/words-en-data.js" }
+        : { gamePath: "/wordsnake/", dictionaryPath: "/wordsnake/public/words-data.js" };
     }
 
-    startBtn.addEventListener("click", () => {
-      launchGame("/wordsnake/", "/wordsnake/public/words-data.js", "사전 준비 완료");
-    });
-    englishStartBtn.addEventListener("click", () => {
-      launchGame("/wordsnake/en/", "/wordsnake/public/words-en-data.js", "English dictionary ready");
-    });
+    async function launchGame() {
+      const copy = currentCopy();
+      const config = languageConfig();
+      const size = selectedSize();
+      startBtn.disabled = true;
+      rankingBtn.disabled = true;
+      setLoadProgress(4, copy.loading);
+      try {
+        await preloadDictionary(config.dictionaryPath, copy.ready);
+      } catch {
+        setLoadProgress(100, copy.moving);
+      }
+      window.location.href = `${config.gamePath}?start=1&size=${size}`;
+    }
+
+    function renderMiniBoard(cells) {
+      return cells.map(letter => `<i class="mini-cell${letter ? " fill" : ""}">${letter || ""}</i>`).join("");
+    }
+
+    function applyLanguage() {
+      const copy = currentCopy();
+      introCopy.textContent = copy.intro;
+      languageLabel.textContent = copy.language;
+      sizeLabel.textContent = copy.size;
+      startBtn.textContent = copy.start;
+      rankingBtn.textContent = copy.ranking;
+      rankingTitle.textContent = copy.ranking;
+      loadStatus.textContent = copy.loading;
+      ruleList.innerHTML = copy.rules.map(rule => `
+        <li>
+          <div class="mini-board" aria-hidden="true">${renderMiniBoard(rule[2])}</div>
+          <p><b>${rule[0]}</b><span>${rule[1]}</span></p>
+        </li>
+      `).join("");
+      if (!rankingPanel.classList.contains("hidden")) showRanking();
+    }
+
+    startBtn.addEventListener("click", launchGame);
     rankingBtn.addEventListener("click", () => {
       if (!rankingPanel.classList.contains("hidden")) {
         rankingPanel.classList.add("hidden");
@@ -530,6 +598,8 @@
     sizeSelect.addEventListener("change", () => {
       if (!rankingPanel.classList.contains("hidden")) showRanking();
     });
+    languageSelect.addEventListener("change", applyLanguage);
+    applyLanguage();
   </script>
 </body>
 </html>
