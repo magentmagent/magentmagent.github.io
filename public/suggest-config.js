@@ -1,0 +1,1 @@
+window.WORDSNAKE_SUGGEST_API = "https://wordsnake-suggestions.magentmagent.workers.dev";
