@@ -12,6 +12,7 @@
   <meta name="google-adsense-account" content="ca-pub-9708655184984227">
   <title>word chain snake</title>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9708655184984227" crossorigin="anonymous"></script>
+  <script src="/wordsnake/public/analytics-config.js"></script>
   <style>
     :root {
       color-scheme: light;
@@ -404,6 +405,25 @@
     const loadFill = document.querySelector("#loadFill");
     const loadStatus = document.querySelector("#loadStatus");
 
+    function loadCloudflareAnalytics() {
+      const config = window.WORD_CHAIN_SNAKE_ANALYTICS || {};
+      const token = String(config.cloudflareToken || "").trim();
+      if (!token || document.querySelector("script[data-cf-beacon]")) return;
+      const script = document.createElement("script");
+      script.defer = true;
+      script.src = "https://static.cloudflareinsights.com/beacon.min.js";
+      script.dataset.cfBeacon = JSON.stringify({ token });
+      document.head.appendChild(script);
+    }
+
+    function preferredLanguage() {
+      const languages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+      const first = String(languages[0] || "").toLowerCase();
+      if (first.startsWith("ko")) return "ko";
+      if (first.startsWith("ja")) return "ja";
+      return "en";
+    }
+
     const COPY = {
       en: {
         intro: "Chain words by their last and first letters while moving like a snake.",
@@ -629,6 +649,8 @@
       if (!rankingPanel.classList.contains("hidden")) showRanking();
     });
     languageSelect.addEventListener("change", applyLanguage);
+    languageSelect.value = preferredLanguage();
+    loadCloudflareAnalytics();
     applyLanguage();
   </script>
 </body>
