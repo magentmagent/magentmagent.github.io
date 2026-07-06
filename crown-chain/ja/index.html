@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Crown Chain は、駒を取るたびに自分の駒が変わる小さなチェーン型チェスパズルです。">
+  <meta name="theme-color" content="#f6f3ea">
+  <meta name="google-adsense-account" content="ca-pub-9708655184984227">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://magentmagent.github.io/crown-chain/ja/">
+  <link rel="alternate" hreflang="en" href="https://magentmagent.github.io/crown-chain/en/">
+  <link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/crown-chain/ko/">
+  <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/crown-chain/ja/">
+  <link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/">
+  <meta property="og:title" content="Crown Chain">
+  <meta property="og:description" content="駒を取り、自分の駒を変えながらチェーンをつなぐチェスパズル。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://magentmagent.github.io/crown-chain/ja/">
+  <meta property="og:image" content="https://magentmagent.github.io/public/crown-chain-social.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Crown Chain">
+  <meta name="twitter:description" content="駒を取りながら変身していく小さなブラウザパズルです。">
+  <meta name="twitter:image" content="https://magentmagent.github.io/public/crown-chain-social.svg">
+  <link rel="stylesheet" href="../shared/styles.css">
+  <title>Crown Chain</title>
+</head>
+<body>
+  <div class="app">
+    <nav class="top-nav" aria-label="サイトナビゲーション">
+      <strong><a class="brand-link" href="/?lang=ja">magentmagent games</a></strong>
+      <a href="/games.html?lang=ja">ゲーム</a>
+      <a href="/crown-chain/en/">English</a>
+      <a href="/crown-chain/ko/">한국어</a>
+      <a href="/word-chain-snake/ja/">word chain snake</a>
+    </nav>
+
+    <header class="hero-line">
+      <h1>Crown Chain</h1>
+      <p class="lead">駒を取り、自分の駒を変えながらチェーンをつなぐチェスパズルです。</p>
+    </header>
+
+    <main class="game-shell">
+      <section class="board-panel" aria-label="Crown Chain 盤面">
+        <canvas id="boardCanvas" class="board-canvas" width="720" height="720"></canvas>
+      </section>
+
+      <aside class="side-panel">
+        <label class="field">モード
+          <select id="modeSelect">
+            <option value="basic">基本</option>
+            <option value="chaos">カオス</option>
+          </select>
+        </label>
+        <div class="stat-grid compact">
+          <div class="stat primary"><span>得点</span><strong id="scoreValue">0</strong></div>
+          <div class="stat"><span>最高</span><strong id="bestValue">0</strong></div>
+          <div class="stat"><span>ライフ</span><strong id="lifeValue">3/5</strong></div>
+          <div class="stat"><span>レベル</span><strong id="levelValue">1</strong></div>
+          <div class="stat"><span>コンボ</span><strong id="comboValue">0</strong></div>
+          <div class="stat"><span>現在の駒</span><strong id="currentValue">K king</strong></div>
+        </div>
+        <p id="message" class="message" aria-live="polite"></p>
+        <div class="button-row">
+          <button id="newGameBtn" class="button" type="button">新しいゲーム</button>
+          <button id="endTurnBtn" class="button secondary" type="button">ターン終了</button>
+          <button id="restartBtn" class="button warn" type="button">再開</button>
+        </div>
+      </aside>
+    </main>
+
+    <section class="rules-panel">
+      <h2>ルール</h2>
+      <ul>
+        <li>駒を一度タップすると移動を確認し、取れる駒はもう一度タップすると取れます。</li>
+        <li>駒を取ると基本的に自分がその駒になり、その移動ルールを使います。</li>
+        <li>取る代わりに、ターンの間に一度だけ空きマスへ自由移動できます。</li>
+        <li>ポーンはボーナス駒です。取ると点だけ入り、現在の駒は変わりません。</li>
+        <li>連続で取るほどコンボが上がり、駒の点にコンボが掛かります。</li>
+        <li>ターン終了で新しい駒が出ます。取れる駒がない状態で終了するとライフが1減ります。</li>
+        <li>基本モードは通常駒のみ、カオスモードはレベルに応じて変則駒が追加されます。</li>
+      </ul>
+    </section>
+
+    <footer class="site-footer">
+      <a href="/?lang=ja">ホーム</a>
+      <a href="/games.html?lang=ja">ゲーム</a>
+      <a href="/about.html?lang=ja">概要</a>
+      <a href="/privacy.html?lang=ja">プライバシー</a>
+      <a href="/terms.html?lang=ja">利用規約</a>
+      <a href="/contact.html?lang=ja">連絡</a>
+    </footer>
+  </div>
+
+  <script src="../shared/pieces.js"></script>
+  <script src="../shared/rules.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/renderer.js"></script>
+  <script src="../shared/game.js"></script>
+  <script>window.CrownChainGame.init({ lang: "ja" });</script>
+</body>
+</html>

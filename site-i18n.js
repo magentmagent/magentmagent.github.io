@@ -32,6 +32,12 @@
     return "/word-chain-snake/en/";
   }
 
+  function crownChainPath(lang) {
+    if (lang === "ko") return "/crown-chain/ko/";
+    if (lang === "ja") return "/crown-chain/ja/";
+    return "/crown-chain/en/";
+  }
+
   function content(lang, key) {
     const t = TEXT[lang] || TEXT.en;
     const common = t.common;
@@ -100,17 +106,22 @@
           <h1 class="stack-title"><span>magent</span><span>magent</span><span>games</span></h1>
           <p class="lead">${t.home.lead}</p>
           <div class="button-row">
-            <a class="button" href="${gamePath(lang)}">${t.home.play}</a>
+            <a class="button" href="${crownChainPath(lang)}">${t.home.play}</a>
             <a class="button secondary" href="/games.html">${t.common.games}</a>
           </div>
         </div>
-        <img class="hero-image" src="/public/social-card-v2.png" alt="${t.home.preview}">
+        <img class="hero-image" src="/public/crown-chain-social.svg" alt="${CROWN_TEXT[lang].preview}">
       </section>
       <section class="grid home-grid" aria-label="${t.home.sections}">
         <article class="card">
+          <h2>Crown Chain</h2>
+          <p>${CROWN_TEXT[lang].body}</p>
+          <a href="${crownChainPath(lang)}">${t.home.play}</a>
+        </article>
+        <article class="card">
           <h2>word chain snake</h2>
           <p>${t.home.cardGame}</p>
-          <a href="/games.html">${t.common.games}</a>
+          <a href="${gamePath(lang)}">${t.home.play}</a>
         </article>
         <article class="card">
           <h2>${t.home.cardSiteTitle}</h2>
@@ -125,6 +136,14 @@
       <h1>${t.common.games}</h1>
       <p class="lead">${t.games.lead}</p>
       <section class="grid" aria-label="${t.common.games}">
+        <article class="card">
+          <img class="game-thumb" src="/public/crown-chain-social.svg" alt="${CROWN_TEXT[lang].preview}">
+          <h2>Crown Chain</h2>
+          <p>${CROWN_TEXT[lang].body}</p>
+          <p>${CROWN_TEXT[lang].support}</p>
+          <p>${CROWN_TEXT[lang].note}</p>
+          <a class="button" href="${crownChainPath(lang)}">${t.home.play}</a>
+        </article>
         <article class="card">
           <img class="game-thumb" src="/public/social-card-v2.png" alt="${t.home.preview}">
           <h2>word chain snake</h2>
@@ -188,6 +207,27 @@
       privacy: { lead: "ゲームはアカウントなしで遊べます。", playerTitle: "プレイヤー入力", player: "ランキング送信時に表示名、得点、盤面サイズ、言語、モード、終了方法、送信時刻が保存される場合があります。単語提案には提案語と言語情報が含まれます。", analyticsTitle: "分析", analytics: "Cloudflare Web Analytics と集計されたゲームイベントを利用する場合があります。入力した全単語の一覧はイベントに含めません。", adsTitle: "広告", ads: "Google AdSense を有効にした場合、Google とパートナーがポリシーに従って Cookie などを使用する場合があります。" },
       contact: { lead: "不具合、単語、ランキング、ポリシーに関する連絡は GitHub で受け付けます。", body: "不足語は、言語情報も送れるゲーム内の提案ボタンを使うのがおすすめです。", button: "GitHub issue を開く" },
       terms: { lead: "このサイトは無料のブラウザゲームを提供します。", body1: "サービスへの過剰なアクセス、不適切な表示名、他のプレイヤーの妨害は禁止です。", body2: "スパム、不正利用、技術的な問題が見つかった場合、スコアや提案語は修正または削除されることがあります。" }
+    }
+  };
+
+  const CROWN_TEXT = {
+    en: {
+      preview: "Crown Chain board preview",
+      body: "A compact chess-chain puzzle where every capture transforms your current piece.",
+      support: "Play Basic mode with standard chess pieces or Chaos mode with variant pieces that appear as levels rise.",
+      note: "Runs entirely in the browser and saves your best score locally."
+    },
+    ko: {
+      preview: "크라운 체인 보드 미리보기",
+      body: "말을 잡을 때마다 현재 말이 바뀌는 짧은 체스 연쇄 퍼즐입니다.",
+      support: "표준 말만 나오는 기본 모드와 레벨이 오르며 변형 말이 추가되는 카오스 모드를 제공합니다.",
+      note: "브라우저 안에서 바로 실행되며 최고 점수는 로컬에 저장됩니다."
+    },
+    ja: {
+      preview: "クラウンチェーン盤面プレビュー",
+      body: "駒を取るたびに現在の駒が変わる、短く遊べるチェス連鎖パズルです。",
+      support: "標準駒だけの基本モードと、レベルに応じて変則駒が増えるカオスモードがあります。",
+      note: "ブラウザ内だけで動作し、最高得点はローカルに保存されます。"
     }
   };
 

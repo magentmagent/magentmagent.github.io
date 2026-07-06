@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Crown Chain preview">
+  <rect width="1200" height="630" fill="#f6f3ea"/>
+  <rect x="58" y="58" width="1084" height="514" rx="24" fill="#fffdf8" stroke="#d8d0c3" stroke-width="3"/>
+  <text x="120" y="170" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="82" font-weight="900">Crown</text>
+  <text x="120" y="255" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="82" font-weight="900">Chain</text>
+  <text x="122" y="315" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="800">capture, transform, combo</text>
+  <g transform="translate(665 98)">
+    <rect x="0" y="0" width="380" height="380" rx="18" fill="#5e6472"/>
+    <g>
+      <rect x="16" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
+      <rect x="62" y="16" width="43" height="43" rx="6" fill="#eadfca"/>
+      <rect x="108" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
+      <rect x="154" y="16" width="43" height="43" rx="6" fill="#eadfca"/>
+      <rect x="200" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
+      <rect x="246" y="16" width="43" height="43" rx="6" fill="#eadfca"/>
+      <rect x="292" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
+      <rect x="16" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
+      <rect x="62" y="62" width="43" height="43" rx="6" fill="#fffaf0"/>
+      <rect x="108" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
+      <rect x="154" y="62" width="43" height="43" rx="6" fill="#fffaf0"/>
+      <rect x="200" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
+      <rect x="246" y="62" width="43" height="43" rx="6" fill="#fffaf0"/>
+      <rect x="292" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
+    </g>
+    <g font-family="system-ui, -apple-system, Segoe UI, sans-serif" text-anchor="middle" dominant-baseline="middle" font-weight="900">
+      <circle cx="176" cy="245" r="35" fill="#197278" stroke="#0d4f54" stroke-width="4"/>
+      <text x="176" y="246" font-size="32" fill="#fffdf8">K</text>
+      <circle cx="82" cy="82" r="31" fill="#fffdf8" stroke="#b9ae9f" stroke-width="4"/>
+      <text x="82" y="83" font-size="30" fill="#202327">Q</text>
+      <circle cx="268" cy="128" r="31" fill="#fffdf8" stroke="#c44536" stroke-width="6"/>
+      <text x="268" y="129" font-size="30" fill="#202327">R</text>
+      <circle cx="222" cy="314" r="31" fill="#fffdf8" stroke="#b9ae9f" stroke-width="4"/>
+      <text x="222" y="315" font-size="30" fill="#202327">N</text>
+    </g>
+  </g>
+  <rect x="120" y="395" width="235" height="62" rx="10" fill="#197278"/>
+  <text x="238" y="436" fill="#fffdf8" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="900" text-anchor="middle">Play now</text>
+</svg>
