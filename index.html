@@ -9,17 +9,17 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://magentmagent.github.io/">
   <link rel="alternate" hreflang="en" href="https://magentmagent.github.io/">
-  <link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/ko/">
-  <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/ja/">
+  <link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/?lang=ko">
+  <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/?lang=ja">
   <link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/">
   <meta property="og:title" content="magentmagent games">
-  <meta property="og:description" content="Compact browser games, starting with word chain snake.">
+  <meta property="og:description" content="A small browser game site featuring word chain snake.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://magentmagent.github.io/">
   <meta property="og:image" content="https://magentmagent.github.io/public/social-card-v2.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="magentmagent games">
-  <meta name="twitter:description" content="Compact browser games, starting with word chain snake.">
+  <meta name="twitter:description" content="A small browser game site featuring word chain snake.">
   <meta name="twitter:image" content="https://magentmagent.github.io/public/social-card-v2.png">
   <link rel="stylesheet" href="/site-page.css">
   <title>magentmagent games</title>
@@ -27,7 +27,8 @@
 <body>
   <main class="page">
     <nav class="top-nav" aria-label="Site navigation">
-      <strong>magentmagent games</strong>
+      <strong><a class="brand-link" href="/">magentmagent games</a></strong>
+      <a href="/">Home</a>
       <a href="/games.html">Games</a>
       <a href="/about.html">About</a>
       <a href="/privacy.html">Privacy</a>
@@ -36,37 +37,35 @@
 
     <section class="hero">
       <div>
-        <p class="eyebrow">Browser game collection</p>
+        <p class="eyebrow">Browser game site</p>
         <h1>magentmagent games</h1>
-        <p class="lead">Compact word and puzzle games for quick play on mobile or desktop. The first game is word chain snake, a word-chain puzzle played directly on a board.</p>
+        <p class="lead">A small site for quick browser play on mobile or desktop. The current featured game is word chain snake.</p>
         <div class="button-row">
-          <a class="button" href="/en/">Play in English</a>
-          <a class="button secondary" href="/ko/">한국어로 플레이</a>
-          <a class="button secondary" href="/ja/">日本語でプレイ</a>
+          <a class="button" href="/en/">Play now</a>
+          <a class="button secondary" href="/games.html">Games</a>
         </div>
       </div>
       <img class="hero-image" src="/public/social-card-v2.png" alt="word chain snake board preview">
     </section>
 
-    <section class="grid" aria-label="Site sections">
+    <section class="grid home-grid" aria-label="Site sections">
       <article class="card">
         <h2>word chain snake</h2>
         <p>Build a continuous snake of words. Longer words, new tiles, and matching crossings earn more points.</p>
         <a href="/games.html">View games</a>
       </article>
       <article class="card">
-        <h2>Rules and dictionaries</h2>
-        <p>Read supported languages, game listings, and review information for word suggestions.</p>
-        <a href="/games.html">Games</a>
-      </article>
-      <article class="card">
-        <h2>Languages</h2>
-        <p>English, Korean, and Japanese pages are maintained separately so each language can have its own game and help pages.</p>
-        <p><a href="/ko/games.html">한국어</a> · <a href="/ja/games.html">日本語</a></p>
+        <h2>Site basics</h2>
+        <ul class="feature-list">
+          <li>No account is required to play.</li>
+          <li>Rankings and suggestions are reviewed for abuse.</li>
+          <li>The interface is tuned for mobile play.</li>
+        </ul>
       </article>
     </section>
 
     <footer class="page-footer">
+      <a href="/">Home</a>
       <a href="/terms.html">Terms</a>
       <a href="/privacy.html">Privacy</a>
       <a href="/contact.html">Contact</a>
