@@ -982,7 +982,7 @@
 
       <p class="site-links">
         Dictionary data includes NIKL Standard Korean Dictionary, Urimalsaem, and Kaikki/Wiktionary-derived data.
-        <a href="/dictionary.html">Dictionary</a> · <a href="/privacy.html">Privacy</a>
+        <a href="/games.html?lang=ja">Games</a> · <a href="/privacy.html?lang=ja">Privacy</a>
       </p>
     </section>
 
@@ -1047,12 +1047,10 @@
       </section>
     </main>
     <footer class="site-footer" aria-label="Site links">
-      <a href="/games.html">Games</a>
-      <a href="/how-to-play.html">How to play</a>
-      <a href="/dictionary.html">Dictionary</a>
-      <a href="/about.html">About</a>
-      <a href="/privacy.html">Privacy</a>
-      <a href="/contact.html">Contact</a>
+      <a href="/games.html?lang=ja">Games</a>
+      <a href="/about.html?lang=ja">About</a>
+      <a href="/privacy.html?lang=ja">Privacy</a>
+      <a href="/contact.html?lang=ja">Contact</a>
     </footer>
   </div>
 
@@ -1717,9 +1715,10 @@
     }
 
     function languagePath(lang) {
+      if (lang === "en") return "/en/";
       if (lang === "ko") return "/ko/";
       if (lang === "ja") return "/ja/";
-      return "/";
+      return "/en/";
     }
 
     function applyIntroParams() {

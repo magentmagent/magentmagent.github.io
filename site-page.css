@@ -44,6 +44,25 @@ a {
   font-size: 1rem;
 }
 
+.lang-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #68707a;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.lang-field select {
+  min-height: 34px;
+  border: 1px solid #d8d0c3;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #202327;
+  font: inherit;
+  font-weight: 850;
+}
+
 .page-footer {
   margin-top: 42px;
   padding-top: 18px;
@@ -83,6 +102,50 @@ li {
   font-weight: 700;
 }
 
+.eyebrow {
+  margin-bottom: 8px;
+  color: #c44536;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.9fr);
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 26px;
+}
+
+.hero-image,
+.game-thumb {
+  display: block;
+  width: 100%;
+  border: 1px solid #d8d0c3;
+  border-radius: 8px;
+  background: #fffdf8;
+  object-fit: cover;
+}
+
+.hero-image {
+  aspect-ratio: 1200 / 630;
+  box-shadow: 0 12px 30px rgba(36, 38, 43, 0.12);
+}
+
+.game-thumb {
+  aspect-ratio: 1200 / 630;
+  margin-bottom: 12px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -115,8 +178,20 @@ li {
   text-decoration: none;
 }
 
+.button.secondary {
+  background: #fffdf8;
+  color: #197278;
+  border: 1px solid #197278;
+}
+
 .note {
   border-left: 4px solid #197278;
   background: #fffdf8;
   padding: 12px 14px;
+}
+
+@media (max-width: 720px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
 }

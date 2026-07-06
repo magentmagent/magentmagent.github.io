@@ -1,20 +1,20 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="끝말잇기, 스네이크 이동, 글자 교차를 합친 모바일 한글 단어 퍼즐 게임입니다.">
+  <meta name="description" content="A mobile word-chain snake puzzle with path planning and letter crossings.">
   <meta name="theme-color" content="#f6f3ea">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="canonical" href="https://magentmagent.github.io/ko/">
-  <link rel="alternate" hreflang="en" href="https://magentmagent.github.io/">
+  <link rel="canonical" href="https://magentmagent.github.io/en/">
+  <link rel="alternate" hreflang="en" href="https://magentmagent.github.io/en/">
   <link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/ko/">
   <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/ja/">
   <link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/">
   <meta property="og:title" content="word chain snake">
-  <meta property="og:description" content="모바일에서 바로 즐기는 한글 단어 스네이크 퍼즐.">
+  <meta property="og:description" content="A mobile English word-chain snake puzzle.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://magentmagent.github.io/ko/">
+  <meta property="og:url" content="https://magentmagent.github.io/en/">
   <meta property="og:image" content="https://magentmagent.github.io/public/social-card-v2.png">
   <meta property="og:image:secure_url" content="https://magentmagent.github.io/public/social-card-v2.png">
   <meta property="og:image:type" content="image/png">
@@ -23,7 +23,7 @@
   <meta property="og:image:alt" content="Word Chain Snake preview board">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="word chain snake">
-  <meta name="twitter:description" content="끝말잇기와 스네이크를 결합한 모바일 단어 퍼즐.">
+  <meta name="twitter:description" content="A mobile word-chain puzzle crossed with snake movement.">
   <meta name="twitter:image" content="https://magentmagent.github.io/public/social-card-v2.png">
   <meta name="google-adsense-account" content="ca-pub-9708655184984227">
   <title>word chain snake</title>
@@ -846,108 +846,105 @@
     <section id="introScreen" class="screen intro">
       <div>
         <h1>word chain snake</h1>
-        <p class="intro-copy">끝말잇기처럼 이어 붙이고, 스네이크처럼 칸을 타고 움직입니다.</p>
-      </div>
+        <p class="intro-copy">Chain words by their last and first letters while moving like a snake.</p>
 
-      <div class="panel">
-        <ul id="classicRuleList" class="rule-list">
+        <ul id="classicRuleList" class="rule-list panel">
           <li>
             <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell start fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill">사</i><i class="mini-cell head fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">가</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">용</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell start fill">S</i><i class="mini-cell fill">T</i><i class="mini-cell fill">O</i><i class="mini-cell fill">N</i><i class="mini-cell head fill">E</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">A</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">G</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">L</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">E</i>
             </div>
-            <p><b>기본 규칙</b><span>바다사자 다음에는 머리 글자 자가 자동으로 붙고, 가용만 입력해 자가용을 놓습니다.</span></p>
+            <p><b>Basic Rule</b><span>STONE ends with E. Type AGLE and EAGLE is placed from the head tile.</span></p>
           </li>
           <li>
             <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">상</i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill pass">사</i><i class="mini-cell head fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">병</i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">B</i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">L</i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell fill">S</i><i class="mini-cell fill">T</i><i class="mini-cell fill pass">O</i><i class="mini-cell fill">N</i><i class="mini-cell head fill">E</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">O</i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">M</i><i class="mini-cell"></i><i class="mini-cell"></i>
             </div>
-            <p><b>통과하기</b><span>상사병처럼 새 단어가 기존 사 칸을 지나도, 글자가 같으면 통과할 수 있습니다.</span></p>
+            <p><b>Crossing</b><span>BLOOM can pass through the existing O because the letters match.</span></p>
           </li>
           <li>
             <div class="mini-board" aria-hidden="true">
               <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell fill">가</i><i class="mini-cell head fill">수</i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell back">가</i><i class="mini-cell back">수</i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell fill">T</i><i class="mini-cell fill">I</i><i class="mini-cell fill">M</i><i class="mini-cell head fill">E</i><i class="mini-cell"></i>
+              <i class="mini-cell back">T</i><i class="mini-cell back">I</i><i class="mini-cell back">M</i><i class="mini-cell back">E</i><i class="mini-cell"></i>
               <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
               <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
             </div>
-            <p><b>되돌아가기</b><span>가수로 오른쪽으로 온 뒤, 수가를 왼쪽으로 놓아 왔던 길을 되돌아갈 수 있습니다.</span></p>
+            <p><b>Turning Back</b><span>After moving right with TIME, place EMIT to travel back along the same tiles.</span></p>
           </li>
           <li>
             <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">상</i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill pass">사</i><i class="mini-cell head fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">병</i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell fill">E</i><i class="mini-cell"></i><i class="mini-cell fill">E</i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell fill">E</i><i class="mini-cell"></i><i class="mini-cell fill">A</i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell fill">L</i><i class="mini-cell"></i><i class="mini-cell fill">G</i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill">L</i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill">E</i><i class="mini-cell"></i>
             </div>
-            <p><b>점수 규칙</b><span>바다사자처럼 긴 단어일수록 점수를 더 받고, 상사병처럼 가로지르면 추가 점수를 받습니다.</span></p>
+            <p><b>Scoring</b><span>EAGLE scores more than EEL, and crossings add extra points.</span></p>
           </li>
           <li>
             <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill">사</i><i class="mini-cell fill">자</i><i class="mini-cell"></i>
+              <i class="mini-cell fill">S</i><i class="mini-cell fill">T</i><i class="mini-cell fill">O</i><i class="mini-cell fill">N</i><i class="mini-cell fill">E</i>
               <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill">사</i><i class="mini-cell fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-            </div>
-            <p><b>금지 규칙</b><span>한 번 사용한 바다사자는 다시 바다사자로 놓을 수 없습니다.</span></p>
-          </li>
-        </ul>
-        <ul id="snakeRuleList" class="rule-list hidden">
-          <li>
-            <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell"></i><i class="mini-cell fill apple">사</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill apple">과</i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell fill apple">자</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill apple">바</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell fill apple">람</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-            </div>
-            <p><b>사과 배치</b><span>시작할 때 단어에 쓸 수 있는 글자들이 맵 곳곳에 사과로 놓입니다. 사과끼리는 서로 붙지 않습니다.</span></p>
-          </li>
-          <li>
-            <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell fill">바</i><i class="mini-cell fill">다</i><i class="mini-cell fill apple pass">사</i><i class="mini-cell fill">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">가</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">용</i><i class="mini-cell"></i>
+              <i class="mini-cell fill">S</i><i class="mini-cell fill">T</i><i class="mini-cell fill">O</i><i class="mini-cell fill">N</i><i class="mini-cell fill">E</i>
               <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
               <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
             </div>
-            <p><b>지나가기</b><span>단어가 사과 칸의 글자와 맞으면 그 칸을 지나갈 수 있고, 그 사과를 획득합니다.</span></p>
-          </li>
-          <li>
-            <div class="mini-board" aria-hidden="true">
-              <i class="mini-cell fill apple pass">사</i><i class="mini-cell fill">과</i><i class="mini-cell"></i><i class="mini-cell fill apple pass">자</i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill">전</i><i class="mini-cell"></i>
-              <i class="mini-cell fill apple">바</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell fill apple pass">람</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
-            </div>
-            <p><b>사과 점수</b><span>처음 지나간 사과마다 누적 보너스를 받습니다. 1번째 +10점, 2번째 +20점, 3번째 +30점입니다.</span></p>
+            <p><b>Forbidden</b><span>Once STONE has been used, STONE cannot be placed again.</span></p>
           </li>
         </ul>
-      </div>
+        <ul id="snakeRuleList" class="rule-list panel hidden">
+          <li>
+            <div class="mini-board" aria-hidden="true">
+              <i class="mini-cell"></i><i class="mini-cell fill apple">A</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill apple">R</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell fill apple">T</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill apple">E</i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell fill apple">S</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+            </div>
+            <p><b>Apple Setup</b><span>Random usable letters appear as apples across the board. Apples never touch each other.</span></p>
+          </li>
+          <li>
+            <div class="mini-board" aria-hidden="true">
+              <i class="mini-cell fill">S</i><i class="mini-cell fill">T</i><i class="mini-cell fill apple pass">O</i><i class="mini-cell fill">N</i><i class="mini-cell fill">E</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">A</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">G</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">L</i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell next">E</i>
+            </div>
+            <p><b>Passing Apples</b><span>If your word matches the apple tile's letter, you pass through it and collect that apple.</span></p>
+          </li>
+          <li>
+            <div class="mini-board" aria-hidden="true">
+              <i class="mini-cell fill apple pass">A</i><i class="mini-cell fill">P</i><i class="mini-cell"></i><i class="mini-cell fill apple pass">E</i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell fill">A</i><i class="mini-cell"></i>
+              <i class="mini-cell fill apple">R</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell fill apple pass">S</i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+            </div>
+            <p><b>Apple Bonus</b><span>Each newly collected apple gives a growing bonus: first +10, second +20, third +30.</span></p>
+          </li>
+        </ul>
 
       <div class="panel controls">
         <div class="settings-row">
           <label class="field">
-            언어
+            Language
             <select id="languageSelect">
-              <option value="en">English</option>
-              <option value="ko" selected>한국어</option>
+              <option value="en" selected>English</option>
+              <option value="ko">한국어</option>
               <option value="ja">日本語</option>
             </select>
           </label>
           <label class="field">
-            칸 수
+            Board size
             <select id="sizeSelect">
               <option value="6">6 x 6</option>
               <option value="7">7 x 7</option>
@@ -959,40 +956,40 @@
             </select>
           </label>
           <label class="field">
-            모드
+            Mode
             <select id="modeSelect">
-              <option value="classic" selected>일반</option>
-              <option value="snake">스네이크</option>
+              <option value="classic" selected>Classic</option>
+              <option value="snake">Snake</option>
             </select>
           </label>
         </div>
         <div class="action-row">
-          <button id="startBtn" class="button primary" type="button">시작</button>
-          <button id="introRankingBtn" class="button" type="button">랭킹</button>
+          <button id="startBtn" class="button primary" type="button">Start</button>
+          <button id="introRankingBtn" class="button" type="button">Ranking</button>
         </div>
         <div id="introRankingPanel" class="result-panel intro-ranking hidden">
           <div class="leaderboard">
             <div class="leaderboard-title">
-              <span>랭킹</span>
+              <span>Ranking</span>
               <span id="introLeaderboardScope">8 x 8</span>
             </div>
             <ol id="introLeaderboardList" class="leaderboard-list"></ol>
           </div>
           <p id="introRankingStatus" class="result-status"></p>
         </div>
-        <p id="dictStatus" class="intro-copy">사전을 불러오는 중입니다.</p>
+        <p id="dictStatus" class="intro-copy">Loading dictionary.</p>
       </div>
 
       <p class="site-links">
-        Dictionary data includes NIKL Standard Korean Dictionary, Urimalsaem, and Kaikki/Wiktionary-derived data.
-        <a href="/games.html?lang=ko">Games</a> · <a href="/privacy.html?lang=ko">Privacy</a>
+        English dictionary data is derived from Wiktionary/Wiktextract and WordNet preparation data.
+        <a href="/games.html?lang=en">Games</a> · <a href="/privacy.html?lang=en">Privacy</a>
       </p>
     </section>
 
     <main id="gameScreen" class="screen hidden">
       <header class="game-header">
         <div class="score">
-          <span>점수</span>
+          <span>Score</span>
           <strong id="scoreText">0 / 64</strong>
         </div>
       </header>
@@ -1000,71 +997,71 @@
       <section class="board-wrap" aria-label="word chain snake board">
         <div class="board-stage">
           <div id="board" class="board" tabindex="0"></div>
-          <input id="boardInput" class="board-input" type="text" inputmode="text" autocomplete="off" placeholder="단어 입력">
+          <input id="boardInput" class="board-input" type="text" inputmode="text" autocomplete="off" placeholder="Enter word">
         </div>
       </section>
 
       <section class="game-actions">
-        <p id="message" class="message">가장자리 빈 칸을 터치해 시작점을 고르세요.</p>
+        <p id="message" class="message">Tap an empty edge tile to choose a start.</p>
         <div id="suggestPanel" class="suggest-panel hidden">
-          <p>사전에 없는 단어라면 등록을 제안할 수 있습니다. 관리자가 승인한 뒤에만 게임 사전에 추가됩니다.</p>
+          <p>If a word is missing, you can suggest it. It is added only after admin approval.</p>
           <div class="suggest-row">
             <strong id="suggestWord" class="suggest-word"></strong>
-            <button id="suggestBtn" class="button" type="button">제안</button>
+            <button id="suggestBtn" class="button" type="button">Suggest</button>
           </div>
           <span id="suggestStatus" class="suggest-status"></span>
         </div>
         <div id="resultPanel" class="result-panel hidden">
-          <p id="resultTitle" class="result-title">결과</p>
+          <p id="resultTitle" class="result-title">Result</p>
           <div class="result-stats" aria-label="score result">
-            <div class="result-stat"><span>점수</span><strong id="resultScore">0</strong></div>
-            <div class="result-stat"><span>칸</span><strong id="resultFilled">0 / 0</strong></div>
-            <div class="result-stat"><span>단어</span><strong id="resultTurns">0</strong></div>
+            <div class="result-stat"><span>Score</span><strong id="resultScore">0</strong></div>
+            <div class="result-stat"><span>Tiles</span><strong id="resultFilled">0 / 0</strong></div>
+            <div class="result-stat"><span>Words</span><strong id="resultTurns">0</strong></div>
           </div>
           <div class="score-submit-row">
-            <input id="playerNameInput" class="score-name-input" type="text" maxlength="16" autocomplete="nickname" placeholder="이름">
-            <button id="submitScoreBtn" class="button primary" type="button">등록</button>
+            <input id="playerNameInput" class="score-name-input" type="text" maxlength="16" autocomplete="nickname" placeholder="Name">
+            <button id="submitScoreBtn" class="button primary" type="button">Upload</button>
           </div>
           <p id="scoreSubmitStatus" class="result-status"></p>
           <div class="share-actions">
             <button id="shareXBtn" class="button" type="button">X</button>
-            <button id="shareNativeBtn" class="button" type="button">공유</button>
-            <button id="copyResultBtn" class="button" type="button">복사</button>
+            <button id="shareNativeBtn" class="button" type="button">Share</button>
+            <button id="copyResultBtn" class="button" type="button">Copy</button>
           </div>
           <div class="share-status-row">
             <p id="shareStatus" class="result-status"></p>
           </div>
           <div class="leaderboard">
             <div class="leaderboard-title">
-              <span>랭킹</span>
+              <span>Ranking</span>
               <span id="leaderboardScope">8 x 8</span>
             </div>
             <ol id="leaderboardList" class="leaderboard-list"></ol>
           </div>
         </div>
-        <button id="placeBtn" class="button primary large" type="button">놓기</button>
+        <button id="placeBtn" class="button primary large" type="button">Place</button>
         <div class="action-row">
-          <button id="undoBtn" class="button" type="button">되돌리기</button>
-          <button id="newBtn" class="button warn" type="button">항복</button>
+          <button id="undoBtn" class="button" type="button">Undo</button>
+          <button id="newBtn" class="button warn" type="button">Surrender</button>
         </div>
       </section>
     </main>
     <footer class="site-footer" aria-label="Site links">
-      <a href="/games.html?lang=ko">Games</a>
-      <a href="/about.html?lang=ko">About</a>
-      <a href="/privacy.html?lang=ko">Privacy</a>
-      <a href="/contact.html?lang=ko">Contact</a>
+      <a href="/games.html?lang=en">Games</a>
+      <a href="/about.html?lang=en">About</a>
+      <a href="/privacy.html?lang=en">Privacy</a>
+      <a href="/contact.html?lang=en">Contact</a>
     </footer>
   </div>
 
-  <script src="../public/words-data.js"></script>
-  <script src="../public/words-blocked-data.js"></script>
+  <script src="../public/words-en-data.js"></script>
+  <script src="../public/words-en-blocked-data.js"></script>
   <script src="../public/suggest-config.js"></script>
   <script src="../public/analytics-config.js"></script>
   <script>
     const DEFAULT_SIZE = 8;
     const DEFAULT_MODE = "classic";
-    const GAME_LANG = "ko";
+    const GAME_LANG = "en";
     const SUGGEST_API = String(window.WORDSNAKE_SUGGEST_API || "").replace(/\/+$/, "");
     const GITHUB_ISSUE_URL = "https://github.com/magentmagent/wordsnake/issues/new";
     const START_PARAMS = new URLSearchParams(window.location.search);
@@ -1072,18 +1069,15 @@
     let boardSize = DEFAULT_SIZE;
     let gameMode = DEFAULT_MODE;
     const DIRECTIONS = {
-      up: { x: 0, y: -1, label: "위" },
-      down: { x: 0, y: 1, label: "아래" },
-      left: { x: -1, y: 0, label: "왼쪽" },
-      right: { x: 1, y: 0, label: "오른쪽" }
+      up: { x: 0, y: -1, label: "up" },
+      down: { x: 0, y: 1, label: "down" },
+      left: { x: -1, y: 0, label: "left" },
+      right: { x: 1, y: 0, label: "right" }
     };
 
     const FALLBACK_WORDS = [
-      "가게", "가격", "가구", "가로수", "가방", "가수", "가위", "가을", "가지", "가족",
-      "나라", "나무", "나비", "나침반", "다리", "다람쥐", "라디오", "라면", "마루", "마을",
-      "바다", "바다사자", "바람", "버스", "사과", "사다리", "사자", "사진", "시장", "시계",
-      "아기", "아버지", "아이", "야구", "어머니", "오리", "오징어", "우산", "자동차", "자가용",
-      "자리", "자전거", "장미", "카메라", "커피", "토마토", "파도", "파랑", "하늘", "학교"
+      "APPLE", "EAGLE", "EARTH", "HOUSE", "EMBER", "RIVER", "ROBOT", "TABLE", "ENERGY", "YELLOW",
+      "WATER", "RHYTHM", "MARKET", "TRAVEL", "LETTER", "ROAD", "DREAM", "MUSIC", "CANDLE", "ENGINE"
     ];
 
     function makeEmptyBoard(size) {
@@ -1111,7 +1105,7 @@
     }
 
     function modeLabel(mode = gameMode) {
-      return normalizeMode(mode) === "snake" ? "스네이크" : "일반";
+      return normalizeMode(mode) === "snake" ? "Snake" : "Classic";
     }
 
     function appleCountForSize(size) {
@@ -1177,56 +1171,19 @@
     }
 
     function normalizeWord(word) {
-      return String(word || "").trim();
+      return String(word || "").trim().toUpperCase();
     }
 
-    function isKoreanWord(word) {
-      return /^[가-힣]+$/.test(word);
+    function isEnglishWord(word) {
+      return /^[A-Z]+$/.test(word);
     }
 
     function isValidWordShape(word) {
-      return isKoreanWord(word) && word.length >= 2;
+      return isEnglishWord(word) && word.length >= 2;
     }
 
-    const HANGUL_BASE = 0xac00;
-    const HANGUL_END = 0xd7a3;
-    const JUNG_COUNT = 21;
-    const JONG_COUNT = 28;
-    const JUNG_WITH_INITIAL_LAW_TO_IEUNG = new Set([2, 3, 6, 7, 12, 17, 20]);
-    const JUNG_WITH_RIEUL_TO_NIEUN = new Set([0, 1, 8, 9, 13, 18]);
-
-    function composeHangul(initialIndex, medialIndex, finalIndex) {
-      return String.fromCharCode(HANGUL_BASE + ((initialIndex * JUNG_COUNT + medialIndex) * JONG_COUNT) + finalIndex);
-    }
-
-    function decomposeHangul(syllable) {
-      const code = syllable.charCodeAt(0);
-      if (code < HANGUL_BASE || code > HANGUL_END) return null;
-      const offset = code - HANGUL_BASE;
-      const initialIndex = Math.floor(offset / (JUNG_COUNT * JONG_COUNT));
-      const medialIndex = Math.floor((offset % (JUNG_COUNT * JONG_COUNT)) / JONG_COUNT);
-      const finalIndex = offset % JONG_COUNT;
-      return { initialIndex, medialIndex, finalIndex };
-    }
-
-    function initialLawReadings(syllable) {
-      const parts = decomposeHangul(syllable);
-      if (!parts) return [syllable];
-      const readings = [syllable];
-
-      if (parts.initialIndex === 5 && JUNG_WITH_INITIAL_LAW_TO_IEUNG.has(parts.medialIndex)) {
-        readings.push(composeHangul(11, parts.medialIndex, parts.finalIndex));
-      }
-
-      if (parts.initialIndex === 5 && JUNG_WITH_RIEUL_TO_NIEUN.has(parts.medialIndex)) {
-        readings.push(composeHangul(2, parts.medialIndex, parts.finalIndex));
-      }
-
-      if (parts.initialIndex === 2 && JUNG_WITH_INITIAL_LAW_TO_IEUNG.has(parts.medialIndex)) {
-        readings.push(composeHangul(11, parts.medialIndex, parts.finalIndex));
-      }
-
-      return [...new Set(readings)];
+    function initialLawReadings(letter) {
+      return letter ? [letter] : [];
     }
 
     function headStartLetters(head) {
@@ -1358,7 +1315,7 @@
         finishType: "",
         scoreUploaded: false,
         scoreId: "",
-        message: "가장자리 빈 칸을 터치해 시작점을 고르세요.",
+        message: "Tap an empty edge tile to choose a start.",
         messageType: "ok"
       };
     }
@@ -1529,33 +1486,33 @@
     function validatePlacement(board, gameState, rawWord, dir) {
       const input = normalizeWord(rawWord);
       const delta = DIRECTIONS[dir];
-      if (!delta) return { ok: false, message: "방향을 선택하세요." };
-      if (!isKoreanWord(input)) return { ok: false, message: "순수 한글 음절 단어만 사용할 수 있습니다." };
-      if (!gameState.start) return { ok: false, message: "먼저 가장자리 시작 칸을 선택하세요." };
-      if (gameState.lastDir && gameState.lastDir === dir) return { ok: false, message: "직전 방향과 같은 방향으로는 이동할 수 없습니다." };
+      if (!delta) return { ok: false, message: "Choose a next tile." };
+      if (!isEnglishWord(input)) return { ok: false, message: "Use A-Z letters only." };
+      if (!gameState.start) return { ok: false, message: "Choose an edge start tile first." };
+      if (gameState.lastDir && gameState.lastDir === dir) return { ok: false, message: "You cannot move in the same direction twice in a row." };
 
       const firstTurn = gameState.turn === 0;
       const anchor = firstTurn ? gameState.start : gameState.head;
-      if (!anchor) return { ok: false, message: "현재 머리 칸이 없습니다." };
-      if (firstTurn && !isEdge(board, anchor.x, anchor.y)) return { ok: false, message: "시작점은 보드 가장자리여야 합니다." };
+      if (!anchor) return { ok: false, message: "There is no current head tile." };
+      if (firstTurn && !isEdge(board, anchor.x, anchor.y)) return { ok: false, message: "The start tile must be on the board edge." };
 
       const candidates = wordCandidatesForInput(input, board, gameState);
       const word = candidates.find(candidate => dictionary.wordSet.has(candidate)) || candidates[0] || input;
-      if (word.length < 2) return { ok: false, message: "한 글자 표제어는 사용할 수 없습니다." };
+      if (word.length < 2) return { ok: false, message: "One-letter words cannot be used." };
       if (isBlockedWord(word)) {
-        return { ok: false, code: "blocked-word", word, message: "명사로 등재된 단어만 사용할 수 있습니다." };
+        return { ok: false, code: "blocked-word", word, message: "Inflected forms and abbreviations cannot be used." };
       }
       if (!dictionary.wordSet.has(word)) {
-        return { ok: false, code: "missing-word", word, message: "현재 사전에 없는 단어입니다." };
+        return { ok: false, code: "missing-word", word, message: "This word is not in the dictionary yet." };
       }
       if ((gameState.usedWords || []).includes(word)) {
-        return { ok: false, message: "이미 사용한 단어는 다시 사용할 수 없습니다." };
+        return { ok: false, message: "You cannot reuse a word." };
       }
 
       const headLetter = firstTurn ? "" : board[anchor.y][anchor.x];
       const allowedStarts = firstTurn ? [] : headStartLetters(headLetter);
       if (!firstTurn && !allowedStarts.includes(word[0])) {
-        return { ok: false, message: `현재 머리 글자 '${allowedStarts.join("/")}'로 시작하는 단어를 입력하세요.` };
+        return { ok: false, message: `Use a word that starts with ${allowedStarts.join("/")}.` };
       }
 
       const path = [];
@@ -1572,10 +1529,10 @@
         const x = anchor.x + delta.x * step;
         const y = anchor.y + delta.y * step;
         const letter = word[i];
-        if (!inBounds(board, x, y)) return { ok: false, message: "단어가 보드 밖으로 나갑니다." };
+        if (!inBounds(board, x, y)) return { ok: false, message: "The word goes off the board." };
         const existing = board[y][x];
         if (existing && existing !== letter) {
-          return { ok: false, message: `(${x + 1}, ${y + 1}) 칸의 '${existing}'와 '${letter}'가 다릅니다.` };
+          return { ok: false, message: `Tile (${x + 1}, ${y + 1}) has ${existing}, not ${letter}.` };
         }
         path.push({ x, y, letter });
       }
@@ -1601,20 +1558,20 @@
     function selectStart(x, y) {
       if (clearAnimation || state.finished) return;
       if (!isEdge(state.board, x, y)) {
-        setMessage("시작점은 가장자리 칸만 가능합니다.", "error");
+        setMessage("Start points must be edge tiles.", "error");
         return;
       }
       if (state.board[y][x]) {
-        setMessage("빈 가장자리 칸만 시작점으로 선택할 수 있습니다.", "error");
+        setMessage("Choose an empty edge tile as the start.", "error");
         return;
       }
       if (state.turn > 0) {
-        setMessage("진행 중에는 새 판을 눌러 시작점을 다시 고르세요.", "error");
+        setMessage("Start a new game to choose another start tile.", "error");
         return;
       }
       state.start = { x, y };
       state.head = { x, y };
-      setMessage(`시작점 (${x + 1}, ${y + 1}) 선택됨. 나아갈 칸을 고르세요.`, "ok");
+      setMessage(`Start (${x + 1}, ${y + 1}) selected. Choose the next tile.`, "ok");
       render();
       focusBoardInput();
     }
@@ -1626,8 +1583,8 @@
       lastMissingWord = "";
       els.boardInput.value = "";
       const message = type === "clear"
-        ? "전체 보드 클리어! 스네이크가 빠져나갑니다."
-        : "항복했습니다. 스네이크가 길을 따라 빠져나갑니다.";
+        ? "Board cleared! The snake is leaving the board."
+        : "Surrendered. The snake is leaving along its path.";
       startSnakeExit(message, () => {
         state.finished = true;
         showResultPanel(type);
@@ -1708,11 +1665,11 @@
 
       const filled = filledCount(state.board);
       const done = filled === state.board.length * state.board.length;
-      const ruleText = result.initialLaw ? `${result.initialLaw.from}/${result.initialLaw.to} 두음법칙 적용. ` : "";
-      const scoreParts = [`+${result.score.gained}점`, `새 칸 +${result.newCells.length}`, `단어 +${result.score.wordBonus}`];
-      if (result.score.crossBonus) scoreParts.push(`교차 +${result.score.crossBonus}`);
-      if (result.score.appleBonus) scoreParts.push(`사과 +${result.score.appleBonus}`);
-      setMessage(done ? "전체 보드 클리어! 스네이크가 빠져나갑니다." : `${ruleText}${result.word} 배치 완료. ${scoreParts.join(" · ")}`, "ok");
+      const ruleText = "";
+      const scoreParts = [`+${result.score.gained} pts`, `new tiles +${result.newCells.length}`, `word +${result.score.wordBonus}`];
+      if (result.score.crossBonus) scoreParts.push(`cross +${result.score.crossBonus}`);
+      if (result.score.appleBonus) scoreParts.push(`apples +${result.score.appleBonus}`);
+      setMessage(done ? "Board cleared! The snake is leaving the board." : `${ruleText}${result.word} placed. ${scoreParts.join(" · ")}`, "ok");
       els.boardInput.value = "";
       lastMissingWord = "";
       if (done) {
@@ -1773,7 +1730,7 @@
     function undo() {
       const snapshot = undoStack.pop();
       if (!snapshot) {
-        setMessage("되돌릴 턴이 없습니다.", "error");
+        setMessage("There is no turn to undo.", "error");
         render();
         return;
       }
@@ -1786,7 +1743,7 @@
         window.clearTimeout(clearTimer);
         clearTimer = null;
       }
-      setMessage("한 턴 되돌렸습니다.", "ok");
+      setMessage("Undid one turn.", "ok");
       render();
     }
 
@@ -1816,7 +1773,7 @@
       els.gameScreen.classList.remove("hidden");
       els.introRankingPanel.classList.add("hidden");
       newGame();
-      setMessage("가장자리 칸을 눌러 시작점을 고르세요.", "ok");
+      setMessage("Tap an edge tile to choose a start.", "ok");
       trackGameEvent("game_start", { boardSize, mode: gameMode });
       render();
     }
@@ -1896,7 +1853,7 @@
       if (clearAnimation) return false;
       if (!dir) return false;
       state.selectedDir = dir;
-      setMessage(state.turn === 0 ? "단어를 입력하고 놓기를 누르세요." : "뒤 글자를 입력하고 놓기를 누르세요.", "ok");
+      setMessage(state.turn === 0 ? "Enter a word, then place it." : "Enter the remaining letters, then place it.", "ok");
       render();
       focusBoardInput();
       return true;
@@ -2138,10 +2095,8 @@
           } else {
             setCellLetter(button, cellLetter || previewLetter || "");
           }
-          const label = initialLawMark
-            ? `${initialLawMark.from}/${initialLawMark.to} 두음법칙 표시`
-            : cellLetter || previewLetter || "빈 칸";
-          button.setAttribute("aria-label", `${x + 1}열 ${y + 1}행 ${label}`);
+          const label = cellLetter || previewLetter || "empty tile";
+          button.setAttribute("aria-label", `column ${x + 1}, row ${y + 1}, ${label}`);
           if (!exiting && isEdge(state.board, x, y)) button.classList.add("edge");
           if (cellLetter) button.classList.add("filled");
           if (apples.has(key)) {
@@ -2185,8 +2140,8 @@
       const total = size * size;
       const head = state.head && state.board[state.head.y][state.head.x] ? state.board[state.head.y][state.head.x] : "-";
       const startLabel = head === "-" ? head : headStartLetters(head).join("/");
-      els.boardInput.placeholder = state.turn === 0 ? "단어 입력" : `${startLabel} 뒤 글자 입력`;
-      els.scoreText.textContent = `${state.score}점 · ${filled} / ${total}`;
+      els.boardInput.placeholder = state.turn === 0 ? "Enter word" : `${startLabel} remaining letters`;
+      els.scoreText.textContent = `${state.score} pts · ${filled} / ${total}`;
     }
 
     function render() {
@@ -2222,15 +2177,15 @@
     }
 
     async function loadBlockedDictionary() {
-      if (typeof window.WORDSNAKE_BLOCKED_WORDS === "string" && window.WORDSNAKE_BLOCKED_WORDS.trim()) {
-        loadBlockedDictionaryFromText(window.WORDSNAKE_BLOCKED_WORDS);
+      if (typeof window.WORDSNAKE_BLOCKED_WORDS_EN === "string" && window.WORDSNAKE_BLOCKED_WORDS_EN.trim()) {
+        loadBlockedDictionaryFromText(window.WORDSNAKE_BLOCKED_WORDS_EN);
         return;
       }
       try {
-        const response = await fetch("../public/words-blocked.txt", { cache: "no-store" });
+        const response = await fetch("../public/words-en-blocked.txt", { cache: "no-store" });
         if (response.ok) loadBlockedDictionaryFromText(await response.text());
       } catch {
-        // 금지 단어 사전은 실패해도 게임 자체는 계속 진행할 수 있습니다.
+        // The blocked-word dictionary is optional; the game can keep running if it fails.
       }
     }
 
@@ -2272,7 +2227,7 @@
       return String(name || "")
         .replace(/[\u0000-\u001f\u007f]/g, "")
         .trim()
-        .slice(0, 16) || "익명";
+        .slice(0, 16) || "Player";
     }
 
     function hideResultPanel() {
@@ -2285,11 +2240,11 @@
     }
 
     function showResultPanel(type) {
-      const savedName = localStorage.getItem("wordsnakePlayerName") || "";
+      const savedName = localStorage.getItem("wordChainSnakeEnPlayerName") || "";
       if (!els.playerNameInput.value && savedName) els.playerNameInput.value = savedName;
       els.resultPanel.classList.remove("hidden");
-      els.resultTitle.textContent = type === "clear" ? "클리어 결과" : "항복 결과";
-      setScoreSubmitStatus(SUGGEST_API ? "점수를 등록할 수 있습니다." : "랭킹 서버 주소가 아직 설정되지 않았습니다.", !SUGGEST_API);
+      els.resultTitle.textContent = type === "clear" ? "Clear Result" : "Surrender Result";
+      setScoreSubmitStatus(SUGGEST_API ? "You can upload your score." : "Ranking server is not configured yet.", !SUGGEST_API);
       loadLeaderboard(state.board.length, els.leaderboardList, setScoreSubmitStatus, state.scoreId, state.gameMode);
       trackGameEvent("game_finish", { finishType: type, score: state.score, filled: filledCount(state.board), turns: state.turn, mode: state.gameMode });
     }
@@ -2299,19 +2254,19 @@
       if (!state.finished) {
         els.placeBtn.disabled = Boolean(clearAnimation);
         els.undoBtn.disabled = Boolean(clearAnimation);
-        els.newBtn.textContent = "항복";
+        els.newBtn.textContent = "Surrender";
         els.submitScoreBtn.disabled = false;
         return;
       }
       const result = resultSnapshot();
-      els.resultTitle.textContent = result.finishType === "clear" ? "클리어 결과" : "항복 결과";
-      els.resultScore.textContent = `${result.score.toLocaleString("ko-KR")}점`;
+      els.resultTitle.textContent = result.finishType === "clear" ? "Clear Result" : "Surrender Result";
+      els.resultScore.textContent = `${result.score.toLocaleString("en-US")} pts`;
       els.resultFilled.textContent = `${result.filled} / ${result.total}`;
-      els.resultTurns.textContent = `${result.turns}개`;
+      els.resultTurns.textContent = `${result.turns}`;
       els.leaderboardScope.textContent = `${result.boardSize} x ${result.boardSize} · ${modeLabel(result.mode)}`;
       els.placeBtn.disabled = true;
       els.undoBtn.disabled = true;
-      els.newBtn.textContent = "처음으로";
+      els.newBtn.textContent = "Home";
       els.submitScoreBtn.disabled = state.scoreUploaded;
     }
 
@@ -2331,23 +2286,23 @@
 
     function shareSummary() {
       const result = resultSnapshot();
-      const finish = result.finishType === "clear" ? "클리어" : "항복";
-      const mode = result.mode === "snake" ? " 스네이크" : "";
-      return `${result.boardSize}x${result.boardSize}${mode} 한국어 ${finish} ${result.score.toLocaleString("ko-KR")}점`;
+      const finish = result.finishType === "clear" ? "Clear" : "Surrender";
+      const mode = result.mode === "snake" ? " Snake" : "";
+      return `${result.boardSize}x${result.boardSize}${mode} English ${finish} ${result.score.toLocaleString("en-US")} pts`;
     }
 
     function shareText() {
       const result = resultSnapshot();
       return [
         `Word Chain Snake - ${shareSummary()}`,
-        `${result.filled} / ${result.total}칸, ${result.turns}개 단어`,
-        "긴 단어와 교차로 점수를 올려보세요.",
+        `${result.filled} / ${result.total} tiles, ${result.turns} words`,
+        "Score higher with longer words and crossings.",
         shareUrl()
       ].join("\n");
     }
 
     function xShareText() {
-      return `${shareSummary()}\n끝말잇기와 스네이크를 합친 단어 퍼즐`;
+      return `${shareSummary()}\nA word-chain puzzle crossed with snake movement`;
     }
 
     function trackShare(channel) {
@@ -2498,7 +2453,7 @@
 
       ctx.fillStyle = "#202327";
       ctx.font = "900 20px system-ui, -apple-system, Segoe UI, sans-serif";
-      ctx.fillText(`${result.filled} / ${result.total}칸 · ${result.turns}개 단어`, pad, boardY + boardPx + 38);
+      ctx.fillText(`${result.filled} / ${result.total} tiles · ${result.turns} words`, pad, boardY + boardPx + 38);
       ctx.fillStyle = "#5f6872";
       ctx.font = "800 15px system-ui, -apple-system, Segoe UI, sans-serif";
       drawWrappedText(ctx, shareUrl(), pad, boardY + boardPx + 66, width - pad * 2, 19);
@@ -2534,8 +2489,8 @@
       });
       window.open(`https://twitter.com/intent/tweet?${params.toString()}`, "_blank", "noopener,noreferrer");
       copyResultImage()
-        .then(copied => setShareStatus(copied ? "X 공유 창을 열고 이미지를 복사했습니다." : "X 공유 창을 열었습니다."))
-        .catch(() => setShareStatus("X 공유 창을 열었습니다."));
+        .then(copied => setShareStatus(copied ? "Opened X share window and copied the image." : "Opened X share window."))
+        .catch(() => setShareStatus("Opened X share window."));
       trackShare("x");
     }
 
@@ -2546,10 +2501,10 @@
         const file = await resultImageFile();
         if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
           await navigator.share({ title: "Word Chain Snake", text, url: shareUrl(), files: [file] });
-          setShareStatus("공유했습니다.");
+          setShareStatus("Shared.");
         } else if (navigator.share) {
           await navigator.share({ title: "Word Chain Snake", text, url: shareUrl() });
-          setShareStatus("공유했습니다.");
+          setShareStatus("Shared.");
         } else {
           await copyResult();
           return;
@@ -2557,7 +2512,7 @@
         trackShare("native");
       } catch (error) {
         if (error && error.name === "AbortError") return;
-        setShareStatus("공유하지 못했습니다.", true);
+        setShareStatus("Could not share.", true);
       }
     }
 
@@ -2566,14 +2521,14 @@
       try {
         const copiedImage = await copyResultImage();
         if (copiedImage) {
-          setShareStatus("결과 이미지를 클립보드에 복사했습니다.");
+          setShareStatus("Result image copied to clipboard.");
         } else {
           await navigator.clipboard.writeText(shareText());
-          setShareStatus("결과를 클립보드에 복사했습니다.");
+          setShareStatus("Result copied to clipboard.");
         }
         trackShare("copy");
       } catch {
-        setShareStatus("클립보드에 복사하지 못했습니다.", true);
+        setShareStatus("Could not copy to clipboard.", true);
       }
     }
 
@@ -2581,33 +2536,33 @@
       listEl.innerHTML = "";
       if (!items.length) {
         const empty = document.createElement("li");
-        empty.innerHTML = `<span class="rank">-</span><span class="name">아직 기록이 없습니다</span><span class="score-value">0점</span>`;
+        empty.innerHTML = `<span class="rank">-</span><span class="name">No scores yet</span><span class="score-value">0 pts</span>`;
         listEl.appendChild(empty);
         return;
       }
       items.forEach((item, index) => {
         const row = document.createElement("li");
-        const finish = item.finishType === "clear" ? "클리어" : "항복";
+        const finish = item.finishType === "clear" ? "Clear" : "Surrender";
         const isOwn = ownItem && item.id === ownItem.id;
         if (isOwn) row.classList.add("own");
         row.innerHTML = `
           <span class="rank">${index + 1}</span>
           <span class="name"></span>
-          <span class="score-value">${Number(item.score || 0).toLocaleString("ko-KR")}점</span>
+          <span class="score-value">${Number(item.score || 0).toLocaleString("en-US")} pts</span>
         `;
-        row.querySelector(".name").textContent = `${item.name || "익명"} · ${finish}${isOwn ? " · 내 순위" : ""}`;
+        row.querySelector(".name").textContent = `${item.name || "Player"} · ${finish}${isOwn ? " · My rank" : ""}`;
         listEl.appendChild(row);
       });
       if (!ownItem || !ownRank || ownRank <= items.length) return;
       const row = document.createElement("li");
       row.classList.add("own");
-      const finish = ownItem.finishType === "clear" ? "클리어" : "항복";
+      const finish = ownItem.finishType === "clear" ? "Clear" : "Surrender";
       row.innerHTML = `
         <span class="rank">${ownRank}</span>
         <span class="name"></span>
-        <span class="score-value">${Number(ownItem.score || 0).toLocaleString("ko-KR")}점</span>
+        <span class="score-value">${Number(ownItem.score || 0).toLocaleString("en-US")} pts</span>
       `;
-      row.querySelector(".name").textContent = `${ownItem.name || "익명"} · ${finish} · 내 순위`;
+      row.querySelector(".name").textContent = `${ownItem.name || "Player"} · ${finish} · My rank`;
       listEl.appendChild(row);
     }
 
@@ -2616,7 +2571,7 @@
       const modeForRank = normalizeMode(mode);
       if (!SUGGEST_API) {
         renderLeaderboard(listEl, []);
-        if (setStatus) setStatus("랭킹 서버 주소가 아직 설정되지 않았습니다.", true);
+        if (setStatus) setStatus("Ranking server is not configured yet.", true);
         return;
       }
       try {
@@ -2624,11 +2579,11 @@
         if (ownId) params.set("id", ownId);
         const response = await fetch(`${SUGGEST_API}/scores?${params.toString()}`, { cache: "no-store" });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "랭킹을 불러오지 못했습니다.");
+        if (!response.ok) throw new Error(data.error || "Could not load rankings.");
         renderLeaderboard(listEl, Array.isArray(data.items) ? data.items : [], data.ownRank, data.ownItem);
         if (setStatus) setStatus("");
       } catch (error) {
-        if (setStatus) setStatus(error.message || "랭킹을 불러오지 못했습니다.", true);
+        if (setStatus) setStatus(error.message || "Could not load rankings.", true);
       }
     }
 
@@ -2676,7 +2631,7 @@
       const mode = selectedIntroMode();
       els.introLeaderboardScope.textContent = `${size} x ${size} · ${modeLabel(mode)}`;
       els.introRankingPanel.classList.remove("hidden");
-      setIntroRankingStatus("랭킹을 불러오는 중...");
+      setIntroRankingStatus("Loading rankings...");
       await loadLeaderboard(size, els.introLeaderboardList, setIntroRankingStatus, "", mode);
     }
 
@@ -2692,15 +2647,15 @@
     async function submitScore() {
       if (!state.finished || state.scoreUploaded) return;
       if (!SUGGEST_API) {
-        setScoreSubmitStatus("랭킹 서버 주소가 아직 설정되지 않았습니다.", true);
+        setScoreSubmitStatus("Ranking server is not configured yet.", true);
         return;
       }
 
       const payload = resultSnapshot();
       els.playerNameInput.value = payload.name;
-      localStorage.setItem("wordsnakePlayerName", payload.name);
+      localStorage.setItem("wordChainSnakeEnPlayerName", payload.name);
       els.submitScoreBtn.disabled = true;
-      setScoreSubmitStatus("점수 등록 중...");
+      setScoreSubmitStatus("Uploading score...");
       try {
         const response = await fetch(`${SUGGEST_API}/scores`, {
           method: "POST",
@@ -2708,13 +2663,13 @@
           body: JSON.stringify(payload)
         });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "점수 등록에 실패했습니다.");
+        if (!response.ok) throw new Error(data.error || "Could not upload score.");
         state.scoreUploaded = true;
         state.scoreId = data.item && data.item.id ? data.item.id : "";
-        setScoreSubmitStatus("점수가 등록되었습니다.");
+        setScoreSubmitStatus("Score uploaded.");
         await loadLeaderboard(state.board.length, els.leaderboardList, setScoreSubmitStatus, state.scoreId, state.gameMode);
       } catch (error) {
-        setScoreSubmitStatus(error.message || "점수 등록에 실패했습니다.", true);
+        setScoreSubmitStatus(error.message || "Could not upload score.", true);
       } finally {
         els.submitScoreBtn.disabled = state.scoreUploaded;
       }
@@ -2722,8 +2677,8 @@
 
     function openGithubSuggestion(word) {
       const params = new URLSearchParams({
-        title: `단어 제안: ${word}`,
-        body: `제안 단어: ${word}\n\n게임에서 사전에 없는 단어로 확인되어 등록을 제안합니다.`
+        title: `Word suggestion: ${word}`,
+        body: `Suggested word: ${word}\n\nThis word was not found in the game dictionary and is being suggested for review.`
       });
       window.open(`${GITHUB_ISSUE_URL}?${params.toString()}`, "_blank", "noopener");
     }
@@ -2731,20 +2686,20 @@
     async function submitWordSuggestion() {
       const word = lastMissingWord || currentInputWord();
       if (!isValidWordShape(word)) {
-        setSuggestStatus("순수 한글 2글자 이상 단어만 제안할 수 있습니다.", true);
+        setSuggestStatus("Only A-Z words with at least 2 letters can be suggested.", true);
         return;
       }
       if (dictionary.wordSet.has(word)) {
-        setSuggestStatus("이미 현재 사전에 있는 단어입니다.");
+        setSuggestStatus("This word is already in the dictionary.");
         return;
       }
 
       els.suggestBtn.disabled = true;
-      setSuggestStatus("제안 전송 중...");
+      setSuggestStatus("Sending suggestion...");
 
       if (!SUGGEST_API) {
         openGithubSuggestion(word);
-        setSuggestStatus("서버 주소가 아직 설정되지 않아 GitHub 제안 화면을 열었습니다.");
+        setSuggestStatus("Server is not configured, so GitHub issue creation was opened.");
         els.suggestBtn.disabled = false;
         return;
       }
@@ -2756,17 +2711,17 @@
           body: JSON.stringify({ word, source: `word-chain-snake-${GAME_LANG}`, lang: GAME_LANG })
         });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "제안 전송에 실패했습니다.");
+        if (!response.ok) throw new Error(data.error || "Could not send suggestion.");
         if (data.status === "approved") {
           dictionary.wordSet.add(word);
           lastMissingWord = "";
-          setMessage(`${word}은 이미 승인된 단어입니다.`, "ok");
+          setMessage(`${word} is already approved.`, "ok");
           render();
           return;
         }
-        setSuggestStatus(data.duplicate ? "이미 대기 중인 단어입니다. 중복 제안은 하나로 합쳤습니다." : "제안이 등록되었습니다. 승인 후 사전에 추가됩니다.");
+        setSuggestStatus(data.duplicate ? "This word is already pending. Duplicate suggestions were merged." : "Suggestion saved. It will be added after approval.");
       } catch (error) {
-        setSuggestStatus(error.message || "제안 전송에 실패했습니다.", true);
+        setSuggestStatus(error.message || "Could not send suggestion.", true);
       } finally {
         els.suggestBtn.disabled = false;
       }
@@ -2778,7 +2733,7 @@
         const response = await fetch(`${SUGGEST_API}/words?lang=${encodeURIComponent(GAME_LANG)}`, { cache: "no-store" });
         if (!response.ok) return;
         addWordsToDictionary(await response.text());
-        els.dictStatus.textContent = `사전 ${dictionary.wordSet.size.toLocaleString("ko-KR")}개 준비됨`;
+        els.dictStatus.textContent = `Dictionary ${dictionary.wordSet.size.toLocaleString("en-US")} words ready`;
         render();
       } catch {
         // The base dictionary is still playable when the suggestion server is unavailable.
@@ -2786,23 +2741,23 @@
     }
 
     async function loadDefaultDictionary() {
-      if (typeof window.WORDSNAKE_WORDS === "string" && window.WORDSNAKE_WORDS.trim()) {
-        loadDictionaryFromText(window.WORDSNAKE_WORDS);
-        els.dictStatus.textContent = `사전 ${dictionary.wordSet.size.toLocaleString("ko-KR")}개 준비됨`;
+      if (typeof window.WORDSNAKE_WORDS_EN === "string" && window.WORDSNAKE_WORDS_EN.trim()) {
+        loadDictionaryFromText(window.WORDSNAKE_WORDS_EN);
+        els.dictStatus.textContent = `Dictionary ${dictionary.wordSet.size.toLocaleString("en-US")} words ready`;
         render();
         loadApprovedServerWords();
         return;
       }
 
       try {
-        const response = await fetch("../public/words.txt", { cache: "no-store" });
+        const response = await fetch("../public/words-en.txt", { cache: "no-store" });
         if (!response.ok) return;
         loadDictionaryFromText(await response.text());
-        els.dictStatus.textContent = `사전 ${dictionary.wordSet.size.toLocaleString("ko-KR")}개 준비됨`;
+        els.dictStatus.textContent = `Dictionary ${dictionary.wordSet.size.toLocaleString("en-US")} words ready`;
         loadApprovedServerWords();
         render();
       } catch {
-        els.dictStatus.textContent = "사전을 불러오지 못했습니다.";
+        els.dictStatus.textContent = "Could not load the dictionary.";
         render();
       }
     }
@@ -2839,6 +2794,7 @@
       filledCount,
       buildDictionary,
       initialLawReadings,
+      isEnglishWord,
       wordCandidatesForInput,
       validatePlacement,
       applyPlacement,
