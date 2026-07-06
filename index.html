@@ -28,16 +28,6 @@
   <meta name="google-adsense-account" content="ca-pub-9708655184984227">
   <title>word chain snake</title>
   <script>
-    (function () {
-      if (location.protocol === "file:" || location.pathname !== "/") return;
-      if (new URLSearchParams(location.search).has("lang")) return;
-      var languages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
-      var primary = String(languages[0] || "").toLowerCase();
-      if (primary.startsWith("ko")) location.replace("/ko/" + location.search + location.hash);
-      else if (primary.startsWith("ja")) location.replace("/ja/" + location.search + location.hash);
-    }());
-  </script>
-  <script>
     if (location.protocol !== "file:") document.documentElement.classList.add("web-launch");
   </script>
   <style>
@@ -853,7 +843,7 @@
 </head>
 <body>
   <div class="app">
-    <section id="introScreen" class="screen intro hidden">
+    <section id="introScreen" class="screen intro">
       <div>
         <h1>word chain snake</h1>
         <p class="intro-copy">Chain words by their last and first letters while moving like a snake.</p>
