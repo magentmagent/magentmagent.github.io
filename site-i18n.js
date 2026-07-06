@@ -27,9 +27,9 @@
   }
 
   function gamePath(lang) {
-    if (lang === "ko") return "/ko/";
-    if (lang === "ja") return "/ja/";
-    return "/en/";
+    if (lang === "ko") return "/word-chain-snake/ko/";
+    if (lang === "ja") return "/word-chain-snake/ja/";
+    return "/word-chain-snake/en/";
   }
 
   function content(lang, key) {
