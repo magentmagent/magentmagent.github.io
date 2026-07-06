@@ -79,9 +79,10 @@ a {
 
 h1 {
   margin: 0 0 12px;
-  font-size: clamp(2.7rem, 12vw, 5.4rem);
+  font-size: clamp(2.7rem, 7vw, 4.2rem);
   line-height: 0.95;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 h2 {
@@ -106,7 +107,7 @@ li {
 
 .lead {
   color: #68707a;
-  font-size: clamp(1.05rem, 2.7vw, 1.28rem);
+  font-size: clamp(1.02rem, 2vw, 1.22rem);
   font-weight: 700;
 }
 
@@ -121,7 +122,7 @@ li {
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.95fr);
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.8fr);
   gap: 28px;
   align-items: center;
   margin-bottom: 30px;
@@ -130,6 +131,10 @@ li {
   border-radius: 8px;
   background: rgba(255, 253, 248, 0.9);
   box-shadow: 0 18px 45px rgba(36, 38, 43, 0.1);
+}
+
+.hero > div {
+  min-width: 0;
 }
 
 .hero-image,
@@ -145,6 +150,15 @@ li {
 .hero-image {
   aspect-ratio: 1200 / 630;
   box-shadow: 0 12px 30px rgba(36, 38, 43, 0.12);
+  min-width: 0;
+}
+
+.hero h1 {
+  max-width: 8.2em;
+}
+
+.hero .lead {
+  max-width: 23em;
 }
 
 .game-thumb {
@@ -228,6 +242,11 @@ li {
   .hero,
   .home-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero h1,
+  .hero .lead {
+    max-width: none;
   }
 
   .top-nav strong {
