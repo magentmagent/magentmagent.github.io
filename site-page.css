@@ -157,6 +157,15 @@ li {
   max-width: 8.2em;
 }
 
+.stack-title {
+  display: grid;
+  gap: 0.02em;
+}
+
+.stack-title span {
+  display: block;
+}
+
 .hero .lead {
   max-width: 23em;
 }
