@@ -1261,6 +1261,64 @@
     let exitGhostKeys = new Set();
     let invalidFlashCells = new Set();
     let lastMissingWord = "";
+    let audioContext = null;
+
+    function audioCtx() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      if (!audioContext) audioContext = new AudioContextClass();
+      if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+      return audioContext;
+    }
+
+    function playTone(ctx, frequency, offset, duration, volume, type = "sine") {
+      const start = ctx.currentTime + offset;
+      const end = start + duration;
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(volume, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, end);
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+      oscillator.start(start);
+      oscillator.stop(end + 0.02);
+    }
+
+    function playSound(name) {
+      try {
+        const ctx = audioCtx();
+        if (!ctx) return;
+        const volume = 0.035;
+        if (name === "start") {
+          playTone(ctx, 392, 0.00, 0.07, volume);
+          playTone(ctx, 523, 0.055, 0.08, volume * 0.9);
+        } else if (name === "place") {
+          playTone(ctx, 587, 0.00, 0.08, volume);
+          playTone(ctx, 740, 0.045, 0.07, volume * 0.7);
+        } else if (name === "apple") {
+          playTone(ctx, 659, 0.00, 0.06, volume);
+          playTone(ctx, 880, 0.045, 0.07, volume * 0.85);
+          playTone(ctx, 1047, 0.09, 0.06, volume * 0.65);
+        } else if (name === "invalid") {
+          playTone(ctx, 196, 0.00, 0.11, volume * 0.75, "triangle");
+        } else if (name === "undo") {
+          playTone(ctx, 440, 0.00, 0.06, volume * 0.75);
+          playTone(ctx, 330, 0.045, 0.08, volume * 0.6);
+        } else if (name === "clear") {
+          playTone(ctx, 523, 0.00, 0.08, volume * 0.9);
+          playTone(ctx, 659, 0.07, 0.08, volume * 0.85);
+          playTone(ctx, 784, 0.14, 0.12, volume * 0.75);
+        } else if (name === "surrender") {
+          playTone(ctx, 330, 0.00, 0.08, volume * 0.65);
+          playTone(ctx, 247, 0.07, 0.12, volume * 0.55);
+        }
+      } catch {
+        // Sound feedback is optional and should never interrupt play.
+      }
+    }
 
     const els = {
       board: document.querySelector("#board"),
@@ -1592,6 +1650,7 @@
     }
 
     function finishGame(type) {
+      playSound(type === "clear" ? "clear" : "surrender");
       state.finished = false;
       state.finishType = type;
       state.selectedDir = null;
@@ -1625,6 +1684,7 @@
     }
 
     function showPlacementError(result) {
+      playSound("invalid");
       lastMissingWord = result.code === "missing-word" ? result.word : "";
       setMessage(result.message, "error");
       const keys = invalidPlacementKeys();
@@ -1684,6 +1744,7 @@
       const scoreParts = [`+${result.score.gained}点`, `新しいマス +${result.newCells.length}`, `単語 +${result.score.wordBonus}`];
       if (result.score.crossBonus) scoreParts.push(`交差 +${result.score.crossBonus}`);
       if (result.score.appleBonus) scoreParts.push(`りんご +${result.score.appleBonus}`);
+      if (!done) playSound(result.appleScore.apples.length ? "apple" : "place");
       setMessage(done ? "盤面クリア！スネークが外へ進みます。" : `${ruleText}${result.word} を置きました。${scoreParts.join(" · ")}`, "ok");
       els.boardInput.value = "";
       lastMissingWord = "";
@@ -1745,6 +1806,7 @@
     function undo() {
       const snapshot = undoStack.pop();
       if (!snapshot) {
+        playSound("invalid");
         setMessage("戻せる手がありません。", "error");
         render();
         return;
@@ -1758,6 +1820,7 @@
         window.clearTimeout(clearTimer);
         clearTimer = null;
       }
+      playSound("undo");
       setMessage("一手戻しました。", "ok");
       render();
     }
@@ -1780,6 +1843,7 @@
     }
 
     function startGame(sizeOverride = null, modeOverride = null) {
+      playSound("start");
       boardSize = Number(sizeOverride || els.sizeSelect.value) || DEFAULT_SIZE;
       gameMode = normalizeMode(modeOverride || els.modeSelect.value);
       els.sizeSelect.value = String(boardSize);
