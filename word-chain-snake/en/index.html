@@ -2142,7 +2142,9 @@
       const splitFactor = Math.max(24, 34 - ((size - 8) * 2.5));
       els.board.style.setProperty("--cell-font-size", `calc(${normalFactor}cqw / ${size})`);
       els.board.style.setProperty("--initial-law-font-size", `calc(${splitFactor}cqw / ${size})`);
-      els.board.appendChild(makePathOverlay(size, state.snakeTrail, clearAnimation || pathAnimation));
+      if (clearAnimation || !exiting) {
+        els.board.appendChild(makePathOverlay(size, state.snakeTrail, clearAnimation || pathAnimation));
+      }
       const apples = appleMap(state);
       const collectedApples = new Set(state.collectedApples || []);
       for (let y = 0; y < size; y += 1) {
