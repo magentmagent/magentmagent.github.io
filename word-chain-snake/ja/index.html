@@ -296,11 +296,10 @@
 
     .path-snake-head {
       fill: #fffdf8;
-      stroke: rgba(32, 35, 39, 0.42);
-      stroke-width: 0.025;
-      stroke-linejoin: round;
+      stroke: none;
       transform-box: fill-box;
       transform-origin: center;
+      filter: drop-shadow(0 0.035px 0.055px rgba(32, 35, 39, 0.36));
     }
 
     .path-snake-head.animated {
@@ -2090,7 +2089,7 @@
       const angle = lastSegmentAngle(trail);
       const head = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
       head.classList.add("path-snake-head");
-      head.setAttribute("points", "0.20,0 -0.15,-0.13 -0.07,0 -0.15,0.13");
+      head.setAttribute("points", "0,0 -0.28,-0.12 -0.20,0 -0.28,0.12");
       head.setAttribute("transform", `translate(${point.x} ${point.y}) rotate(${angle})`);
       svg.appendChild(head);
     }
@@ -2098,7 +2097,7 @@
     function appendAnimatedSnakeHead(svg, pathId, duration = 620) {
       const head = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
       head.classList.add("path-snake-head", "animated");
-      head.setAttribute("points", "0.20,0 -0.15,-0.13 -0.07,0 -0.15,0.13");
+      head.setAttribute("points", "0,0 -0.28,-0.12 -0.20,0 -0.28,0.12");
       const motion = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
       motion.setAttribute("dur", `${duration}ms`);
       motion.setAttribute("fill", "freeze");
