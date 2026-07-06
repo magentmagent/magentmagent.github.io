@@ -294,29 +294,12 @@
       animation: snake-exit-flow var(--snake-exit-duration, 980ms) linear forwards;
     }
 
-    .path-snake-head {
-      fill: #fffdf8;
-      stroke: none;
-      transform-box: fill-box;
-      transform-origin: center;
-      filter: drop-shadow(0 0.035px 0.055px rgba(32, 35, 39, 0.36));
-    }
-
-    .path-snake-head.animated {
-      opacity: 0;
-      animation: snake-head-show 1ms linear forwards;
-    }
-
     @keyframes snake-path-grow {
       to { stroke-dashoffset: 0; }
     }
 
     @keyframes snake-exit-flow {
       to { stroke-dashoffset: -1; }
-    }
-
-    @keyframes snake-head-show {
-      to { opacity: 1; }
     }
 
     .board-input {
@@ -2075,38 +2058,6 @@
       svg.style.setProperty("--snake-exit-duration", `${duration}ms`);
       const path = appendSnakePath(svg, d, false);
       if (path) path.classList.add("exiting");
-      const pathId = `snake-exit-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      const motionPath = appendSnakePath(svg, d, false, pathId);
-      if (motionPath) {
-        motionPath.setAttribute("opacity", "0");
-        appendAnimatedSnakeHead(svg, pathId, duration);
-      }
-    }
-
-    function appendStaticSnakeHead(svg, trail) {
-      if (trail.length < 2) return;
-      const point = pathPoint(trail[trail.length - 1]);
-      const angle = lastSegmentAngle(trail);
-      const head = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-      head.classList.add("path-snake-head");
-      head.setAttribute("points", "0,0 -0.28,-0.12 -0.20,0 -0.28,0.12");
-      head.setAttribute("transform", `translate(${point.x} ${point.y}) rotate(${angle})`);
-      svg.appendChild(head);
-    }
-
-    function appendAnimatedSnakeHead(svg, pathId, duration = 620) {
-      const head = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-      head.classList.add("path-snake-head", "animated");
-      head.setAttribute("points", "0,0 -0.28,-0.12 -0.20,0 -0.28,0.12");
-      const motion = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
-      motion.setAttribute("dur", `${duration}ms`);
-      motion.setAttribute("fill", "freeze");
-      motion.setAttribute("rotate", "auto");
-      const mpath = document.createElementNS("http://www.w3.org/2000/svg", "mpath");
-      mpath.setAttribute("href", `#${pathId}`);
-      motion.appendChild(mpath);
-      head.appendChild(motion);
-      svg.appendChild(head);
     }
 
     function makePathOverlay(size, trail, animation = null) {
@@ -2127,7 +2078,6 @@
         && animation.fromIndex < trail.length - 1;
       if (!activeAnimation) {
         appendSnakePath(svg, pathDataForTrail(trail));
-        appendStaticSnakeHead(svg, trail);
         return svg;
       }
 
@@ -2137,7 +2087,6 @@
       appendSnakePath(svg, pathDataForTrail(stableTrail));
       const animatedPathId = `snake-motion-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       appendSnakePath(svg, pathDataForTrail(animatedTrail), true, animatedPathId);
-      appendAnimatedSnakeHead(svg, animatedPathId);
       return svg;
     }
 
