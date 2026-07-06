@@ -287,6 +287,13 @@
       animation: snake-path-grow 620ms ease-out forwards;
     }
 
+    .path-snake-line.exiting {
+      stroke-width: 0.24;
+      stroke-dasharray: 0.34 1;
+      stroke-dashoffset: 0.34;
+      animation: snake-exit-flow var(--snake-exit-duration, 980ms) linear forwards;
+    }
+
     .path-snake-head {
       fill: #fffdf8;
       stroke: rgba(32, 35, 39, 0.42);
@@ -303,6 +310,10 @@
 
     @keyframes snake-path-grow {
       to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes snake-exit-flow {
+      to { stroke-dashoffset: -1; }
     }
 
     @keyframes snake-head-show {
@@ -1496,24 +1507,15 @@
       const frames = new Map();
       const ordered = [...latest.entries()].sort((a, b) => a[1].index - b[1].index);
       for (const [key, frame] of ordered) {
-        const cellPath = trail.slice(0, frame.index + 1).reverse().concat(exitCell);
-        frames.set(key, {
-          order: frame.index,
-          path: cellPath.map(cell => ({
-            x: cell.x - frame.cell.x,
-            y: cell.y - frame.cell.y
-          }))
-        });
+        frames.set(key, { order: frame.index });
       }
+      frames.exitTrail = trail.slice().reverse().concat(exitCell);
+      frames.duration = Math.min(1180, Math.max(720, 560 + (trail.length * 18)));
       return frames;
     }
 
     function clearAnimationTime(frames) {
-      let maxTime = 0;
-      for (const frame of frames.values()) {
-        maxTime = Math.max(maxTime, (frame.order * 95) + (frame.path.length * 150));
-      }
-      return maxTime + 180;
+      return (frames && frames.duration) || 900;
     }
 
     function clearPathAnimation(shouldRender = false) {
@@ -1532,14 +1534,13 @@
       }
       clearPathAnimation(false);
       if (clearTimer) window.clearTimeout(clearTimer);
-      exitGhostKeys = new Set();
       clearAnimation = buildClearAnimation(state.snakeTrail, state.board.length);
+      exitGhostKeys = new Set(clearAnimation.keys());
       setMessage(message, "ok");
       render();
       if (typeof onDone !== "function") return;
       clearTimer = window.setTimeout(() => {
         clearTimer = null;
-        exitGhostKeys = new Set(clearAnimation.keys());
         clearAnimation = null;
         onDone();
       }, clearAnimationTime(clearAnimation));
@@ -2098,6 +2099,20 @@
       return path;
     }
 
+    function appendExitSnakePath(svg, trail, duration) {
+      const d = pathDataForTrail(trail);
+      if (!d) return;
+      svg.style.setProperty("--snake-exit-duration", `${duration}ms`);
+      const path = appendSnakePath(svg, d, false);
+      if (path) path.classList.add("exiting");
+      const pathId = `snake-exit-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const motionPath = appendSnakePath(svg, d, false, pathId);
+      if (motionPath) {
+        motionPath.setAttribute("opacity", "0");
+        appendAnimatedSnakeHead(svg, pathId, duration);
+      }
+    }
+
     function appendStaticSnakeHead(svg, trail) {
       if (trail.length < 2) return;
       const point = pathPoint(trail[trail.length - 1]);
@@ -2131,6 +2146,11 @@
       svg.setAttribute("aria-hidden", "true");
       if (trail.length < 2) return svg;
 
+      if (animation && animation.exitTrail) {
+        appendExitSnakePath(svg, animation.exitTrail, animation.duration || 900);
+        return svg;
+      }
+
       const activeAnimation = animation
         && Number.isInteger(animation.fromIndex)
         && animation.fromIndex >= 0
@@ -2151,26 +2171,6 @@
       return svg;
     }
 
-    function clearTransformForStep(step) {
-      return `translate(calc(${step.x} * (100% + 3px)), calc(${step.y} * (100% + 3px)))`;
-    }
-
-    function applyClearFlowAnimations() {
-      if (!clearAnimation) return;
-      const cells = els.board.querySelectorAll(".clear-cell");
-      for (const cell of cells) {
-        const frame = clearAnimation.get(cell.dataset.clearKey);
-        if (!frame || !frame.path.length) continue;
-        const keyframes = frame.path.map(step => ({ transform: clearTransformForStep(step), opacity: 1 }));
-        cell.animate(keyframes, {
-          duration: Math.max(360, frame.path.length * 150),
-          delay: frame.order * 95,
-          easing: "linear",
-          fill: "forwards"
-        });
-      }
-    }
-
     function renderBoard() {
       els.board.innerHTML = "";
       const exiting = Boolean(clearAnimation || state.finished || exitGhostKeys.size);
@@ -2185,7 +2185,7 @@
       const splitFactor = Math.max(24, 34 - ((size - 8) * 2.5));
       els.board.style.setProperty("--cell-font-size", `calc(${normalFactor}cqw / ${size})`);
       els.board.style.setProperty("--initial-law-font-size", `calc(${splitFactor}cqw / ${size})`);
-      els.board.appendChild(makePathOverlay(size, state.snakeTrail, pathAnimation));
+      els.board.appendChild(makePathOverlay(size, state.snakeTrail, clearAnimation || pathAnimation));
       const apples = appleMap(state);
       const collectedApples = new Set(state.collectedApples || []);
       for (let y = 0; y < size; y += 1) {
@@ -2225,11 +2225,6 @@
             if (state.selectedDir === nextDir) button.classList.add("selected-next");
           }
           if (animated.has(`${x},${y}`)) button.classList.add("new-cell");
-          const clearFrame = clearAnimation && clearAnimation.get(key);
-          if (clearFrame) {
-            button.classList.add("clear-cell");
-            button.dataset.clearKey = key;
-          }
           button.addEventListener("click", () => {
             if (selectDirectionCell(x, y)) return;
             selectStart(x, y);
@@ -2238,10 +2233,6 @@
         }
       }
       newCellsForAnimation = [];
-      if (clearAnimation) {
-        const schedule = window.requestAnimationFrame || (callback => window.setTimeout(callback, 0));
-        schedule(applyClearFlowAnimations);
-      }
     }
 
     function renderScore() {
