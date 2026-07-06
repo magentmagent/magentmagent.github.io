@@ -6,6 +6,11 @@
   <meta name="description" content="A mobile word-chain snake puzzle with path planning and letter crossings.">
   <meta name="theme-color" content="#f6f3ea">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://magentmagent.github.io/">
+  <link rel="alternate" hreflang="en" href="https://magentmagent.github.io/">
+  <link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/ko/">
+  <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/ja/">
+  <link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/">
   <meta property="og:title" content="word chain snake">
   <meta property="og:description" content="A mobile English word-chain snake puzzle.">
   <meta property="og:type" content="website">
@@ -826,17 +831,24 @@
       text-decoration: none;
     }
 
-    .ad-zone {
-      display: none;
-      width: 100%;
-      min-height: 96px;
-      border-top: 1px solid var(--line);
-      padding-top: 10px;
+    .site-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 14px;
+      padding: 2px 0 4px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.45;
+      text-align: center;
     }
 
-    .ad-zone.ready {
-      display: block;
+    .site-footer a {
+      color: var(--accent);
+      font-weight: 850;
+      text-decoration: none;
     }
+
   </style>
 </head>
 <body>
@@ -980,9 +992,8 @@
 
       <p class="site-links">
         English dictionary data is derived from Wiktionary/Wiktextract and WordNet preparation data.
-        <a href="NOTICE.md">Notice</a> · <a href="privacy.html">Privacy</a>
+        <a href="/dictionary.html">Dictionary</a> · <a href="/privacy.html">Privacy</a>
       </p>
-      <aside id="introAd" class="ad-zone" aria-label="Advertisement"></aside>
     </section>
 
     <main id="gameScreen" class="screen hidden">
@@ -1037,7 +1048,6 @@
             </div>
             <ol id="leaderboardList" class="leaderboard-list"></ol>
           </div>
-          <aside id="resultAd" class="ad-zone" aria-label="Advertisement"></aside>
         </div>
         <button id="placeBtn" class="button primary large" type="button">Place</button>
         <div class="action-row">
@@ -1046,12 +1056,19 @@
         </div>
       </section>
     </main>
+    <footer class="site-footer" aria-label="Site links">
+      <a href="/games.html">Games</a>
+      <a href="/how-to-play.html">How to play</a>
+      <a href="/dictionary.html">Dictionary</a>
+      <a href="/about.html">About</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/contact.html">Contact</a>
+    </footer>
   </div>
 
   <script src="public/words-en-data.js"></script>
   <script src="public/words-en-blocked-data.js"></script>
   <script src="public/suggest-config.js"></script>
-  <script src="public/ad-config.js"></script>
   <script src="public/analytics-config.js"></script>
   <script>
     const DEFAULT_SIZE = 8;
@@ -1216,38 +1233,6 @@
       return { wordSet };
     }
 
-    function initAds() {
-      const config = window.WORDSNAKE_ADS || {};
-      const client = String(config.adsenseClient || "").trim();
-      if (!config.enabled || !/^ca-pub-\d+$/.test(client)) return;
-
-      const script = document.createElement("script");
-      script.async = true;
-      script.crossOrigin = "anonymous";
-      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(client)}`;
-      document.head.appendChild(script);
-
-      const slots = config.slots || {};
-      mountAdSlot(els.introAd, client, slots.intro);
-      mountAdSlot(els.resultAd, client, slots.result);
-    }
-
-    function mountAdSlot(container, client, slot) {
-      const adSlot = String(slot || "").trim();
-      if (!container || !/^\d+$/.test(adSlot)) return;
-      const ad = document.createElement("ins");
-      ad.className = "adsbygoogle";
-      ad.style.display = "block";
-      ad.dataset.adClient = client;
-      ad.dataset.adSlot = adSlot;
-      ad.dataset.adFormat = "auto";
-      ad.dataset.fullWidthResponsive = "true";
-      container.appendChild(ad);
-      container.classList.add("ready");
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-    }
-
     function loadCloudflareAnalytics() {
       const config = window.WORD_CHAIN_SNAKE_ANALYTICS || {};
       const token = String(config.cloudflareToken || "").trim();
@@ -1303,8 +1288,6 @@
       introLeaderboardScope: document.querySelector("#introLeaderboardScope"),
       introLeaderboardList: document.querySelector("#introLeaderboardList"),
       introRankingStatus: document.querySelector("#introRankingStatus"),
-      introAd: document.querySelector("#introAd"),
-      resultAd: document.querySelector("#resultAd"),
       undoBtn: document.querySelector("#undoBtn"),
       newBtn: document.querySelector("#newBtn"),
       languageSelect: document.querySelector("#languageSelect"),
@@ -2830,7 +2813,6 @@
       buildClearAnimation
     };
 
-    initAds();
     const startedFromUrl = startFromUrlParams();
     if (!startedFromUrl) {
       applyIntroParams();
