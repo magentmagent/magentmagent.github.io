@@ -2,6 +2,10 @@
   const lang = window.TOWER_CUT_LANG || "en";
   const T = window.TOWER_CUT_TEXT;
   const GAME_SECONDS = 60;
+  const GAME_NAME = "tower-cut";
+  const SCORE_SCOPE = 6;
+  const SUGGEST_API = String(window.WORDSNAKE_SUGGEST_API || "").replace(/\/+$/, "");
+  const playerNameKey = "towerCutPlayerName";
   const blocks = [
     { id: "square", mark: "■" },
     { id: "circle", mark: "●" },
@@ -22,12 +26,28 @@
     message: document.querySelector("#message"),
     startView: document.querySelector("#startView"),
     gameView: document.querySelector("#gameView"),
-    resultModal: document.querySelector("#resultModal"),
+    playArea: document.querySelector(".play-area"),
+    resultOverlay: document.querySelector("#resultOverlay"),
+    resultEyebrow: document.querySelector("#resultEyebrow"),
     startBtn: document.querySelector("#startBtn"),
+    introLeaderboardToggle: document.querySelector("#introLeaderboardToggle"),
+    introLeaderboardPanel: document.querySelector("#introLeaderboardPanel"),
+    introLeaderboardScope: document.querySelector("#introLeaderboardScope"),
+    introLeaderboardList: document.querySelector("#introLeaderboardList"),
+    introLeaderboardStatus: document.querySelector("#introLeaderboardStatus"),
     restartBtns: document.querySelectorAll("[data-action='restart']"),
     endBtn: document.querySelector("#endBtn"),
     resultTitle: document.querySelector("#resultTitle"),
     resultStats: document.querySelector("#resultStats"),
+    playerName: document.querySelector("#playerNameInput"),
+    submitScore: document.querySelector("#submitScoreBtn"),
+    leaderboardScope: document.querySelector("#leaderboardScope"),
+    leaderboardList: document.querySelector("#leaderboardList"),
+    leaderboardStatus: document.querySelector("#leaderboardStatus"),
+    shareX: document.querySelector("#shareXBtn"),
+    shareNative: document.querySelector("#shareNativeBtn"),
+    copyResult: document.querySelector("#copyResultBtn"),
+    shareStatus: document.querySelector("#shareStatus"),
     langSelect: document.querySelector("#langSelect")
   };
 
@@ -141,10 +161,14 @@
       totalClicks: 0,
       stageClicks: 0,
       timeLeft: GAME_SECONDS,
-      stageData: makeStage(1)
+      stageData: makeStage(1),
+      scoreUploaded: false,
+      scoreId: "",
+      finishType: ""
     };
     showStart(true);
     showResult(false);
+    if (els.playerName) els.playerName.value = localStorage.getItem(playerNameKey) || "";
     setMessage(T.msgReady);
     render();
   }
@@ -170,6 +194,7 @@
   function finish(reason) {
     if (state.finished) return;
     state.finished = true;
+    state.finishType = reason || "timeout";
     clearInterval(timerId);
     playSfx("end");
     showResult(true, reason);
@@ -474,8 +499,13 @@
   }
 
   function showResult(show, reason) {
-    els.resultModal.classList.toggle("show", show);
+    els.resultOverlay?.classList.toggle("is-hidden", !show);
+    els.playArea?.classList.toggle("result-open", show);
     if (!show) return;
+    state.scoreUploaded = false;
+    state.scoreId = "";
+    if (els.submitScore) els.submitScore.disabled = false;
+    if (els.resultEyebrow) els.resultEyebrow.textContent = T.leaderboard || "Tower Cut";
     els.resultTitle.textContent = reason === "manual" ? T.resultManual : T.resultTimeout;
     const payload = resultPayload(reason);
     els.resultStats.innerHTML = "";
@@ -495,11 +525,13 @@
       item.append(small, strong);
       els.resultStats.appendChild(item);
     });
+    setShareStatus("");
+    loadLeaderboard(els.leaderboardList, els.leaderboardScope, setLeaderboardStatus, state.scoreId);
   }
 
   function resultPayload(reason) {
     return {
-      game: "tower-cut",
+      game: GAME_NAME,
       lang,
       mode: "classic",
       score: state.score,
@@ -508,8 +540,182 @@
       perfectClears: state.perfect,
       maxCombo: state.maxCombo,
       totalClicks: state.totalClicks,
-      highestStage: state.stage
+      highestStage: state.stage,
+      boardSize: SCORE_SCOPE,
+      total: state.cleared,
+      filled: state.cleared,
+      turns: state.totalClicks,
+      name: currentPlayerName()
     };
+  }
+
+  function setStatus(el, message, isError = false) {
+    if (!el) return;
+    el.textContent = message || "";
+    el.classList.toggle("error", isError);
+  }
+
+  function setLeaderboardStatus(message, isError = false) {
+    setStatus(els.leaderboardStatus, message, isError);
+  }
+
+  function setIntroLeaderboardStatus(message, isError = false) {
+    setStatus(els.introLeaderboardStatus, message, isError);
+  }
+
+  function setShareStatus(message, isError = false) {
+    setStatus(els.shareStatus, message, isError);
+  }
+
+  function renderLeaderboard(listEl, items, ownRank = null, ownItem = null) {
+    if (!listEl) return;
+    listEl.innerHTML = "";
+    if (!items.length) {
+      const empty = document.createElement("li");
+      empty.innerHTML = `<span class="rank">-</span><span class="name">${T.leaderboardEmpty}</span><span class="score-value">0</span>`;
+      listEl.appendChild(empty);
+      return;
+    }
+    items.forEach((item, index) => {
+      const row = document.createElement("li");
+      const isOwn = ownItem && item.id === ownItem.id;
+      if (isOwn) row.classList.add("own");
+      row.innerHTML = `
+        <span class="rank">${index + 1}</span>
+        <span class="name"></span>
+        <span class="score-value">${Number(item.score || 0).toLocaleString(lang === "en" ? "en-US" : lang)}</span>
+      `;
+      row.querySelector(".name").textContent = `${item.name || T.namePlaceholder}${isOwn ? ` · ${T.myRank}` : ""}`;
+      listEl.appendChild(row);
+    });
+    if (!ownItem || !ownRank || ownRank <= items.length) return;
+    const own = document.createElement("li");
+    own.classList.add("own");
+    own.innerHTML = `
+      <span class="rank">${ownRank}</span>
+      <span class="name"></span>
+      <span class="score-value">${Number(ownItem.score || 0).toLocaleString(lang === "en" ? "en-US" : lang)}</span>
+    `;
+    own.querySelector(".name").textContent = `${ownItem.name || T.namePlaceholder} · ${T.myRank}`;
+    listEl.appendChild(own);
+  }
+
+  async function loadLeaderboard(listEl, scopeEl, statusFn, ownId = "") {
+    if (scopeEl) scopeEl.textContent = T.leaderboard || "Tower Cut";
+    if (!SUGGEST_API) {
+      renderLeaderboard(listEl, []);
+      statusFn(T.rankingsUnavailable, true);
+      return;
+    }
+    statusFn(T.rankingsLoading);
+    try {
+      const params = new URLSearchParams({
+        game: GAME_NAME,
+        boardSize: String(SCORE_SCOPE),
+        limit: "10",
+        lang,
+        mode: "classic"
+      });
+      if (ownId) params.set("id", ownId);
+      const response = await fetch(`${SUGGEST_API}/scores?${params.toString()}`, { cache: "no-store" });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || T.rankingsFailed);
+      renderLeaderboard(listEl, Array.isArray(data.items) ? data.items : [], data.ownRank, data.ownItem);
+      statusFn(state?.scoreUploaded ? T.scoreUploaded : "");
+    } catch (error) {
+      renderLeaderboard(listEl, []);
+      statusFn(error.message || T.rankingsFailed, true);
+    }
+  }
+
+  async function toggleIntroLeaderboard() {
+    if (!els.introLeaderboardPanel) return;
+    const hidden = els.introLeaderboardPanel.classList.contains("is-hidden");
+    els.introLeaderboardPanel.classList.toggle("is-hidden", !hidden);
+    if (hidden) await loadLeaderboard(els.introLeaderboardList, els.introLeaderboardScope, setIntroLeaderboardStatus, "");
+    else setIntroLeaderboardStatus("");
+  }
+
+  function currentPlayerName() {
+    return String(els.playerName?.value || "").trim().slice(0, 16) || T.namePlaceholder;
+  }
+
+  async function submitScore() {
+    if (!state?.finished || state.scoreUploaded || !els.submitScore) return;
+    if (!SUGGEST_API) {
+      setLeaderboardStatus(T.rankingsUnavailable, true);
+      return;
+    }
+    const payload = resultPayload(state.finishType);
+    if (els.playerName) {
+      els.playerName.value = payload.name;
+      localStorage.setItem(playerNameKey, payload.name);
+    }
+    els.submitScore.disabled = true;
+    setLeaderboardStatus(T.uploadingScore);
+    try {
+      const response = await fetch(`${SUGGEST_API}/scores`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || T.uploadFailed);
+      state.scoreUploaded = true;
+      state.scoreId = data.item && data.item.id ? data.item.id : "";
+      setLeaderboardStatus(T.scoreUploaded);
+      await loadLeaderboard(els.leaderboardList, els.leaderboardScope, setLeaderboardStatus, state.scoreId);
+    } catch (error) {
+      els.submitScore.disabled = false;
+      setLeaderboardStatus(error.message || T.uploadFailed, true);
+    }
+  }
+
+  function shareUrl() {
+    if (location.protocol === "http:" || location.protocol === "https:") return `${location.origin}/tower-cut/${lang}/`;
+    return `https://magentmagent.github.io/tower-cut/${lang}/`;
+  }
+
+  function shareSummary() {
+    return `${T.score}: ${state.score.toLocaleString(lang === "en" ? "en-US" : lang)} · ${T.cleared}: ${state.cleared} · ${T.maxCombo}: ${state.maxCombo}`;
+  }
+
+  function shareText() {
+    if (lang === "ko") return `타워컷 결과\n${shareSummary()}\n${shareUrl()}`;
+    if (lang === "ja") return `Tower Cut 結果\n${shareSummary()}\n${shareUrl()}`;
+    return `Tower Cut result\n${shareSummary()}\n${shareUrl()}`;
+  }
+
+  function shareToX() {
+    if (!state?.finished) return;
+    const params = new URLSearchParams({ text: shareSummary(), url: shareUrl(), hashtags: "TowerCut" });
+    window.open(`https://twitter.com/intent/tweet?${params.toString()}`, "_blank", "noopener,noreferrer");
+    setShareStatus(T.shareOpened);
+  }
+
+  async function shareNative() {
+    if (!state?.finished) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Tower Cut", text: shareText(), url: shareUrl() });
+        setShareStatus(T.shareShared);
+      } else {
+        await copyResult();
+      }
+    } catch (error) {
+      if (error && error.name === "AbortError") return;
+      setShareStatus(T.shareFailed, true);
+    }
+  }
+
+  async function copyResult() {
+    if (!state?.finished) return;
+    try {
+      await navigator.clipboard.writeText(shareText());
+      setShareStatus(T.shareCopied);
+    } catch {
+      setShareStatus(T.shareFailed, true);
+    }
   }
 
   function ensureAudio() {
@@ -556,8 +762,13 @@
   }
 
   els.startBtn.addEventListener("click", startGame);
+  els.introLeaderboardToggle?.addEventListener("click", toggleIntroLeaderboard);
   els.endBtn.addEventListener("click", () => finish("manual"));
   els.restartBtns.forEach(button => button.addEventListener("click", newGame));
+  els.submitScore?.addEventListener("click", submitScore);
+  els.shareX?.addEventListener("click", shareToX);
+  els.shareNative?.addEventListener("click", shareNative);
+  els.copyResult?.addEventListener("click", copyResult);
   els.langSelect.value = lang;
   els.langSelect.addEventListener("change", () => {
     localStorage.setItem("wordChainSnakeSiteLang", els.langSelect.value);

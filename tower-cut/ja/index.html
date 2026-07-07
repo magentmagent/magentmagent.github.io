@@ -46,19 +46,44 @@
         <p class="eyebrow">スタック編集パズル</p>
         <h1 id="startTitle" class="start-title">Tower Cut</h1>
         <p class="lead">60秒でできるだけ多くの壊れた塔を復元しましょう。</p>
-        <ul class="start-rules">
-          <li>目標の塔と現在の塔を見比べます。</li>
-          <li>パレットの層ブロックを列へドラッグするか、選んで列を押します。</li>
-          <li>間違った層を押すと、その層だけを取り除き、上の層は下へ落ちます。</li>
-        </ul>
-        <button id="startBtn" class="button" type="button">スタート</button>
-      </div>
-      <div class="mini-demo" aria-hidden="true">
-        <div class="mini-towers">
-          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+        <div class="intro-action-row">
+          <button id="startBtn" class="button" type="button">スタート</button>
+          <button id="introLeaderboardToggle" class="button secondary" type="button">ランキング</button>
         </div>
-        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
+      </div>
+      <div class="rule-column">
+        <article class="rule-card">
+          <div class="rule-art compare-art" aria-hidden="true">
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+            <div class="rule-arrow">=</div>
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+          </div>
+          <p><b>目標に合わせる</b><span>目標の塔と現在の塔を同じ形にすると得点です。</span></p>
+        </article>
+        <article class="rule-card">
+          <div class="rule-art place-art" aria-hidden="true">
+            <div class="rule-palette"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+            <div class="rule-drop">↓</div>
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span></div>
+          </div>
+          <p><b>層を置く</b><span>ブロックを列へドラッグするか、選んで列を押します。</span></p>
+        </article>
+        <article class="rule-card">
+          <div class="rule-art cut-art" aria-hidden="true">
+            <div class="rule-tower"><span class="block triangle"></span><span class="block circle cut-mark"></span><span class="block square"></span></div>
+            <div class="rule-drop">→</div>
+            <div class="rule-tower"><span class="block triangle"></span><span class="block square"></span></div>
+          </div>
+          <p><b>切って落とす</b><span>間違った層を押すと、その層だけ消え、上の層が下へ落ちます。</span></p>
+        </article>
+        <article id="introLeaderboardPanel" class="leaderboard-panel is-hidden">
+          <div class="leaderboard-title">
+            <strong>ランキング</strong>
+            <span id="introLeaderboardScope">Tower Cut</span>
+          </div>
+          <ol id="introLeaderboardList" class="leaderboard-list"></ol>
+          <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
+        </article>
       </div>
     </section>
     <section id="gameView" class="game-shell is-hidden" aria-label="Tower Cut game">
@@ -82,6 +107,30 @@
           </article>
         </div>
         <div id="palette" class="palette" aria-label="ブロックパレット"></div>
+        <section id="resultOverlay" class="result-overlay is-hidden" aria-live="polite">
+          <div class="result-card">
+            <p id="resultEyebrow" class="eyebrow">結果</p>
+            <h2 id="resultTitle">結果</h2>
+            <div id="resultStats" class="result-grid"></div>
+            <label class="field">名前
+              <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="プレイヤー">
+            </label>
+            <button id="submitScoreBtn" class="button" type="button">スコア登録</button>
+            <p id="leaderboardStatus" class="status-note" aria-live="polite"></p>
+            <div class="leaderboard-title">
+              <strong>ランキング</strong>
+              <span id="leaderboardScope">Tower Cut</span>
+            </div>
+            <ol id="leaderboardList" class="leaderboard-list"></ol>
+            <div class="share-actions">
+              <button id="shareXBtn" class="button secondary" type="button">X</button>
+              <button id="shareNativeBtn" class="button secondary" type="button">共有</button>
+              <button id="copyResultBtn" class="button secondary" type="button">コピー</button>
+            </div>
+            <p id="shareStatus" class="status-note" aria-live="polite"></p>
+            <button class="button" data-action="restart" type="button">もう一度</button>
+          </div>
+        </section>
       </div>
       <aside class="side-panel" aria-label="操作">
         <div id="message" class="message" aria-live="polite"></div>
@@ -99,17 +148,12 @@
       <a href="/contact.html">連絡</a>
     </footer>
   </main>
-  <div id="resultModal" class="modal-backdrop">
-    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
-      <h2 id="resultTitle">結果</h2>
-      <div id="resultStats" class="result-grid"></div>
-      <button class="button" data-action="restart" type="button">もう一度</button>
-    </section>
-  </div>
   <script>
     window.TOWER_CUT_LANG = "ja";
     window.TOWER_CUT_TEXT = {
       score: "得点", cleared: "クリア", perfect: "PERFECT", maxCombo: "最大コンボ", totalClicks: "クリック", highestStage: "ステージ",
+      leaderboard: "ランキング", leaderboardEmpty: "まだ記録がありません", rankingsLoading: "ランキングを読み込み中です。", rankingsUnavailable: "ランキングサーバーが設定されていません。", rankingsFailed: "ランキングを読み込めませんでした。", uploadingScore: "スコアを登録中です。", uploadFailed: "スコアを登録できませんでした。", scoreUploaded: "スコアを登録しました。", namePlaceholder: "プレイヤー", myRank: "自分の記録",
+      shareOpened: "Xの共有画面を開きました。", shareShared: "共有しました。", shareCopied: "結果をコピーしました。", shareFailed: "共有できませんでした。",
       placeColumn: "列に置く",
       resultTimeout: "時間切れ", resultManual: "終了",
       blockName: { square: "四角", circle: "丸", triangle: "三角", diamond: "ひし形" },
@@ -124,6 +168,7 @@
       msgClear: (score, over) => `CLEAR +${score} / 追加クリック ${over}`
     };
   </script>
+  <script src="/public/suggest-config.js"></script>
   <script src="../shared/game.js"></script>
 </body>
 </html>

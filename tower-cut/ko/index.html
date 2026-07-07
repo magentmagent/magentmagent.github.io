@@ -46,19 +46,44 @@
         <p class="eyebrow">스택 편집 퍼즐</p>
         <h1 id="startTitle" class="start-title">타워컷</h1>
         <p class="lead">60초 안에 가능한 한 많은 망가진 탑을 복원하세요.</p>
-        <ul class="start-rules">
-          <li>목표 탑과 현재 탑을 비교합니다.</li>
-          <li>팔레트의 층 블록을 원하는 줄 위로 끌어다 놓거나, 선택 후 줄을 누릅니다.</li>
-          <li>잘못된 층을 누르면 그 층만 제거되고 위층은 아래로 내려옵니다.</li>
-        </ul>
-        <button id="startBtn" class="button" type="button">시작</button>
-      </div>
-      <div class="mini-demo" aria-hidden="true">
-        <div class="mini-towers">
-          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+        <div class="intro-action-row">
+          <button id="startBtn" class="button" type="button">시작</button>
+          <button id="introLeaderboardToggle" class="button secondary" type="button">랭킹</button>
         </div>
-        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
+      </div>
+      <div class="rule-column">
+        <article class="rule-card">
+          <div class="rule-art compare-art" aria-hidden="true">
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+            <div class="rule-arrow">=</div>
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+          </div>
+          <p><b>목표와 맞추기</b><span>왼쪽 목표 탑과 오른쪽 현재 탑이 같아지면 점수를 얻습니다.</span></p>
+        </article>
+        <article class="rule-card">
+          <div class="rule-art place-art" aria-hidden="true">
+            <div class="rule-palette"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+            <div class="rule-drop">↓</div>
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span></div>
+          </div>
+          <p><b>층 쌓기</b><span>아래 블록을 줄 위로 끌어다 놓거나, 블록을 고른 뒤 줄을 누릅니다.</span></p>
+        </article>
+        <article class="rule-card">
+          <div class="rule-art cut-art" aria-hidden="true">
+            <div class="rule-tower"><span class="block triangle"></span><span class="block circle cut-mark"></span><span class="block square"></span></div>
+            <div class="rule-drop">→</div>
+            <div class="rule-tower"><span class="block triangle"></span><span class="block square"></span></div>
+          </div>
+          <p><b>자르고 내려오기</b><span>틀린 층을 누르면 그 층만 빠지고, 위층은 아래로 내려옵니다.</span></p>
+        </article>
+        <article id="introLeaderboardPanel" class="leaderboard-panel is-hidden">
+          <div class="leaderboard-title">
+            <strong>랭킹</strong>
+            <span id="introLeaderboardScope">타워컷</span>
+          </div>
+          <ol id="introLeaderboardList" class="leaderboard-list"></ol>
+          <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
+        </article>
       </div>
     </section>
     <section id="gameView" class="game-shell is-hidden" aria-label="타워컷 게임">
@@ -82,6 +107,30 @@
           </article>
         </div>
         <div id="palette" class="palette" aria-label="블록 팔레트"></div>
+        <section id="resultOverlay" class="result-overlay is-hidden" aria-live="polite">
+          <div class="result-card">
+            <p id="resultEyebrow" class="eyebrow">결과</p>
+            <h2 id="resultTitle">결과</h2>
+            <div id="resultStats" class="result-grid"></div>
+            <label class="field">이름
+              <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="플레이어">
+            </label>
+            <button id="submitScoreBtn" class="button" type="button">점수 등록</button>
+            <p id="leaderboardStatus" class="status-note" aria-live="polite"></p>
+            <div class="leaderboard-title">
+              <strong>랭킹</strong>
+              <span id="leaderboardScope">타워컷</span>
+            </div>
+            <ol id="leaderboardList" class="leaderboard-list"></ol>
+            <div class="share-actions">
+              <button id="shareXBtn" class="button secondary" type="button">X</button>
+              <button id="shareNativeBtn" class="button secondary" type="button">공유</button>
+              <button id="copyResultBtn" class="button secondary" type="button">복사</button>
+            </div>
+            <p id="shareStatus" class="status-note" aria-live="polite"></p>
+            <button class="button" data-action="restart" type="button">다시 하기</button>
+          </div>
+        </section>
       </div>
       <aside class="side-panel" aria-label="조작">
         <div id="message" class="message" aria-live="polite"></div>
@@ -99,17 +148,12 @@
       <a href="/contact.html">문의</a>
     </footer>
   </main>
-  <div id="resultModal" class="modal-backdrop">
-    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
-      <h2 id="resultTitle">결과</h2>
-      <div id="resultStats" class="result-grid"></div>
-      <button class="button" data-action="restart" type="button">다시 하기</button>
-    </section>
-  </div>
   <script>
     window.TOWER_CUT_LANG = "ko";
     window.TOWER_CUT_TEXT = {
       score: "점수", cleared: "완성", perfect: "PERFECT", maxCombo: "최고 콤보", totalClicks: "클릭", highestStage: "단계",
+      leaderboard: "랭킹", leaderboardEmpty: "아직 기록이 없습니다", rankingsLoading: "랭킹을 불러오는 중입니다.", rankingsUnavailable: "랭킹 서버 설정이 없습니다.", rankingsFailed: "랭킹을 불러오지 못했습니다.", uploadingScore: "점수를 등록하는 중입니다.", uploadFailed: "점수를 등록하지 못했습니다.", scoreUploaded: "점수를 등록했습니다.", namePlaceholder: "플레이어", myRank: "내 기록",
+      shareOpened: "X 공유 창을 열었습니다.", shareShared: "공유했습니다.", shareCopied: "결과를 복사했습니다.", shareFailed: "공유할 수 없습니다.",
       placeColumn: "줄에 쌓기",
       resultTimeout: "시간 종료", resultManual: "게임 종료",
       blockName: { square: "사각형", circle: "원형", triangle: "삼각형", diamond: "마름모" },
@@ -124,6 +168,7 @@
       msgClear: (score, over) => `CLEAR +${score} / 초과 클릭 ${over}`
     };
   </script>
+  <script src="/public/suggest-config.js"></script>
   <script src="../shared/game.js"></script>
 </body>
 </html>

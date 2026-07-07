@@ -46,19 +46,44 @@
         <p class="eyebrow">Stack editing puzzle</p>
         <h1 id="startTitle" class="start-title">Tower Cut</h1>
         <p class="lead">Restore as many broken towers as possible in 60 seconds.</p>
-        <ul class="start-rules">
-          <li>Compare the target tower and your tower.</li>
-          <li>Drag a layer from the palette onto a column, or select a layer and tap a column.</li>
-          <li>Click one wrong layer to remove only that layer. Upper layers fall down.</li>
-        </ul>
-        <button id="startBtn" class="button" type="button">Start</button>
-      </div>
-      <div class="mini-demo" aria-hidden="true">
-        <div class="mini-towers">
-          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+        <div class="intro-action-row">
+          <button id="startBtn" class="button" type="button">Start</button>
+          <button id="introLeaderboardToggle" class="button secondary" type="button">Ranking</button>
         </div>
-        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
+      </div>
+      <div class="rule-column">
+        <article class="rule-card">
+          <div class="rule-art compare-art" aria-hidden="true">
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+            <div class="rule-arrow">=</div>
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+          </div>
+          <p><b>Match the target</b><span>Score by making your tower match the target tower.</span></p>
+        </article>
+        <article class="rule-card">
+          <div class="rule-art place-art" aria-hidden="true">
+            <div class="rule-palette"><span class="block square"></span><span class="block circle"></span><span class="block triangle"></span></div>
+            <div class="rule-drop">↓</div>
+            <div class="rule-tower"><span class="block square"></span><span class="block circle"></span></div>
+          </div>
+          <p><b>Place layers</b><span>Drag a block onto a column, or select a block and tap a column.</span></p>
+        </article>
+        <article class="rule-card">
+          <div class="rule-art cut-art" aria-hidden="true">
+            <div class="rule-tower"><span class="block triangle"></span><span class="block circle cut-mark"></span><span class="block square"></span></div>
+            <div class="rule-drop">→</div>
+            <div class="rule-tower"><span class="block triangle"></span><span class="block square"></span></div>
+          </div>
+          <p><b>Cut and fall</b><span>Tap a wrong layer to remove only that layer. Upper layers fall down.</span></p>
+        </article>
+        <article id="introLeaderboardPanel" class="leaderboard-panel is-hidden">
+          <div class="leaderboard-title">
+            <strong>Ranking</strong>
+            <span id="introLeaderboardScope">Tower Cut</span>
+          </div>
+          <ol id="introLeaderboardList" class="leaderboard-list"></ol>
+          <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
+        </article>
       </div>
     </section>
     <section id="gameView" class="game-shell is-hidden" aria-label="Tower Cut game">
@@ -82,6 +107,30 @@
           </article>
         </div>
         <div id="palette" class="palette" aria-label="Block palette"></div>
+        <section id="resultOverlay" class="result-overlay is-hidden" aria-live="polite">
+          <div class="result-card">
+            <p id="resultEyebrow" class="eyebrow">Result</p>
+            <h2 id="resultTitle">Result</h2>
+            <div id="resultStats" class="result-grid"></div>
+            <label class="field">Name
+              <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="Player">
+            </label>
+            <button id="submitScoreBtn" class="button" type="button">Upload score</button>
+            <p id="leaderboardStatus" class="status-note" aria-live="polite"></p>
+            <div class="leaderboard-title">
+              <strong>Ranking</strong>
+              <span id="leaderboardScope">Tower Cut</span>
+            </div>
+            <ol id="leaderboardList" class="leaderboard-list"></ol>
+            <div class="share-actions">
+              <button id="shareXBtn" class="button secondary" type="button">X</button>
+              <button id="shareNativeBtn" class="button secondary" type="button">Share</button>
+              <button id="copyResultBtn" class="button secondary" type="button">Copy</button>
+            </div>
+            <p id="shareStatus" class="status-note" aria-live="polite"></p>
+            <button class="button" data-action="restart" type="button">Play again</button>
+          </div>
+        </section>
       </div>
       <aside class="side-panel" aria-label="Actions">
         <div id="message" class="message" aria-live="polite"></div>
@@ -99,17 +148,12 @@
       <a href="/contact.html">Contact</a>
     </footer>
   </main>
-  <div id="resultModal" class="modal-backdrop">
-    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
-      <h2 id="resultTitle">Result</h2>
-      <div id="resultStats" class="result-grid"></div>
-      <button class="button" data-action="restart" type="button">Play again</button>
-    </section>
-  </div>
   <script>
     window.TOWER_CUT_LANG = "en";
     window.TOWER_CUT_TEXT = {
       score: "Score", cleared: "Cleared", perfect: "Perfect", maxCombo: "Max combo", totalClicks: "Clicks", highestStage: "Stage",
+      leaderboard: "Ranking", leaderboardEmpty: "No scores yet", rankingsLoading: "Loading ranking.", rankingsUnavailable: "Ranking server is not configured.", rankingsFailed: "Could not load ranking.", uploadingScore: "Uploading score.", uploadFailed: "Could not upload score.", scoreUploaded: "Score uploaded.", namePlaceholder: "Player", myRank: "My score",
+      shareOpened: "Opened X share window.", shareShared: "Shared.", shareCopied: "Result copied.", shareFailed: "Could not share.",
       placeColumn: "Place on column",
       resultTimeout: "Time up", resultManual: "Run ended",
       blockName: { square: "Square", circle: "Circle", triangle: "Triangle", diamond: "Diamond" },
@@ -124,6 +168,7 @@
       msgClear: (score, over) => `CLEAR +${score} / ${over} extra click${over === 1 ? "" : "s"}`
     };
   </script>
+  <script src="/public/suggest-config.js"></script>
   <script src="../shared/game.js"></script>
 </body>
 </html>
