@@ -136,34 +136,41 @@
     const SUGGEST_API = String(window.WORDSNAKE_SUGGEST_API || "").trim();
     const GAME_NAME = "crown-chain";
     const els = {
-      boardPanel: document.querySelector(".board-panel"),
+      introScreen: document.querySelector("#introScreen"),
+      gameScreen: document.querySelector("#gameScreen"),
+      boardPanel: document.querySelector("#boardPanel"),
       score: document.querySelector("#scoreValue"),
+      introBest: document.querySelector("#introBestValue"),
       best: document.querySelector("#bestValue"),
-      life: document.querySelector("#lifeValue"),
       level: document.querySelector("#levelValue"),
       combo: document.querySelector("#comboValue"),
-      bestCombo: document.querySelector("#bestComboValue"),
-      spawn: document.querySelector("#spawnValue"),
-      bag: document.querySelector("#bagValue"),
       current: document.querySelector("#currentValue"),
-      legal: document.querySelector("#legalValue"),
-      mode: document.querySelector("#modeSelect"),
-      newGame: document.querySelector("#newGameBtn"),
+      mode: document.querySelector("#introModeSelect"),
+      startGame: document.querySelector("#startGameBtn"),
       endTurn: document.querySelector("#endTurnBtn"),
       restart: document.querySelector("#restartBtn"),
+      overlayRestart: document.querySelector("#overlayRestartBtn"),
+      menu: document.querySelector("#menuBtn"),
+      menuSecondary: document.querySelector("#menuBtnSecondary"),
       message: document.querySelector("#message"),
-      pieceList: document.querySelector("#pieceList"),
+      introLeaderboardToggle: document.querySelector("#introLeaderboardToggle"),
+      introLeaderboardPanel: document.querySelector("#introLeaderboardPanel"),
+      introLeaderboardScope: document.querySelector("#introLeaderboardScope"),
+      introLeaderboardList: document.querySelector("#introLeaderboardList"),
+      introLeaderboardStatus: document.querySelector("#introLeaderboardStatus"),
+      resultEyebrow: document.querySelector("#resultEyebrow"),
+      resultTitle: document.querySelector("#resultTitle"),
+      resultSummary: document.querySelector("#resultSummary"),
+      gameOverOverlay: document.querySelector("#gameOverOverlay"),
       playerName: document.querySelector("#playerNameInput"),
       submitScore: document.querySelector("#submitScoreBtn"),
       leaderboardScope: document.querySelector("#leaderboardScope"),
       leaderboardList: document.querySelector("#leaderboardList"),
-      leaderboardStatus: document.querySelector("#leaderboardStatus"),
-      leaderboardHint: document.querySelector("#leaderboardHint")
+      leaderboardStatus: document.querySelector("#leaderboardStatus")
     };
 
     const stats = {
       score: els.score ? els.score.closest(".stat") : null,
-      life: els.life ? els.life.closest(".stat") : null,
       combo: els.combo ? els.combo.closest(".stat") : null,
       current: els.current ? els.current.closest(".stat") : null
     };
@@ -177,6 +184,7 @@
     let rafId = 0;
     let audioContext = null;
     const sfxGainScale = 3.1;
+    const prefersReducedEffects = () => ((window.matchMedia && window.matchMedia("(pointer: coarse)").matches) || window.innerWidth < 520);
     const fx = {
       playerMotion: null,
       enemyAttackMotion: null,
@@ -303,10 +311,22 @@
       if (state.score > bestScore(state.mode)) localStorage.setItem(key, String(state.score));
     }
 
+    function selectedMode() {
+      return normalizedMode(els.mode?.value || "basic");
+    }
+
+    function setStatusText(el, message, isError = false) {
+      if (!el) return;
+      el.textContent = message;
+      el.classList.toggle("error", isError);
+    }
+
     function setLeaderboardStatus(message, isError = false) {
-      if (!els.leaderboardStatus) return;
-      els.leaderboardStatus.textContent = message;
-      els.leaderboardStatus.classList.toggle("error", isError);
+      setStatusText(els.leaderboardStatus, message, isError);
+    }
+
+    function setIntroLeaderboardStatus(message, isError = false) {
+      setStatusText(els.introLeaderboardStatus, message, isError);
     }
 
     function restartClass(el, className) {
@@ -324,17 +344,29 @@
       if (effectClass) restartClass(els.message, effectClass);
     }
 
+    function enemyAttackMessage(pieceLabel) {
+      if (lang === "ko") return `공격당했습니다: ${pieceLabel}`;
+      if (lang === "ja") return `攻撃されました: ${pieceLabel}`;
+      return `Under attack: ${pieceLabel}`;
+    }
+
+    function noEnemyReachMessage() {
+      if (lang === "ko") return "이번 턴에는 즉시 공격해 올 적이 없습니다.";
+      if (lang === "ja") return "このターンはすぐに攻撃してくる敵がいません。";
+      return "No enemy could reach you.";
+    }
+
     function leaderboardModeLabel(mode) {
       return `${modeLabel(t, mode)} ${t.leaderboard}`;
     }
 
-    function renderLeaderboard(items, ownRank = null, ownItem = null) {
-      if (!els.leaderboardList) return;
-      els.leaderboardList.innerHTML = "";
+    function renderLeaderboard(listEl, items, ownRank = null, ownItem = null) {
+      if (!listEl) return;
+      listEl.innerHTML = "";
       if (!items.length) {
         const empty = document.createElement("li");
         empty.innerHTML = `<span class="rank">-</span><span class="name">${t.leaderboardEmpty}</span><span class="score-value">0</span>`;
-        els.leaderboardList.appendChild(empty);
+        listEl.appendChild(empty);
         return;
       }
       items.forEach((item, index) => {
@@ -347,7 +379,7 @@
           <span class="score-value">${Number(item.score || 0).toLocaleString()}</span>
         `;
         row.querySelector(".name").textContent = `${item.name || t.namePlaceholder}${isOwn ? ` · ${t.myRank}` : ""}`;
-        els.leaderboardList.appendChild(row);
+        listEl.appendChild(row);
       });
       if (!ownItem || !ownRank || ownRank <= items.length) return;
       const row = document.createElement("li");
@@ -358,17 +390,17 @@
         <span class="score-value">${Number(ownItem.score || 0).toLocaleString()}</span>
       `;
       row.querySelector(".name").textContent = `${ownItem.name || t.namePlaceholder} · ${t.myRank}`;
-      els.leaderboardList.appendChild(row);
+      listEl.appendChild(row);
     }
 
-    async function loadLeaderboard(mode = state?.mode || els.mode.value || "basic", ownId = "") {
-      if (els.leaderboardScope) els.leaderboardScope.textContent = leaderboardModeLabel(mode);
+    async function loadLeaderboardInto(listEl, scopeEl, statusFn, mode = state?.mode || selectedMode(), ownId = "") {
+      if (scopeEl) scopeEl.textContent = leaderboardModeLabel(mode);
       if (!SUGGEST_API) {
-        renderLeaderboard([]);
-        setLeaderboardStatus(t.rankingsUnavailable, true);
+        renderLeaderboard(listEl, []);
+        statusFn(t.rankingsUnavailable, true);
         return;
       }
-      setLeaderboardStatus(t.rankingsLoading);
+      statusFn(t.rankingsLoading);
       try {
         const params = new URLSearchParams({
           game: GAME_NAME,
@@ -381,16 +413,76 @@
         const response = await fetch(`${SUGGEST_API}/scores?${params.toString()}`, { cache: "no-store" });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || t.rankingsFailed);
-        renderLeaderboard(Array.isArray(data.items) ? data.items : [], data.ownRank, data.ownItem);
-        setLeaderboardStatus(state?.scoreUploaded ? t.scoreUploaded : state?.gameOver ? t.gameOverToSubmit : t.submitHint);
+        renderLeaderboard(listEl, Array.isArray(data.items) ? data.items : [], data.ownRank, data.ownItem);
+        statusFn(state?.scoreUploaded ? t.scoreUploaded : state?.gameOver ? t.gameOverToSubmit : "");
       } catch (error) {
-        renderLeaderboard([]);
-        setLeaderboardStatus(error.message || t.rankingsFailed, true);
+        renderLeaderboard(listEl, []);
+        statusFn(error.message || t.rankingsFailed, true);
       }
+    }
+
+    async function loadIntroLeaderboard(mode = selectedMode()) {
+      if (els.introBest) els.introBest.textContent = bestScore(mode).toLocaleString();
+      await loadLeaderboardInto(els.introLeaderboardList, els.introLeaderboardScope, setIntroLeaderboardStatus, mode, "");
+    }
+
+    function refreshIntroBest(mode = selectedMode()) {
+      if (els.introBest) els.introBest.textContent = bestScore(mode).toLocaleString();
+    }
+
+    async function toggleIntroLeaderboard() {
+      if (!els.introLeaderboardPanel) return;
+      const isHidden = els.introLeaderboardPanel.classList.contains("hidden");
+      if (!isHidden) {
+        els.introLeaderboardPanel.classList.add("hidden");
+        setIntroLeaderboardStatus("");
+        return;
+      }
+      els.introLeaderboardPanel.classList.remove("hidden");
+      setIntroLeaderboardStatus(t.rankingsLoading);
+      await loadIntroLeaderboard(selectedMode());
+    }
+
+    async function loadGameOverLeaderboard(mode = state?.mode || selectedMode(), ownId = "") {
+      await loadLeaderboardInto(els.leaderboardList, els.leaderboardScope, setLeaderboardStatus, mode, ownId);
     }
 
     function currentPlayerName() {
       return String(els.playerName?.value || "").trim().slice(0, 16) || t.namePlaceholder;
+    }
+
+    function hideGameOverOverlay() {
+      els.gameOverOverlay?.classList.add("hidden");
+      els.boardPanel?.classList.remove("game-over");
+    }
+
+    function showGameOverOverlay() {
+      if (els.resultEyebrow) els.resultEyebrow.textContent = modeLabel(t, state.mode);
+      if (els.resultTitle) els.resultTitle.textContent = t.gameOver;
+      if (els.resultSummary) {
+        els.resultSummary.textContent = `${t.score}: ${state.score.toLocaleString()} · ${t.level}: ${state.level} · ${t.bestCombo}: ${state.bestCombo}`;
+      }
+      els.gameOverOverlay?.classList.remove("hidden");
+      els.boardPanel?.classList.add("game-over");
+    }
+
+    function showIntroScreen() {
+      hideGameOverOverlay();
+      els.gameScreen?.classList.add("hidden");
+      els.introScreen?.classList.remove("hidden");
+    }
+
+    function showGameScreen() {
+      els.introScreen?.classList.add("hidden");
+      els.gameScreen?.classList.remove("hidden");
+    }
+
+    async function returnToIntro() {
+      showIntroScreen();
+      refreshIntroBest(selectedMode());
+      if (els.introLeaderboardPanel && !els.introLeaderboardPanel.classList.contains("hidden")) {
+        await loadIntroLeaderboard(selectedMode());
+      }
     }
 
     function trackGameEvent(type, detail = {}) {
@@ -461,7 +553,8 @@
         state.scoreUploaded = true;
         state.scoreId = data.item && data.item.id ? data.item.id : "";
         setLeaderboardStatus(t.scoreUploaded);
-        await loadLeaderboard(state.mode, state.scoreId);
+        await loadGameOverLeaderboard(state.mode, state.scoreId);
+        if (els.introBest) els.introBest.textContent = bestScore(state.mode).toLocaleString();
       } catch (error) {
         setLeaderboardStatus(error.message || t.uploadFailed, true);
       } finally {
@@ -683,7 +776,7 @@
     }
 
     function hasActiveEffects() {
-      return !!(fx.playerMotion || fx.enemyAttackMotion || fx.spawnMotions.length || fx.pulseCells.length || fx.particles.length || fx.floatingTexts.length || fx.captureGhosts.length || fx.clearBurst || (state && state.combo >= 2));
+      return !!(fx.playerMotion || fx.enemyAttackMotion || fx.spawnMotions.length || fx.pulseCells.length || fx.particles.length || fx.floatingTexts.length || fx.captureGhosts.length || fx.clearBurst || (state && state.combo >= 2 && !prefersReducedEffects()));
     }
 
     function render(renderTime = now()) {
@@ -697,10 +790,10 @@
         particles: fx.particles,
         floatingTexts: fx.floatingTexts,
         captureGhosts: fx.captureGhosts,
-        clearBurst: fx.clearBurst
+        clearBurst: fx.clearBurst,
+        reducedEffects: prefersReducedEffects()
       });
       renderStats();
-      renderPieceList();
     }
 
     function startEffectLoop() {
@@ -757,7 +850,6 @@
       addPulseCell(state.player, "rgba(196, 69, 54, 0.22)", true, 220);
       addPulseCell(state.player, "#c44536", false, 280);
       addParticles(state.player, "#c44536", 6, 0.18, 2.7, 300);
-      restartClass(stats.life, "stat-damage");
       restartClass(els.boardPanel, "board-damage");
       playDamageSfx();
       if (navigator.vibrate) navigator.vibrate(24);
@@ -768,19 +860,8 @@
       animateEnemyAttack(attacker, 240);
       addPulseCell(state.player, "#c44536", false, 260);
       addParticles(state.player, "#c44536", 7, 0.2, 2.8, 300);
-      restartClass(stats.life, "stat-damage");
       restartClass(els.boardPanel, "board-damage");
       playEnemyAttackSfx();
-      startEffectLoop();
-    }
-
-    function triggerLifeHealFeedback() {
-      addPulseCell(state.player, "rgba(25, 114, 120, 0.18)", true, 220);
-      addPulseCell(state.player, "#197278", false, 260);
-      addParticles(state.player, "#197278", 6, 0.16, 2.4, 280);
-      addFloatingText(state.player, "+1 LIFE", "#197278", 0.18, 520);
-      restartClass(stats.life, "stat-heal");
-      playHealSfx();
       startEffectLoop();
     }
 
@@ -800,8 +881,9 @@
           }
         }
       }
-      for (let i = 0; i < 28; i += 1) {
-        const angle = (Math.PI * 2 * i) / 28;
+      const particleCount = prefersReducedEffects() ? 14 : 28;
+      for (let i = 0; i < particleCount; i += 1) {
+        const angle = (Math.PI * 2 * i) / particleCount;
         fx.particles.push({
           cell: { x: 3.5, y: 3.5 },
           color: `hsl(${(fx.clearBurst.hue + i * 12) % 360} 88% 64%)`,
@@ -833,8 +915,8 @@
     function spawnOne(type) {
       const cells = Rules.getEmptyCellsExceptPlayer(state, type);
       if (!cells.length) {
-        state.life -= 1;
         triggerLifeLossFeedback();
+        endGame();
         return false;
       }
       const cell = cells[Math.floor(Math.random() * cells.length)];
@@ -851,7 +933,7 @@
     function spawnFromBag(count) {
       for (let i = 0; i < count; i += 1) {
         spawnOne(drawType());
-        if (state.life <= 0) break;
+        if (state.gameOver) break;
       }
     }
 
@@ -874,15 +956,14 @@
 
     function awardClearBonus() {
       const clearBonus = 500 * state.level;
-      const lifeBonus = state.life * 100;
       const comboBonus = state.bestCombo * 50;
-      state.score += clearBonus + lifeBonus + comboBonus;
+      state.score += clearBonus + comboBonus;
       triggerBoardClearFeedback();
       state.level += 1;
       state.spawnCount = getSpawnCount(state.level);
       state.bag.drawPile = buildLevelBag(MODES[state.mode], state.level);
       spawnFromBag(Math.min(10, state.spawnCount + 4));
-      setMessage(`${t.boardClear}: +${clearBonus + lifeBonus + comboBonus}`, false, "pulse-combo");
+      setMessage(`${t.boardClear}: +${clearBonus + comboBonus}`, false, "pulse-combo");
     }
 
     function endGame() {
@@ -897,7 +978,9 @@
         bestCombo: state.bestCombo
       });
       setMessage(`${t.gameOver}. ${t.score}: ${state.score.toLocaleString()}`, true, "pulse-damage");
+      showGameOverOverlay();
       setLeaderboardStatus(t.gameOverToSubmit);
+      loadGameOverLeaderboard(state.mode, state.scoreId || "");
       render();
     }
 
@@ -916,35 +999,15 @@
       const currentDef = Rules.getPieceDef(state.player.type);
       els.score.textContent = state.score.toLocaleString();
       els.best.textContent = Math.max(bestScore(state.mode), state.score).toLocaleString();
-      els.life.textContent = `${state.life}/${state.maxLife}`;
       if (els.level) els.level.textContent = String(state.level);
       if (els.combo) els.combo.textContent = String(state.combo);
-      if (els.bestCombo) els.bestCombo.textContent = String(state.bestCombo);
-      if (els.spawn) els.spawn.textContent = String(state.spawnCount);
-      if (els.bag) els.bag.textContent = String(state.bag.drawPile.length);
       if (els.current) els.current.textContent = state.player.type === "bigrook"
         ? displayName(state.player.type)
         : `${currentDef.label} ${displayName(state.player.type)}`;
-      if (els.legal) els.legal.textContent = String(legalCaptures.length || legalMoves.length);
-      els.mode.disabled = !state.gameOver && state.turn > 0;
       if (els.submitScore) els.submitScore.disabled = !state.gameOver || !!state.scoreUploaded;
     }
 
-    function renderPieceList() {
-      if (!els.pieceList) return;
-      const visible = state.mode === "chaos" ? Object.keys(PIECES) : ["pawn", "king", "rook", "bishop", "knight", "queen"];
-      els.pieceList.innerHTML = "";
-      for (const type of visible) {
-        const def = Rules.getPieceDef(type);
-        const chip = document.createElement("span");
-        chip.textContent = type === "bigrook"
-          ? `${displayName(type)} ${def.score}`
-          : `${def.label} ${def.score}`;
-        els.pieceList.appendChild(chip);
-      }
-    }
-
-    function newGame(mode = els.mode.value || "basic") {
+    function newGame(mode = selectedMode()) {
       const debugConfig = parseDebugConfig();
       const selectedMode = debugConfig.mode || (MODES[mode] ? mode : "basic");
       state = {
@@ -952,8 +1015,6 @@
         board: Array(SIZE * SIZE).fill(null),
         player: { type: "king", x: 3, y: 4 },
         playerMeta: {},
-        life: 3,
-        maxLife: 3,
         score: 0,
         combo: 0,
         bestCombo: 0,
@@ -976,7 +1037,9 @@
       fx.floatingTexts = [];
       fx.captureGhosts = [];
       fx.clearBurst = null;
-      els.mode.value = selectedMode;
+      if (els.mode) els.mode.value = selectedMode;
+      showGameScreen();
+      hideGameOverOverlay();
       spawnFromBag(8);
       ensureOpeningCapture();
       const debugApplied = applyDebugConfig(debugConfig);
@@ -990,7 +1053,6 @@
         setMessage(`${t.title} - ${modeLabel(t, selectedMode)}`);
       }
       render();
-      loadLeaderboard(selectedMode);
       trackGameEvent("game_start", { mode: selectedMode, level: 1 });
     }
 
@@ -1038,14 +1100,6 @@
       state.bestCombo = Math.max(state.bestCombo, state.combo);
       const gained = capturedEntities.reduce((sum, cell) => sum + (cell.scoreOverride || Rules.getPieceDef(cell.target.type).score), 0) * state.combo;
       state.score += gained;
-
-      let healed = false;
-      if (state.life < state.maxLife) {
-        state.life += 1;
-        healed = true;
-      } else {
-        state.score += 25 * state.combo;
-      }
 
       capturedEntities.forEach((cell) => {
         clearPieceFromBoard(state.board, cell.target);
@@ -1099,25 +1153,19 @@
       state.turn += 1;
 
       triggerCaptureFeedback(from, nextPos, capturedEntities[0].target, gained);
-      if (healed) triggerLifeHealFeedback();
-      if (healed) {
-        setMessage(`${t.captured}: ${capturedNames.join("+")} +${gained} / +1 life`, false, state.combo > 1 ? "pulse-combo" : "pulse-heal");
-      } else {
-        const bigRookNote = state.player.type === "bigrook" && state.playerMeta.bigRookNonPawn
-          ? ` / Big Rook ${state.playerMeta.bigRookNonPawn}/2`
-          : "";
-        const pendingBigRookNote = state.playerMeta.bigRookCaptured
-          ? ` / Big Rook ${state.playerMeta.bigRookCaptured}/2`
-          : "";
-        const keptNote = state.player.type !== "bigrook" && capturedEntities.length === 1 && capturedEntities[0].target.type === "pawn"
-          ? ` / ${t.pawnBonus || "Piece kept."}`
-          : "";
-        setMessage(`${t.captured}: ${capturedNames.join("+")} +${gained}${keptNote}${bigRookNote}${pendingBigRookNote}`, false, state.combo > 1 ? "pulse-combo" : "pulse-note");
-      }
+      const bigRookNote = state.player.type === "bigrook" && state.playerMeta.bigRookNonPawn
+        ? ` / Big Rook ${state.playerMeta.bigRookNonPawn}/2`
+        : "";
+      const pendingBigRookNote = state.playerMeta.bigRookCaptured
+        ? ` / Big Rook ${state.playerMeta.bigRookCaptured}/2`
+        : "";
+      const keptNote = state.player.type !== "bigrook" && capturedEntities.length === 1 && capturedEntities[0].target.type === "pawn"
+        ? ` / ${t.pawnBonus || "Piece kept."}`
+        : "";
+      setMessage(`${t.captured}: ${capturedNames.join("+")} +${gained}${keptNote}${bigRookNote}${pendingBigRookNote}`, false, state.combo > 1 ? "pulse-combo" : "pulse-note");
 
       if (Rules.isBoardClear(state)) awardClearBonus();
-      if (state.life <= 0) endGame();
-      else render();
+      render();
     }
 
     function moveTo(x, y) {
@@ -1186,21 +1234,18 @@
     }
 
     async function resolveEnemyAttacks(attackers) {
-      if (!attackers.length) return 0;
-      let hits = 0;
+      if (!attackers.length) return false;
       for (const attacker of attackers) {
         clearPieceFromBoard(state.board, attacker);
         render();
         triggerEnemyHitFeedback(attacker);
         await waitMs(260);
-        state.life -= 1;
-        hits += 1;
-        setMessage(`Under attack: ${Rules.getPieceDef(attacker.type).label} -1 life`, true, "pulse-damage");
+        setMessage(enemyAttackMessage(Rules.getPieceDef(attacker.type).label), true, "pulse-damage");
         render();
-        if (state.life <= 0) break;
-        await waitMs(120);
+        await waitMs(140);
+        return true;
       }
-      return hits;
+      return false;
     }
 
     async function endTurn() {
@@ -1216,11 +1261,16 @@
       state.turn += 1;
       state.turnActionTaken = false;
       spawnFromBag(state.spawnCount);
-      const hits = await resolveEnemyAttacks(pendingAttackers);
-      if (state.life <= 0) {
+      if (state.gameOver) {
+        state.phaseLocked = false;
+        render();
+        return;
+      }
+      const defeated = await resolveEnemyAttacks(pendingAttackers);
+      if (defeated) {
         endGame();
-      } else if (hits === 0) {
-        setMessage("No enemy could reach you.", false, "pulse-note");
+      } else {
+        setMessage(noEnemyReachMessage(), false, "pulse-note");
       }
       state.phaseLocked = false;
       render();
@@ -1235,17 +1285,27 @@
       if (state) render();
     });
 
-    els.newGame.addEventListener("click", () => {
+    els.startGame?.addEventListener("click", () => {
       ensureAudio();
-      newGame(els.mode.value);
+      newGame(selectedMode());
     });
     els.restart.addEventListener("click", () => {
       ensureAudio();
-      newGame(els.mode.value);
+      newGame(state?.mode || selectedMode());
+    });
+    els.overlayRestart?.addEventListener("click", () => {
+      ensureAudio();
+      newGame(state?.mode || selectedMode());
     });
     els.endTurn.addEventListener("click", endTurn);
-    els.mode.addEventListener("change", () => {
-      if (!state || state.gameOver || state.turn === 0) newGame(els.mode.value);
+    els.menu?.addEventListener("click", returnToIntro);
+    els.menuSecondary?.addEventListener("click", returnToIntro);
+    els.introLeaderboardToggle?.addEventListener("click", toggleIntroLeaderboard);
+    els.mode?.addEventListener("change", () => {
+      refreshIntroBest(selectedMode());
+      if (els.introLeaderboardPanel && !els.introLeaderboardPanel.classList.contains("hidden")) {
+        loadIntroLeaderboard(selectedMode());
+      }
     });
     if (els.playerName) {
       els.playerName.addEventListener("change", () => {
@@ -1255,8 +1315,9 @@
     }
     if (els.submitScore) els.submitScore.addEventListener("click", submitScore);
 
-    trackGameEvent("page_view", { mode: els.mode.value || "basic" });
-    newGame(els.mode.value || "basic");
+    trackGameEvent("page_view", { mode: selectedMode() });
+    showIntroScreen();
+    refreshIntroBest(selectedMode());
   }
 
   window.CrownChainGame = { init };

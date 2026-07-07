@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Crown Chain は、駒を取るたびに自分の駒が変わる小さなチェーン型チェスパズルです。">
+  <meta name="description" content="Crown Chain は、駒を取るたびに自分の駒が変わるコンパクトなチェス連鎖ゲームです。">
   <meta name="theme-color" content="#f6f3ea">
   <meta name="google-adsense-account" content="ca-pub-9708655184984227">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -13,13 +13,13 @@
   <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/crown-chain/ja/">
   <link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/">
   <meta property="og:title" content="Crown Chain">
-  <meta property="og:description" content="駒を取り、自分の駒を変えながらチェーンをつなぐチェスパズル。">
+  <meta property="og:description" content="駒を取り、その駒に変身しながらチェーンをつなぐブラウザゲーム。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://magentmagent.github.io/crown-chain/ja/">
   <meta property="og:image" content="https://magentmagent.github.io/public/crown-chain-social.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Crown Chain">
-  <meta name="twitter:description" content="駒を取りながら変身していく小さなブラウザパズルです。">
+  <meta name="twitter:description" content="コンパクトなチェス連鎖ブラウザゲーム。">
   <meta name="twitter:image" content="https://magentmagent.github.io/public/crown-chain-social.png">
   <link rel="stylesheet" href="../shared/styles.css">
   <title>Crown Chain</title>
@@ -34,73 +34,135 @@
       <a href="/word-chain-snake/ja/">word chain snake</a>
     </nav>
 
-    <header class="hero-line">
-      <h1>Crown Chain</h1>
-      <p class="lead">駒を取り、自分の駒を変えながらチェーンをつなぐチェスパズルです。</p>
-    </header>
+    <section id="introScreen" class="intro-screen">
+      <header class="hero-line">
+        <h1>Crown Chain</h1>
+        <p class="lead">駒を取り、その駒に変わりながらチェーンをつなげていくゲームです。</p>
+      </header>
 
-    <main class="game-shell">
-      <section class="board-panel" aria-label="Crown Chain 盤面">
-        <canvas id="boardCanvas" class="board-canvas" width="720" height="720"></canvas>
-      </section>
+      <section class="intro-grid">
+        <article class="intro-card intro-primary">
+          <label class="field">モード
+            <select id="introModeSelect">
+              <option value="basic">基本</option>
+              <option value="chaos">カオス</option>
+            </select>
+          </label>
+          <div class="stat-grid intro-stats">
+            <div class="stat primary"><span>ベスト</span><strong id="introBestValue">0</strong></div>
+          </div>
+          <p class="intro-note">基本は読みやすい通常の駒中心。カオスはレベルが上がるほど変則駒が増えます。</p>
+          <div class="intro-action-row">
+            <button id="startGameBtn" class="button button-large" type="button">スタート</button>
+            <button id="introLeaderboardToggle" class="button secondary button-large" type="button">ランキング</button>
+          </div>
+        </article>
 
-      <aside class="side-panel">
-        <label class="field">モード
-          <select id="modeSelect">
-            <option value="basic">基本</option>
-            <option value="chaos">カオス</option>
-          </select>
-        </label>
-        <div class="stat-grid compact">
-          <div class="stat primary"><span>得点</span><strong id="scoreValue">0</strong></div>
-          <div class="stat"><span>最高</span><strong id="bestValue">0</strong></div>
-          <div class="stat"><span>ライフ</span><strong id="lifeValue">3/5</strong></div>
-          <div class="stat"><span>レベル</span><strong id="levelValue">1</strong></div>
-          <div class="stat"><span>コンボ</span><strong id="comboValue">0</strong></div>
-          <div class="stat"><span>現在の駒</span><strong id="currentValue">K king</strong></div>
-        </div>
-        <p id="message" class="message" aria-live="polite"></p>
-        <div class="button-row">
-          <button id="newGameBtn" class="button" type="button">新しいゲーム</button>
-          <button id="endTurnBtn" class="button secondary" type="button">ターン終了</button>
-          <button id="restartBtn" class="button warn" type="button">再開</button>
-        </div>
-        <section class="leaderboard-block" aria-label="基本/カオスのリーダーボード">
+        <article class="intro-card">
+          <h2>ルール</h2>
+          <ul class="rules-list">
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell preview"></i><i class="mini-cell preview"></i><i class="mini-cell target"><img class="mini-piece" src="../shared/pieces/rook.png" alt=""></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/king.png" alt=""></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell preview"></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              </div>
+              <p><b>取る</b><span>駒を一度タップすると移動候補が出ます。強調された敵駒をもう一度タップすると取れます。</span></p>
+            </li>
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/rook.png" alt=""></i><i class="mini-cell preview"></i><i class="mini-cell preview"></i>
+                <i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              </div>
+              <p><b>変身</b><span>駒を取ると、ふつうはその駒に変わり、次からその駒の動きになります。</span></p>
+            </li>
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/bishop.png" alt=""></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell preview"></i>
+              </div>
+              <p><b>自由移動</b><span>取りと取りの間、またはターンごとに一度だけ、空きマスへ動けます。</span></p>
+            </li>
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell"></i><i class="mini-cell danger"><img class="mini-piece" src="../shared/pieces/queen.png" alt=""></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell danger"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/king.png" alt=""></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              </div>
+              <p><b>一撃で終了</b><span>ターン終了で新しい駒が出ます。直後に敵が攻撃できるならゲーム終了です。</span></p>
+            </li>
+          </ul>
+        </article>
+
+        <article id="introLeaderboardPanel" class="intro-card intro-ranking-panel hidden">
           <div class="leaderboard-title">
             <strong>リーダーボード</strong>
-            <span id="leaderboardScope">基本</span>
+            <span id="introLeaderboardScope">基本 リーダーボード</span>
           </div>
-          <label class="field">名前
-            <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="Player">
-          </label>
-          <button id="submitScoreBtn" class="button" type="button">得点を登録</button>
-          <p id="leaderboardStatus" class="status-note" aria-live="polite">ゲーム終了後に登録できます。</p>
-          <ol id="leaderboardList" class="leaderboard-list"></ol>
-          <p id="leaderboardHint" class="leaderboard-hint">基本モードとカオスモードは別々に集計されます。</p>
-        </section>
-      </aside>
-    </main>
+          <ol id="introLeaderboardList" class="leaderboard-list"></ol>
+          <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
+        </article>
+      </section>
+    </section>
 
-    <section class="rules-panel">
-      <h2>ルール</h2>
-      <ul>
-        <li>駒を一度タップすると移動を確認し、取れる駒はもう一度タップすると取れます。</li>
-        <li>駒を取ると基本的に自分がその駒になり、その移動ルールを使います。</li>
-        <li>取る代わりに、ターンの間に一度だけ空きマスへ自由移動できます。</li>
-        <li>ポーンはボーナス駒です。取ると点だけ入り、現在の駒は変わりません。</li>
-        <li>連続で取るほどコンボが上がり、駒の点にコンボが掛かります。</li>
-        <li>ターン終了で新しい駒が出ます。取れる駒がない状態で終了するとライフが1減ります。</li>
-        <li>基本モードは通常駒のみ、カオスモードはレベルに応じて変則駒が追加されます。</li>
-      </ul>
+    <section id="gameScreen" class="game-screen hidden">
+      <main class="game-shell">
+        <section id="boardPanel" class="board-panel" aria-label="Crown Chain board">
+          <canvas id="boardCanvas" class="board-canvas" width="720" height="720"></canvas>
+          <section id="gameOverOverlay" class="board-overlay hidden" aria-live="polite">
+            <div class="overlay-card">
+              <p id="resultEyebrow" class="overlay-eyebrow">ゲームオーバー</p>
+              <h2 id="resultTitle">ゲームオーバー</h2>
+              <p id="resultSummary" class="overlay-summary"></p>
+              <label class="field">名前
+                <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="Player">
+              </label>
+              <button id="submitScoreBtn" class="button" type="button">スコア登録</button>
+              <p id="leaderboardStatus" class="status-note"></p>
+              <div class="leaderboard-title">
+                <strong>リーダーボード</strong>
+                <span id="leaderboardScope">基本 リーダーボード</span>
+              </div>
+              <ol id="leaderboardList" class="leaderboard-list"></ol>
+              <div class="button-row overlay-actions">
+                <button id="overlayRestartBtn" class="button secondary" type="button">リスタート</button>
+                <button id="menuBtn" class="button warn" type="button">メニュー</button>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="side-panel">
+          <div class="stat-grid compact">
+            <div class="stat primary"><span>得点</span><strong id="scoreValue">0</strong></div>
+            <div class="stat"><span>ベスト</span><strong id="bestValue">0</strong></div>
+            <div class="stat"><span>レベル</span><strong id="levelValue">1</strong></div>
+            <div class="stat"><span>コンボ</span><strong id="comboValue">0</strong></div>
+            <div class="stat"><span>現在の駒</span><strong id="currentValue">K king</strong></div>
+          </div>
+          <p id="message" class="message" aria-live="polite"></p>
+          <div class="button-row play-actions">
+            <button id="endTurnBtn" class="button" type="button">ターン終了</button>
+            <button id="restartBtn" class="button secondary" type="button">リスタート</button>
+            <button id="menuBtnSecondary" class="button warn" type="button">メニュー</button>
+          </div>
+        </aside>
+      </main>
     </section>
 
     <footer class="site-footer">
       <a href="/?lang=ja">ホーム</a>
       <a href="/games.html?lang=ja">ゲーム</a>
-      <a href="/about.html?lang=ja">概要</a>
+      <a href="/about.html?lang=ja">サイトについて</a>
       <a href="/privacy.html?lang=ja">プライバシー</a>
       <a href="/terms.html?lang=ja">利用規約</a>
-      <a href="/contact.html?lang=ja">連絡</a>
+      <a href="/contact.html?lang=ja">お問い合わせ</a>
     </footer>
   </div>
 

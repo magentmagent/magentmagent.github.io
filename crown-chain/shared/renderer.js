@@ -77,7 +77,8 @@
   function resizeCanvas(canvas) {
     const rect = canvas.getBoundingClientRect();
     const size = Math.max(280, Math.floor(rect.width));
-    const scale = window.devicePixelRatio || 1;
+    const coarse = (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) || rect.width < 520;
+    const scale = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2);
     if (canvas.width !== Math.floor(size * scale)) {
       canvas.width = Math.floor(size * scale);
       canvas.height = Math.floor(size * scale);
@@ -334,12 +335,12 @@
     });
   }
 
-  function drawComboField(ctx, state, size, tile, pad, now) {
+  function drawComboField(ctx, state, size, tile, pad, now, reducedEffects = false) {
     if (!state.combo || state.combo < 2) return;
     const energy = Math.min(1, (state.combo - 1) / 6);
     const rainbowMode = state.combo >= 8;
     const hue = rainbowMode ? (now * 0.08) % 360 : comboHue(state.combo);
-    const boardPulse = 0.04 + (Math.sin(now / 220) * 0.02) + (energy * 0.04);
+    const boardPulse = (reducedEffects ? 0.025 : 0.04) + (Math.sin(now / 220) * (reducedEffects ? 0.012 : 0.02)) + (energy * (reducedEffects ? 0.025 : 0.04));
 
     ctx.save();
     const gradient = ctx.createLinearGradient(0, 0, size, size);
@@ -351,9 +352,10 @@
     ctx.fill();
     ctx.restore();
 
-    const shimmer = 0.14 + (energy * 0.08);
+    const shimmer = (reducedEffects ? 0.08 : 0.14) + (energy * (reducedEffects ? 0.04 : 0.08));
     for (let y = 0; y < SIZE; y += 1) {
       for (let x = 0; x < SIZE; x += 1) {
+        if (reducedEffects && (x + y) % 2 !== 0) continue;
         const px = pad + (x * tile);
         const py = pad + (y * tile);
         const cellHue = rainbowMode ? ((hue + ((x + (y * 2)) * 18)) % 360) : hue;
@@ -368,12 +370,12 @@
     }
   }
 
-  function drawComboAfterglow(ctx, piece, center, tile, pad, combo, now, motion = null) {
+  function drawComboAfterglow(ctx, piece, center, tile, pad, combo, now, motion = null, reducedEffects = false) {
     if (!combo || combo < 2) return;
     const energy = Math.min(1, (combo - 1) / 6);
     const rainbowMode = combo >= 8;
     const hue = rainbowMode ? (now * 0.12) % 360 : comboHue(combo);
-    const echoes = Math.min(6, combo + 1);
+    const echoes = Math.min(reducedEffects ? 3 : 6, combo + 1);
     const motionDx = motion ? (motion.to.x - motion.from.x) : 0;
     const motionDy = motion ? (motion.to.y - motion.from.y) : 0;
     const motionDistance = motion ? Math.max(1, Math.hypot(motionDx, motionDy)) : 1;
@@ -409,7 +411,7 @@
       drawPieceAt(ctx, echoX, echoY, tile, piece, {
         player: true,
         noFallback: true,
-        alpha: 0.07 + ((1 - step) * 0.3 * energy),
+        alpha: (reducedEffects ? 0.12 : 0.07) + ((1 - step) * (reducedEffects ? 0.18 : 0.3) * energy),
         scale: 0.82 + ((1 - step) * 0.18),
         shadowColor: "transparent",
         shadowBlur: 0,
@@ -512,7 +514,7 @@
     ctx.fillStyle = "#5e6472";
     roundedRect(ctx, 0, 0, size, size, 10);
     ctx.fill();
-    drawComboField(ctx, state, size, tile, pad, now);
+    drawComboField(ctx, state, size, tile, pad, now, !!fx.reducedEffects);
 
     for (let y = 0; y < SIZE; y += 1) {
       for (let x = 0; x < SIZE; x += 1) {
@@ -559,7 +561,7 @@
       const to = cellCenter(fx.playerMotion.to, tile, pad);
       const eased = easeInOutQuad(progress);
       const currentCenter = { x: mix(from.x, to.x, eased), y: mix(from.y, to.y, eased) };
-      drawComboAfterglow(ctx, fx.playerMotion.piece, currentCenter, tile, pad, state.combo, now, fx.playerMotion);
+      drawComboAfterglow(ctx, fx.playerMotion.piece, currentCenter, tile, pad, state.combo, now, fx.playerMotion, !!fx.reducedEffects);
       drawPiece(ctx, state.player, state.player, tile, pad, {
         player: true,
         scale: 1
@@ -571,7 +573,7 @@
         scale: mix(0.95, 1.03, Math.sin(progress * Math.PI))
       });
     } else {
-      drawComboAfterglow(ctx, state.player, cellCenter(state.player, tile, pad), tile, pad, state.combo, now);
+      drawComboAfterglow(ctx, state.player, cellCenter(state.player, tile, pad), tile, pad, state.combo, now, null, !!fx.reducedEffects);
       drawPiece(ctx, state.player, state.player, tile, pad, {
         player: true,
         scale: 1

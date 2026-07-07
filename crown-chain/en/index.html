@@ -34,64 +34,126 @@
       <a href="/word-chain-snake/en/">word chain snake</a>
     </nav>
 
-    <header class="hero-line">
-      <h1>Crown Chain</h1>
-      <p class="lead">Capture pieces, transform into them, and keep the chain alive.</p>
-    </header>
+    <section id="introScreen" class="intro-screen">
+      <header class="hero-line">
+        <h1>Crown Chain</h1>
+        <p class="lead">Capture pieces, transform into them, and keep the chain alive.</p>
+      </header>
 
-    <main class="game-shell">
-      <section class="board-panel" aria-label="Crown Chain board">
-        <canvas id="boardCanvas" class="board-canvas" width="720" height="720"></canvas>
-      </section>
+      <section class="intro-grid">
+        <article class="intro-card intro-primary">
+          <label class="field">Mode
+            <select id="introModeSelect">
+              <option value="basic">Basic</option>
+              <option value="chaos">Chaos</option>
+            </select>
+          </label>
+          <div class="stat-grid intro-stats">
+            <div class="stat primary"><span>Best</span><strong id="introBestValue">0</strong></div>
+          </div>
+          <p class="intro-note">Basic keeps standard chess pieces readable. Chaos gradually mixes in variant pieces.</p>
+          <div class="intro-action-row">
+            <button id="startGameBtn" class="button button-large" type="button">Start</button>
+            <button id="introLeaderboardToggle" class="button secondary button-large" type="button">Ranking</button>
+          </div>
+        </article>
 
-      <aside class="side-panel">
-        <label class="field">Mode
-          <select id="modeSelect">
-            <option value="basic">Basic</option>
-            <option value="chaos">Chaos</option>
-          </select>
-        </label>
-        <div class="stat-grid compact">
-          <div class="stat primary"><span>Score</span><strong id="scoreValue">0</strong></div>
-          <div class="stat"><span>Best</span><strong id="bestValue">0</strong></div>
-          <div class="stat"><span>Life</span><strong id="lifeValue">3/5</strong></div>
-          <div class="stat"><span>Level</span><strong id="levelValue">1</strong></div>
-          <div class="stat"><span>Combo</span><strong id="comboValue">0</strong></div>
-          <div class="stat"><span>Current</span><strong id="currentValue">K king</strong></div>
-        </div>
-        <p id="message" class="message" aria-live="polite"></p>
-        <div class="button-row">
-          <button id="newGameBtn" class="button" type="button">New Game</button>
-          <button id="endTurnBtn" class="button secondary" type="button">End Turn</button>
-          <button id="restartBtn" class="button warn" type="button">Restart</button>
-        </div>
-        <section class="leaderboard-block" aria-label="Basic and Chaos leaderboards">
+        <article class="intro-card">
+          <h2>Rules</h2>
+          <ul class="rules-list">
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell preview"></i><i class="mini-cell preview"></i><i class="mini-cell target"><img class="mini-piece" src="../shared/pieces/rook.png" alt=""></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/king.png" alt=""></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell preview"></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              </div>
+              <p><b>Capture</b><span>Tap a piece once to preview movement. Tap a highlighted target again to capture it.</span></p>
+            </li>
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/rook.png" alt=""></i><i class="mini-cell preview"></i><i class="mini-cell preview"></i>
+                <i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              </div>
+              <p><b>Transform</b><span>After a capture, you usually become that piece and use its movement next.</span></p>
+            </li>
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/bishop.png" alt=""></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell preview"></i><i class="mini-cell"></i><i class="mini-cell preview"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell preview"></i>
+              </div>
+              <p><b>Free Move</b><span>Once between captures or turns, you may move to an empty square instead of capturing.</span></p>
+            </li>
+            <li>
+              <div class="mini-board" aria-hidden="true">
+                <i class="mini-cell"></i><i class="mini-cell danger"><img class="mini-piece" src="../shared/pieces/queen.png" alt=""></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell danger"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell player"><img class="mini-piece" src="../shared/pieces/king.png" alt=""></i><i class="mini-cell"></i><i class="mini-cell"></i>
+                <i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i><i class="mini-cell"></i>
+              </div>
+              <p><b>One Hit</b><span>End turn to spawn pieces. If an enemy can attack immediately, the run ends.</span></p>
+            </li>
+          </ul>
+        </article>
+
+        <article id="introLeaderboardPanel" class="intro-card intro-ranking-panel hidden">
           <div class="leaderboard-title">
             <strong>Leaderboard</strong>
-            <span id="leaderboardScope">Basic</span>
+            <span id="introLeaderboardScope">Basic Leaderboard</span>
           </div>
-          <label class="field">Name
-            <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="Player">
-          </label>
-          <button id="submitScoreBtn" class="button" type="button">Upload score</button>
-          <p id="leaderboardStatus" class="status-note" aria-live="polite">Upload is available after game over.</p>
-          <ol id="leaderboardList" class="leaderboard-list"></ol>
-          <p id="leaderboardHint" class="leaderboard-hint">Basic and Chaos use separate leaderboards.</p>
-        </section>
-      </aside>
-    </main>
+          <ol id="introLeaderboardList" class="leaderboard-list"></ol>
+          <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
+        </article>
+      </section>
+    </section>
 
-    <section class="rules-panel">
-      <h2>Rules</h2>
-      <ul>
-        <li>Tap a piece once to preview its movement. If it can be captured, tap it again to capture.</li>
-        <li>After a capture, you usually become that piece and use its movement.</li>
-        <li>Once between captures or turns, you may move to an empty square instead of capturing.</li>
-        <li>Pawns are bonus pieces: capturing one gives points but does not transform you.</li>
-        <li>Each capture increases combo. Score is piece value times combo.</li>
-        <li>End turn to spawn new pieces. If no capture exists, ending turn costs 1 life.</li>
-        <li>Basic uses standard pieces. Chaos adds variant pieces as levels rise.</li>
-      </ul>
+    <section id="gameScreen" class="game-screen hidden">
+      <main class="game-shell">
+        <section id="boardPanel" class="board-panel" aria-label="Crown Chain board">
+          <canvas id="boardCanvas" class="board-canvas" width="720" height="720"></canvas>
+          <section id="gameOverOverlay" class="board-overlay hidden" aria-live="polite">
+            <div class="overlay-card">
+              <p id="resultEyebrow" class="overlay-eyebrow">Game over</p>
+              <h2 id="resultTitle">Game over</h2>
+              <p id="resultSummary" class="overlay-summary"></p>
+              <label class="field">Name
+                <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="Player">
+              </label>
+              <button id="submitScoreBtn" class="button" type="button">Upload score</button>
+              <p id="leaderboardStatus" class="status-note"></p>
+              <div class="leaderboard-title">
+                <strong>Leaderboard</strong>
+                <span id="leaderboardScope">Basic Leaderboard</span>
+              </div>
+              <ol id="leaderboardList" class="leaderboard-list"></ol>
+              <div class="button-row overlay-actions">
+                <button id="overlayRestartBtn" class="button secondary" type="button">Restart</button>
+                <button id="menuBtn" class="button warn" type="button">Menu</button>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="side-panel">
+          <div class="stat-grid compact">
+            <div class="stat primary"><span>Score</span><strong id="scoreValue">0</strong></div>
+            <div class="stat"><span>Best</span><strong id="bestValue">0</strong></div>
+            <div class="stat"><span>Level</span><strong id="levelValue">1</strong></div>
+            <div class="stat"><span>Combo</span><strong id="comboValue">0</strong></div>
+            <div class="stat"><span>Current</span><strong id="currentValue">K king</strong></div>
+          </div>
+          <p id="message" class="message" aria-live="polite"></p>
+          <div class="button-row play-actions">
+            <button id="endTurnBtn" class="button" type="button">End Turn</button>
+            <button id="restartBtn" class="button secondary" type="button">Restart</button>
+            <button id="menuBtnSecondary" class="button warn" type="button">Menu</button>
+          </div>
+        </aside>
+      </main>
     </section>
 
     <footer class="site-footer">
