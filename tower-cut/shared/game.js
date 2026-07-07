@@ -311,8 +311,8 @@
     root.innerHTML = "";
     labelsRoot.innerHTML = "";
     root.classList.toggle("editable", editable);
-    root.style.gridTemplateColumns = `repeat(${tower.length}, minmax(46px, 62px))`;
-    labelsRoot.style.gridTemplateColumns = `repeat(${tower.length}, minmax(46px, 62px))`;
+    root.style.gridTemplateColumns = `repeat(${tower.length}, var(--tower-column-size))`;
+    labelsRoot.style.gridTemplateColumns = `repeat(${tower.length}, var(--tower-column-size))`;
     tower.forEach((stack, col) => {
       const column = document.createElement("div");
       column.className = "column";
