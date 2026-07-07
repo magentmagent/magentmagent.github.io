@@ -351,6 +351,14 @@ a {
   transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
+.palette-shortcut {
+  display: none;
+  color: #68707a;
+  font-size: 0.72rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
 .palette-button:active {
   cursor: grabbing;
   transform: scale(0.96);
@@ -363,6 +371,19 @@ a {
 
 .palette-button .block {
   width: 34px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .palette-button {
+    grid-template-rows: 1fr auto;
+    gap: 5px;
+    min-height: 66px;
+    padding: 7px 6px 6px;
+  }
+
+  .palette-shortcut {
+    display: block;
+  }
 }
 
 .drag-ghost {

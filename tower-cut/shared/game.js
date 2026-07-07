@@ -411,15 +411,19 @@
   function renderPalette() {
     els.palette.innerHTML = "";
     const typeCount = rangeForStage(state.stage).types;
-    blocks.slice(0, typeCount).forEach(block => {
+    blocks.slice(0, typeCount).forEach((block, index) => {
       const button = document.createElement("button");
       button.className = "palette-button";
       button.type = "button";
       button.draggable = false;
       button.setAttribute("aria-pressed", String(state.selected === block.id));
-      button.setAttribute("aria-label", T.blockName[block.id]);
+      button.setAttribute("aria-label", `${T.blockName[block.id]} ${index + 1}`);
       button.dataset.block = block.id;
       button.appendChild(blockNode(block.id));
+      const shortcut = document.createElement("span");
+      shortcut.className = "palette-shortcut";
+      shortcut.textContent = index + 1;
+      button.appendChild(shortcut);
       button.addEventListener("click", event => {
         if (suppressPaletteClick) {
           event.preventDefault();
@@ -438,6 +442,16 @@
     setMessage(T.msgSelected(T.blockName[id]));
     playSfx("select");
     renderPalette();
+  }
+
+  function selectBlockByShortcut(key) {
+    if (!state?.started || state.finished) return;
+    if (/^(input|select|textarea)$/i.test(document.activeElement?.tagName || "")) return;
+    const index = Number(key) - 1;
+    const available = blocks.slice(0, rangeForStage(state.stage).types);
+    const block = available[index];
+    if (!block) return;
+    selectBlock(block.id);
   }
 
   function startPointerDrag(event, id) {
@@ -495,6 +509,11 @@
 
   window.addEventListener("mouseup", event => {
     handleDragEnd(event.clientX, event.clientY);
+  });
+
+  window.addEventListener("keydown", event => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (/^[1-4]$/.test(event.key)) selectBlockByShortcut(event.key);
   });
 
   function handleDragEnd(clientX, clientY) {
