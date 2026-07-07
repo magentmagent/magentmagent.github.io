@@ -32,6 +32,8 @@
 
   let state;
   let timerId = 0;
+  let audioCtx = null;
+  let pointerDrag = null;
 
   function rnd(max) {
     return Math.floor(Math.random() * max);
@@ -55,10 +57,6 @@
   function makeStack(height, typeCount) {
     const pool = blocks.slice(0, typeCount).map(block => block.id);
     return Array.from({ length: height }, () => pick(pool));
-  }
-
-  function cloneTower(tower) {
-    return tower.map(stack => stack.slice());
   }
 
   function towersEqual(a, b) {
@@ -96,12 +94,13 @@
       current = target.map(stack => mutateStack(stack, cfg.types, stage));
       tries += 1;
     } while (towersEqual(target, current) && tries < 20);
-    if (towersEqual(target, current)) current[0].push(blocks[0].id === target[0][target[0].length - 1] ? blocks[1].id : blocks[0].id);
+    if (towersEqual(target, current)) {
+      current[0].push(blocks[0].id === target[0][target[0].length - 1] ? blocks[1].id : blocks[0].id);
+    }
     return {
       target,
       current,
-      optimal: optimalClicks(target, current),
-      maxHeight: Math.max(...target.map(s => s.length), ...current.map(s => s.length), cfg.maxH)
+      optimal: optimalClicks(target, current)
     };
   }
 
@@ -143,14 +142,18 @@
     };
     showStart(true);
     showResult(false);
+    setMessage(T.msgReady);
     render();
   }
 
   function startGame() {
     if (state.started) return;
     state.started = true;
+    ensureAudio();
+    playSfx("start");
     showStart(false);
     timerId = setInterval(tick, 250);
+    setMessage(T.msgDrag);
     render();
   }
 
@@ -165,6 +168,7 @@
     if (state.finished) return;
     state.finished = true;
     clearInterval(timerId);
+    playSfx("end");
     showResult(true, reason);
     renderHud();
   }
@@ -186,7 +190,10 @@
     const gained = Math.max(20, 100 + (perfect ? 50 : 0) + comboBonus + timeBonus - over * 10);
     state.score += gained;
     state.cleared += 1;
+    document.querySelector(".play-area")?.classList.add("stage-flash");
+    playSfx(perfect ? "perfect" : "clear");
     setMessage(perfect ? T.msgPerfect(gained) : T.msgClear(gained, over));
+    setTimeout(() => document.querySelector(".play-area")?.classList.remove("stage-flash"), 420);
     setTimeout(() => {
       if (state.finished) return;
       state.stage += 1;
@@ -194,7 +201,7 @@
       state.stageData = makeStage(state.stage);
       setMessage(T.msgNext);
       render();
-    }, 520);
+    }, 680);
   }
 
   function addClick() {
@@ -202,32 +209,46 @@
     state.totalClicks += 1;
   }
 
-  function placeBlock(col) {
+  function placeBlock(col, blockId = state.selected) {
     if (!state.started || state.finished) return;
     const stack = state.stageData.current[col];
     if (!stack || stack.length >= 6) {
       setMessage(T.msgFull);
+      playSfx("deny");
       return;
     }
-    stack.push(state.selected);
+    stack.push(blockId);
+    state.selected = blockId;
     addClick();
     setMessage(T.msgPlaced);
-    afterMove();
+    playSfx("place");
+    render();
+    const placed = document.querySelector(`#currentTower [data-col="${col}"][data-row="${stack.length - 1}"]`);
+    placed?.classList.add("placed");
+    setTimeout(() => {
+      placed?.classList.remove("placed");
+      if (towersEqual(state.stageData.target, state.stageData.current)) clearStage();
+    }, 130);
   }
 
   function cutBlock(col, row) {
     if (!state.started || state.finished) return;
     const stack = state.stageData.current[col];
     if (!stack || row < 0 || row >= stack.length) return;
-    stack.splice(row);
+    const nodes = [...document.querySelectorAll(`#currentTower [data-col="${col}"]`)]
+      .filter(node => Number(node.dataset.row) >= row);
+    nodes.forEach((node, index) => {
+      node.style.setProperty("--cut-delay", `${index * 24}ms`);
+      node.classList.add("cutting");
+    });
     addClick();
     setMessage(T.msgCut);
-    afterMove();
-  }
-
-  function afterMove() {
-    render();
-    if (towersEqual(state.stageData.target, state.stageData.current)) clearStage();
+    playSfx("cut");
+    setTimeout(() => {
+      stack.splice(row);
+      render();
+      if (towersEqual(state.stageData.target, state.stageData.current)) clearStage();
+    }, 190);
   }
 
   function render() {
@@ -262,18 +283,30 @@
     root.innerHTML = "";
     labelsRoot.innerHTML = "";
     root.classList.toggle("editable", editable);
-    root.style.gridTemplateColumns = `repeat(${tower.length}, minmax(42px, 64px))`;
-    labelsRoot.style.gridTemplateColumns = `repeat(${tower.length}, minmax(42px, 64px))`;
+    root.style.gridTemplateColumns = `repeat(${tower.length}, minmax(46px, 62px))`;
+    labelsRoot.style.gridTemplateColumns = `repeat(${tower.length}, minmax(46px, 62px))`;
     tower.forEach((stack, col) => {
       const column = document.createElement("div");
       column.className = "column";
+      column.dataset.col = String(col);
+      if (editable) wireDropColumn(column, col);
       if (editable) {
-        column.classList.toggle("can-place", Boolean(state.selected));
-        column.addEventListener("click", () => placeBlock(col));
+        const topPad = document.createElement("button");
+        topPad.className = `drop-zone ${stack.length >= 6 ? "full" : ""}`;
+        topPad.type = "button";
+        topPad.textContent = "+";
+        topPad.setAttribute("aria-label", `${T.placeColumn} ${col + 1}`);
+        topPad.addEventListener("click", event => {
+          event.stopPropagation();
+          placeBlock(col, state.selected);
+        });
+        column.appendChild(topPad);
       }
-      stack.forEach((id, row) => {
+      stack.slice().reverse().forEach((id, reverseIndex) => {
+        const row = stack.length - 1 - reverseIndex;
         const node = blockNode(id);
-        node.dataset.row = row;
+        node.dataset.col = String(col);
+        node.dataset.row = String(row);
         if (editable) {
           node.addEventListener("click", event => {
             event.stopPropagation();
@@ -284,22 +317,27 @@
         }
         column.appendChild(node);
       });
-      if (editable) {
-        const drop = document.createElement("button");
-        drop.className = `drop-zone ${stack.length >= 6 ? "full" : ""}`;
-        drop.type = "button";
-        drop.textContent = "+";
-        drop.setAttribute("aria-label", `${T.placeColumn} ${col + 1}`);
-        drop.addEventListener("click", event => {
-          event.stopPropagation();
-          placeBlock(col);
-        });
-        column.appendChild(drop);
-      }
+      const base = document.createElement("div");
+      base.className = "tower-base";
+      column.appendChild(base);
       root.appendChild(column);
       const label = document.createElement("div");
       label.textContent = col + 1;
       labelsRoot.appendChild(label);
+    });
+  }
+
+  function wireDropColumn(column, col) {
+    column.addEventListener("dragover", event => {
+      event.preventDefault();
+      column.classList.add("drop-hover");
+    });
+    column.addEventListener("dragleave", () => column.classList.remove("drop-hover"));
+    column.addEventListener("drop", event => {
+      event.preventDefault();
+      column.classList.remove("drop-hover");
+      const id = event.dataTransfer.getData("text/plain") || state.selected;
+      placeBlock(col, id);
     });
   }
 
@@ -316,18 +354,65 @@
       const button = document.createElement("button");
       button.className = "palette-button";
       button.type = "button";
+      button.draggable = true;
       button.setAttribute("aria-pressed", String(state.selected === block.id));
       button.setAttribute("aria-label", T.blockName[block.id]);
+      button.dataset.block = block.id;
       button.appendChild(blockNode(block.id));
-      button.addEventListener("click", () => {
+      button.addEventListener("click", () => selectBlock(block.id));
+      button.addEventListener("dragstart", event => {
+        ensureAudio();
         state.selected = block.id;
-        setMessage(T.msgSelected(T.blockName[block.id]));
+        event.dataTransfer.effectAllowed = "copy";
+        event.dataTransfer.setData("text/plain", block.id);
         renderPalette();
-        renderTower(els.current, els.currentLabels, state.stageData.current, true);
       });
+      button.addEventListener("pointerdown", event => startPointerDrag(event, block.id));
       els.palette.appendChild(button);
     });
   }
+
+  function selectBlock(id) {
+    state.selected = id;
+    setMessage(T.msgSelected(T.blockName[id]));
+    playSfx("select");
+    renderPalette();
+  }
+
+  function startPointerDrag(event, id) {
+    if (event.pointerType === "mouse") return;
+    ensureAudio();
+    state.selected = id;
+    const ghost = blockNode(id);
+    ghost.classList.add("drag-ghost");
+    document.body.appendChild(ghost);
+    pointerDrag = { id, ghost };
+    moveGhost(event.clientX, event.clientY);
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+  }
+
+  function moveGhost(x, y) {
+    if (!pointerDrag) return;
+    pointerDrag.ghost.style.transform = `translate(${x - 28}px, ${y - 28}px)`;
+  }
+
+  window.addEventListener("pointermove", event => {
+    if (!pointerDrag) return;
+    moveGhost(event.clientX, event.clientY);
+    const col = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("#currentTower .column");
+    document.querySelectorAll("#currentTower .column").forEach(node => node.classList.toggle("drop-hover", node === col));
+  });
+
+  window.addEventListener("pointerup", event => {
+    if (!pointerDrag) return;
+    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("#currentTower .column");
+    document.querySelectorAll("#currentTower .column").forEach(node => node.classList.remove("drop-hover"));
+    const id = pointerDrag.id;
+    pointerDrag.ghost.remove();
+    pointerDrag = null;
+    if (target) placeBlock(Number(target.dataset.col), id);
+  });
 
   function setMessage(text) {
     els.message.textContent = text;
@@ -374,6 +459,43 @@
       totalClicks: state.totalClicks,
       highestStage: state.stage
     };
+  }
+
+  function ensureAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  }
+
+  function playSfx(type) {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const out = audioCtx.createGain();
+    out.gain.setValueAtTime(0.0001, now);
+    out.gain.exponentialRampToValueAtTime(type === "perfect" ? 0.09 : 0.055, now + 0.01);
+    out.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    out.connect(audioCtx.destination);
+    const notes = {
+      start: [330, 440],
+      select: [520],
+      place: [360, 520],
+      cut: [240, 170],
+      clear: [420, 560, 700],
+      perfect: [520, 660, 880],
+      deny: [120],
+      end: [220, 180]
+    }[type] || [300];
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type === "cut" || type === "deny" ? "square" : "sine";
+      osc.frequency.setValueAtTime(freq, now + i * 0.045);
+      gain.gain.setValueAtTime(0.0001, now + i * 0.045);
+      gain.gain.exponentialRampToValueAtTime(0.9, now + i * 0.045 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.045 + 0.12);
+      osc.connect(gain).connect(out);
+      osc.start(now + i * 0.045);
+      osc.stop(now + i * 0.045 + 0.14);
+    });
   }
 
   function languagePath(nextLang) {
