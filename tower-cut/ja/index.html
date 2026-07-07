@@ -45,7 +45,7 @@
       <div class="start-copy">
         <p class="eyebrow">スタック編集パズル</p>
         <h1 id="startTitle" class="start-title">Tower Cut</h1>
-        <p class="lead">60秒でできるだけ多くの壊れた塔を復元しましょう。</p>
+        <p class="lead">60秒または180秒で、できるだけ多くの壊れた塔を復元しましょう。</p>
       </div>
       <div class="rule-column">
         <article class="rule-card">
@@ -73,6 +73,12 @@
           <p><b>切って落とす</b><span>間違った層を押すと、その層だけ消え、上の層が下へ落ちます。</span></p>
         </article>
       </div>
+      <label class="field intro-duration">時間
+        <select id="durationSelect">
+          <option value="60">60秒</option>
+          <option value="180">180秒</option>
+        </select>
+      </label>
       <div class="intro-action-row">
         <button id="startBtn" class="button" type="button">スタート</button>
         <button id="introLeaderboardToggle" class="button secondary" type="button">ランキング</button>
@@ -152,7 +158,7 @@
     window.TOWER_CUT_LANG = "ja";
     window.TOWER_CUT_TEXT = {
       score: "得点", cleared: "クリア", perfect: "PERFECT", maxCombo: "最大コンボ", totalClicks: "クリック", highestStage: "ステージ",
-      leaderboard: "ランキング", leaderboardEmpty: "まだ記録がありません", rankingsLoading: "ランキングを読み込み中です。", rankingsUnavailable: "ランキングサーバーが設定されていません。", rankingsFailed: "ランキングを読み込めませんでした。", uploadingScore: "スコアを登録中です。", uploadFailed: "スコアを登録できませんでした。", scoreUploaded: "スコアを登録しました。", namePlaceholder: "プレイヤー", myRank: "自分の記録",
+      leaderboard: "ランキング", leaderboardEmpty: "まだ記録がありません", rankingsLoading: "ランキングを読み込み中です。", rankingsUnavailable: "ランキングサーバーが設定されていません。", rankingsFailed: "ランキングを読み込めませんでした。", uploadingScore: "スコアを登録中です。", uploadFailed: "スコアを登録できませんでした。", scoreUploaded: "スコアを登録しました。", namePlaceholder: "プレイヤー", myRank: "自分の記録", seconds: "秒",
       shareOpened: "Xの共有画面を開きました。", shareShared: "共有しました。", shareCopied: "結果をコピーしました。", shareFailed: "共有できませんでした。",
       placeColumn: "列に置く",
       resultTimeout: "時間切れ", resultManual: "終了",

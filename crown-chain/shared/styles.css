@@ -415,6 +415,24 @@ h1 {
   border-color: rgba(25, 114, 120, 0.28);
 }
 
+.timer-stat {
+  background: #fff8e7;
+  border-color: rgba(202, 128, 36, 0.34);
+}
+
+.timer-stat strong {
+  color: #9a4b20;
+}
+
+.timer-stat.timer-warning {
+  background: #fff1ec;
+  border-color: rgba(197, 56, 44, 0.48);
+}
+
+.timer-stat.timer-warning strong {
+  color: #c4382c;
+}
+
 .stat span {
   display: block;
   color: var(--muted);

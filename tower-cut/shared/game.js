@@ -1,7 +1,8 @@
 (function () {
   const lang = window.TOWER_CUT_LANG || "en";
   const T = window.TOWER_CUT_TEXT;
-  const GAME_SECONDS = 60;
+  const DEFAULT_SECONDS = 60;
+  const DURATIONS = [60, 180];
   const GAME_NAME = "tower-cut";
   const SCORE_SCOPE = 6;
   const SUGGEST_API = String(window.WORDSNAKE_SUGGEST_API || "").replace(/\/+$/, "");
@@ -48,6 +49,7 @@
     shareNative: document.querySelector("#shareNativeBtn"),
     copyResult: document.querySelector("#copyResultBtn"),
     shareStatus: document.querySelector("#shareStatus"),
+    durationSelect: document.querySelector("#durationSelect"),
     langSelect: document.querySelector("#langSelect")
   };
 
@@ -63,6 +65,27 @@
 
   function pick(pool) {
     return pool[rnd(pool.length)];
+  }
+
+  function selectedDuration() {
+    const value = Number(els.durationSelect?.value || DEFAULT_SECONDS);
+    return DURATIONS.includes(value) ? value : DEFAULT_SECONDS;
+  }
+
+  function modeForDuration(seconds = selectedDuration()) {
+    const value = Number(seconds);
+    return String(DURATIONS.includes(value) ? value : DEFAULT_SECONDS);
+  }
+
+  function durationLabel(seconds = selectedDuration()) {
+    const value = Number(seconds);
+    const normalized = DURATIONS.includes(value) ? value : DEFAULT_SECONDS;
+    const unit = T.seconds || "sec";
+    return lang === "en" ? `${normalized} ${unit}` : `${normalized}${unit}`;
+  }
+
+  function leaderboardLabel(seconds = selectedDuration()) {
+    return `${T.leaderboard || "Ranking"} · ${durationLabel(seconds)}`;
   }
 
   function rangeForStage(stage) {
@@ -148,6 +171,7 @@
 
   function newGame() {
     clearInterval(timerId);
+    const seconds = selectedDuration();
     state = {
       started: false,
       finished: false,
@@ -160,7 +184,8 @@
       perfect: 0,
       totalClicks: 0,
       stageClicks: 0,
-      timeLeft: GAME_SECONDS,
+      durationSeconds: seconds,
+      timeLeft: seconds,
       stageData: makeStage(1),
       scoreUploaded: false,
       scoreId: "",
@@ -176,6 +201,8 @@
   function startGame() {
     if (state.started) return;
     state.started = true;
+    state.durationSeconds = selectedDuration();
+    state.timeLeft = state.durationSeconds;
     ensureAudio();
     playSfx("start");
     showStart(false);
@@ -526,15 +553,17 @@
       els.resultStats.appendChild(item);
     });
     setShareStatus("");
-    loadLeaderboard(els.leaderboardList, els.leaderboardScope, setLeaderboardStatus, state.scoreId);
+    loadLeaderboard(els.leaderboardList, els.leaderboardScope, setLeaderboardStatus, state.scoreId, state.durationSeconds);
   }
 
   function resultPayload(reason) {
+    const durationSeconds = state.durationSeconds || selectedDuration();
     return {
       game: GAME_NAME,
       lang,
-      mode: "classic",
+      mode: modeForDuration(durationSeconds),
       score: state.score,
+      durationSeconds,
       finishType: reason || "timeout",
       clearedTowers: state.cleared,
       perfectClears: state.perfect,
@@ -600,8 +629,8 @@
     listEl.appendChild(own);
   }
 
-  async function loadLeaderboard(listEl, scopeEl, statusFn, ownId = "") {
-    if (scopeEl) scopeEl.textContent = T.leaderboard || "Tower Cut";
+  async function loadLeaderboard(listEl, scopeEl, statusFn, ownId = "", duration = selectedDuration()) {
+    if (scopeEl) scopeEl.textContent = leaderboardLabel(duration);
     if (!SUGGEST_API) {
       renderLeaderboard(listEl, []);
       statusFn(T.rankingsUnavailable, true);
@@ -614,7 +643,7 @@
         boardSize: String(SCORE_SCOPE),
         limit: "10",
         lang,
-        mode: "classic"
+        mode: modeForDuration(duration)
       });
       if (ownId) params.set("id", ownId);
       const response = await fetch(`${SUGGEST_API}/scores?${params.toString()}`, { cache: "no-store" });
@@ -632,7 +661,7 @@
     if (!els.introLeaderboardPanel) return;
     const hidden = els.introLeaderboardPanel.classList.contains("is-hidden");
     els.introLeaderboardPanel.classList.toggle("is-hidden", !hidden);
-    if (hidden) await loadLeaderboard(els.introLeaderboardList, els.introLeaderboardScope, setIntroLeaderboardStatus, "");
+    if (hidden) await loadLeaderboard(els.introLeaderboardList, els.introLeaderboardScope, setIntroLeaderboardStatus, "", selectedDuration());
     else setIntroLeaderboardStatus("");
   }
 
@@ -664,7 +693,7 @@
       state.scoreUploaded = true;
       state.scoreId = data.item && data.item.id ? data.item.id : "";
       setLeaderboardStatus(T.scoreUploaded);
-      await loadLeaderboard(els.leaderboardList, els.leaderboardScope, setLeaderboardStatus, state.scoreId);
+      await loadLeaderboard(els.leaderboardList, els.leaderboardScope, setLeaderboardStatus, state.scoreId, state.durationSeconds);
     } catch (error) {
       els.submitScore.disabled = false;
       setLeaderboardStatus(error.message || T.uploadFailed, true);
@@ -677,7 +706,7 @@
   }
 
   function shareSummary() {
-    return `${T.score}: ${state.score.toLocaleString(lang === "en" ? "en-US" : lang)} · ${T.cleared}: ${state.cleared} · ${T.maxCombo}: ${state.maxCombo}`;
+    return `${durationLabel(state.durationSeconds || selectedDuration())} · ${T.score}: ${state.score.toLocaleString(lang === "en" ? "en-US" : lang)} · ${T.cleared}: ${state.cleared} · ${T.maxCombo}: ${state.maxCombo}`;
   }
 
   function shareText() {
@@ -769,6 +798,17 @@
   els.shareX?.addEventListener("click", shareToX);
   els.shareNative?.addEventListener("click", shareNative);
   els.copyResult?.addEventListener("click", copyResult);
+  els.durationSelect?.addEventListener("change", () => {
+    const seconds = selectedDuration();
+    if (state && !state.started) {
+      state.durationSeconds = seconds;
+      state.timeLeft = seconds;
+      renderHud();
+    }
+    if (els.introLeaderboardPanel && !els.introLeaderboardPanel.classList.contains("is-hidden")) {
+      loadLeaderboard(els.introLeaderboardList, els.introLeaderboardScope, setIntroLeaderboardStatus, "", seconds);
+    }
+  });
   els.langSelect.value = lang;
   els.langSelect.addEventListener("change", () => {
     localStorage.setItem("wordChainSnakeSiteLang", els.langSelect.value);

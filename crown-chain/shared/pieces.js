@@ -83,6 +83,8 @@
       ]
     }
   };
+  MODES["basic-time"] = { ...MODES.basic, id: "basic-time", timeAttack: true };
+  MODES["chaos-time"] = { ...MODES.chaos, id: "chaos-time", timeAttack: true };
 
   window.CrownChainPieces = { DIRS, OFFSETS, PIECES, MODES };
 }());

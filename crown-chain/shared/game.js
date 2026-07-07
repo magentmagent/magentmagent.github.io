@@ -100,6 +100,8 @@
   }
 
   function modeLabel(t, mode) {
+    if (mode === "basic-time") return t.basicTime || "Basic Time Attack";
+    if (mode === "chaos-time") return t.chaosTime || "Chaos Time Attack";
     return mode === "chaos" ? t.chaos : t.basic;
   }
 
@@ -143,6 +145,8 @@
       introBest: document.querySelector("#introBestValue"),
       best: document.querySelector("#bestValue"),
       level: document.querySelector("#levelValue"),
+      timerStat: document.querySelector("#timerStat"),
+      timer: document.querySelector("#timerValue"),
       combo: document.querySelector("#comboValue"),
       current: document.querySelector("#currentValue"),
       mode: document.querySelector("#introModeSelect"),
@@ -179,6 +183,7 @@
       current: els.current ? els.current.closest(".stat") : null
     };
 
+    const TIME_ATTACK_LIMIT_MS = 3000;
     const playerNameKey = `crownChainPlayerName:${lang}`;
     let state = null;
     let legalCaptures = [];
@@ -186,6 +191,8 @@
     let legalActions = [];
     let selectedPiece = null;
     let rafId = 0;
+    let turnTimerId = 0;
+    let turnTimerDeadline = 0;
     let audioContext = null;
     const sfxGainScale = 3.1;
     const prefersReducedEffects = () => ((window.matchMedia && window.matchMedia("(pointer: coarse)").matches) || window.innerWidth < 520);
@@ -220,7 +227,11 @@
     if (els.playerName) els.playerName.value = localStorage.getItem(playerNameKey) || "";
 
     function normalizedMode(mode) {
-      return mode === "chaos" ? "chaos" : "basic";
+      return MODES[mode] ? mode : "basic";
+    }
+
+    function isTimeAttackMode(mode = state?.mode || selectedMode()) {
+      return !!MODES[normalizedMode(mode)]?.timeAttack;
     }
 
     function bestStorageKey(mode = "basic") {
@@ -317,6 +328,47 @@
 
     function selectedMode() {
       return normalizedMode(els.mode?.value || "basic");
+    }
+
+    function setTimerVisible(visible) {
+      els.timerStat?.classList.toggle("hidden", !visible);
+    }
+
+    function renderTimer(ms = TIME_ATTACK_LIMIT_MS) {
+      if (!els.timer) return;
+      els.timer.textContent = (Math.max(0, ms) / 1000).toFixed(1);
+      els.timerStat?.classList.toggle("timer-warning", ms <= 1000);
+    }
+
+    function clearTurnTimer() {
+      if (turnTimerId) window.clearInterval(turnTimerId);
+      turnTimerId = 0;
+      turnTimerDeadline = 0;
+      if (els.timerStat) els.timerStat.classList.remove("timer-warning");
+    }
+
+    function armTurnTimer() {
+      clearTurnTimer();
+      if (!state || state.gameOver || state.phaseLocked || !isTimeAttackMode(state.mode)) {
+        setTimerVisible(isTimeAttackMode(state?.mode || selectedMode()));
+        return;
+      }
+      setTimerVisible(true);
+      turnTimerDeadline = performance.now() + TIME_ATTACK_LIMIT_MS;
+      renderTimer(TIME_ATTACK_LIMIT_MS);
+      turnTimerId = window.setInterval(() => {
+        if (!state || state.gameOver || state.phaseLocked) {
+          clearTurnTimer();
+          return;
+        }
+        const remaining = turnTimerDeadline - performance.now();
+        renderTimer(remaining);
+        if (remaining <= 0) {
+          clearTurnTimer();
+          selectedPiece = null;
+          void endTurn("timeout");
+        }
+      }, 80);
     }
 
     function setStatusText(el, message, isError = false) {
@@ -467,7 +519,7 @@
 
     function showGameOverOverlay() {
       if (els.resultEyebrow) els.resultEyebrow.textContent = modeLabel(t, state.mode);
-      if (els.resultTitle) els.resultTitle.textContent = t.gameOver;
+      if (els.resultTitle) els.resultTitle.textContent = state.finishType === "timeout" ? (t.timeOver || "Time over") : t.gameOver;
       if (els.resultSummary) {
         els.resultSummary.textContent = `${t.score}: ${state.score.toLocaleString()} · ${t.level}: ${state.level} · ${t.bestCombo}: ${state.bestCombo}`;
       }
@@ -476,6 +528,8 @@
     }
 
     function showIntroScreen() {
+      clearTurnTimer();
+      setTimerVisible(false);
       hideGameOverOverlay();
       els.gameScreen?.classList.add("hidden");
       els.introScreen?.classList.remove("hidden");
@@ -484,6 +538,7 @@
     function showGameScreen() {
       els.introScreen?.classList.add("hidden");
       els.gameScreen?.classList.remove("hidden");
+      setTimerVisible(isTimeAttackMode(selectedMode()));
     }
 
     async function returnToIntro() {
@@ -876,6 +931,12 @@
       playTone({ frequency: 86, toFrequency: 72, duration: 0.2, gain: 0.02, type: "triangle", when: 0.028 });
     }
 
+    function playTimeoutSfx() {
+      playTone({ frequency: 620, toFrequency: 420, duration: 0.09, gain: 0.042, type: "square" });
+      playTone({ frequency: 310, toFrequency: 210, duration: 0.12, gain: 0.03, type: "triangle", when: 0.035 });
+      playTone({ frequency: 170, toFrequency: 120, duration: 0.11, gain: 0.022, type: "sine", when: 0.085 });
+    }
+
     function playEnemyAttackSfx() {
       playTone({ frequency: 220, toFrequency: 160, duration: 0.11, gain: 0.04, type: "triangle" });
       playTone({ frequency: 460, toFrequency: 300, duration: 0.08, gain: 0.028, type: "sine", when: 0.015 });
@@ -1068,6 +1129,18 @@
       startEffectLoop();
     }
 
+    function triggerTimeoutFeedback() {
+      addPulseCell(state.player, "rgba(196, 69, 54, 0.26)", true, 260);
+      addPulseCell(state.player, "#c44536", false, 330);
+      addParticles(state.player, "#f6bd60", 8, 0.2, 2.6, 320);
+      addParticles(state.player, "#c44536", 5, 0.16, 2.2, 280);
+      addFloatingText(state.player, "TIME", "#c44536", 0.18, 520);
+      restartClass(els.boardPanel, "board-damage");
+      playTimeoutSfx();
+      if (navigator.vibrate) navigator.vibrate(18);
+      startEffectLoop();
+    }
+
     function triggerEnemyHitFeedback(attacker) {
       animateEnemyAttack(attacker, 240);
       addPulseCell(state.player, "#c44536", false, 260);
@@ -1178,18 +1251,21 @@
       setMessage(`${t.boardClear}: +${clearBonus + comboBonus}`, false, "pulse-combo");
     }
 
-    function endGame() {
+    function endGame(finishType = "gameover") {
+      clearTurnTimer();
       state.gameOver = true;
+      state.finishType = finishType;
       saveBest();
       trackGameEvent("game_finish", {
         mode: state.mode,
-        finishType: "gameover",
+        finishType,
         score: state.score,
         level: state.level,
         turns: state.turn,
         bestCombo: state.bestCombo
       });
-      setMessage(`${t.gameOver}. ${t.score}: ${state.score.toLocaleString()}`, true, "pulse-damage");
+      const finishMessage = finishType === "timeout" ? (t.timeOver || "Time over") : t.gameOver;
+      setMessage(`${finishMessage}. ${t.score}: ${state.score.toLocaleString()}`, true, "pulse-damage");
       showGameOverOverlay();
       setLeaderboardStatus(t.gameOverToSubmit);
       loadGameOverLeaderboard(state.mode, state.scoreId || "");
@@ -1238,9 +1314,11 @@
         freeMoveAvailable: true,
         bag: { drawPile: createBagFromComposition(MODES[selectedMode].startingBag) },
         gameOver: false,
+        finishType: "",
         scoreUploaded: false,
         scoreId: ""
       };
+      clearTurnTimer();
       fx.playerMotion = null;
       fx.enemyAttackMotion = null;
       fx.spawnMotions = [];
@@ -1265,6 +1343,7 @@
         setMessage(`${t.title} - ${modeLabel(t, selectedMode)}`);
       }
       render();
+      armTurnTimer();
       trackGameEvent("game_start", { mode: selectedMode, level: 1 });
     }
 
@@ -1276,6 +1355,7 @@
         setMessage(t.blocked, true, "pulse-damage");
         return;
       }
+      clearTurnTimer();
 
       const from = { x: state.player.x, y: state.player.y };
       const destination = { x: capture.anchorX ?? x, y: capture.anchorY ?? y };
@@ -1378,6 +1458,7 @@
 
       if (Rules.isBoardClear(state)) awardClearBonus();
       render();
+      armTurnTimer();
     }
 
     function moveTo(x, y) {
@@ -1388,6 +1469,7 @@
         setMessage(t.blocked, true, "pulse-damage");
         return;
       }
+      clearTurnTimer();
       const from = { x: state.player.x, y: state.player.y };
       const destination = { x: move.anchorX ?? x, y: move.anchorY ?? y };
       state.player = { ...state.player, x: destination.x, y: destination.y };
@@ -1399,6 +1481,7 @@
       const held = state.combo > 0 ? ` Combo x${state.combo} held.` : "";
       setMessage(`${t.moved || "Moved."}${held}`, false, "pulse-note");
       render();
+      armTurnTimer();
     }
 
     function selectPiece(x, y, piece, canCapture) {
@@ -1460,13 +1543,15 @@
       return false;
     }
 
-    async function endTurn() {
+    async function endTurn(reason = "manual") {
       if (state.gameOver || state.phaseLocked) return;
       ensureAudio();
+      clearTurnTimer();
       state.phaseLocked = true;
       selectedPiece = null;
       updateLegal();
-      setMessage(t.turnEnded, false, "pulse-note");
+      if (reason === "timeout") triggerTimeoutFeedback();
+      setMessage(reason === "timeout" ? (t.timeOverTurn || "Time over. Turn ended.") : t.turnEnded, reason === "timeout", reason === "timeout" ? "pulse-damage" : "pulse-note");
       const pendingAttackers = getEnemyAttackersCompat(state).map(attacker => ({ ...attacker }));
       state.combo = 0;
       state.freeMoveAvailable = true;
@@ -1486,6 +1571,7 @@
       }
       state.phaseLocked = false;
       render();
+      armTurnTimer();
     }
 
     canvas.addEventListener("click", event => {
@@ -1509,7 +1595,7 @@
       ensureAudio();
       newGame(state?.mode || selectedMode());
     });
-    els.endTurn.addEventListener("click", endTurn);
+    els.endTurn.addEventListener("click", () => endTurn());
     els.menu?.addEventListener("click", returnToIntro);
     els.menuSecondary?.addEventListener("click", returnToIntro);
     els.introLeaderboardToggle?.addEventListener("click", toggleIntroLeaderboard);

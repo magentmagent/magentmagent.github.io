@@ -50,13 +50,15 @@
           <label class="field">モード
             <select id="introModeSelect">
               <option value="basic">基本</option>
+              <option value="basic-time">基本タイムアタック</option>
               <option value="chaos">カオス</option>
+              <option value="chaos-time">カオスタイムアタック</option>
             </select>
           </label>
           <div class="stat-grid intro-stats">
             <div class="stat primary"><span>ベスト</span><strong id="introBestValue">0</strong></div>
           </div>
-          <p class="intro-note">基本は読みやすい通常の駒中心。カオスはレベルが上がるほど変則駒が増えます。</p>
+          <p class="intro-note">基本は通常の駒中心。カオスは変則駒が混ざります。タイムアタックは3秒でターン終了です。</p>
           <div class="intro-action-row">
             <button id="startGameBtn" class="button button-large" type="button">スタート</button>
             <button id="introLeaderboardToggle" class="button secondary button-large" type="button">ランキング</button>
@@ -154,6 +156,7 @@
             <div class="stat primary"><span>得点</span><strong id="scoreValue">0</strong></div>
             <div class="stat"><span>ベスト</span><strong id="bestValue">0</strong></div>
             <div class="stat"><span>レベル</span><strong id="levelValue">1</strong></div>
+            <div id="timerStat" class="stat timer-stat hidden"><span>時間</span><strong id="timerValue">3.0</strong></div>
             <div class="stat"><span>コンボ</span><strong id="comboValue">0</strong></div>
             <div class="stat"><span>現在の駒</span><strong id="currentValue">K king</strong></div>
           </div>

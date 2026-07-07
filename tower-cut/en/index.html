@@ -45,7 +45,7 @@
       <div class="start-copy">
         <p class="eyebrow">Stack editing puzzle</p>
         <h1 id="startTitle" class="start-title">Tower Cut</h1>
-        <p class="lead">Restore as many broken towers as possible in 60 seconds.</p>
+        <p class="lead">Restore as many broken towers as possible in 60 or 180 seconds.</p>
       </div>
       <div class="rule-column">
         <article class="rule-card">
@@ -73,6 +73,12 @@
           <p><b>Cut and fall</b><span>Tap a wrong layer to remove only that layer. Upper layers fall down.</span></p>
         </article>
       </div>
+      <label class="field intro-duration">Time
+        <select id="durationSelect">
+          <option value="60">60 sec</option>
+          <option value="180">180 sec</option>
+        </select>
+      </label>
       <div class="intro-action-row">
         <button id="startBtn" class="button" type="button">Start</button>
         <button id="introLeaderboardToggle" class="button secondary" type="button">Ranking</button>
@@ -152,7 +158,7 @@
     window.TOWER_CUT_LANG = "en";
     window.TOWER_CUT_TEXT = {
       score: "Score", cleared: "Cleared", perfect: "Perfect", maxCombo: "Max combo", totalClicks: "Clicks", highestStage: "Stage",
-      leaderboard: "Ranking", leaderboardEmpty: "No scores yet", rankingsLoading: "Loading ranking.", rankingsUnavailable: "Ranking server is not configured.", rankingsFailed: "Could not load ranking.", uploadingScore: "Uploading score.", uploadFailed: "Could not upload score.", scoreUploaded: "Score uploaded.", namePlaceholder: "Player", myRank: "My score",
+      leaderboard: "Ranking", leaderboardEmpty: "No scores yet", rankingsLoading: "Loading ranking.", rankingsUnavailable: "Ranking server is not configured.", rankingsFailed: "Could not load ranking.", uploadingScore: "Uploading score.", uploadFailed: "Could not upload score.", scoreUploaded: "Score uploaded.", namePlaceholder: "Player", myRank: "My score", seconds: "sec",
       shareOpened: "Opened X share window.", shareShared: "Shared.", shareCopied: "Result copied.", shareFailed: "Could not share.",
       placeColumn: "Place on column",
       resultTimeout: "Time up", resultManual: "Run ended",

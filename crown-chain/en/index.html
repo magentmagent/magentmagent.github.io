@@ -50,13 +50,15 @@
           <label class="field">Mode
             <select id="introModeSelect">
               <option value="basic">Basic</option>
+              <option value="basic-time">Basic Time Attack</option>
               <option value="chaos">Chaos</option>
+              <option value="chaos-time">Chaos Time Attack</option>
             </select>
           </label>
           <div class="stat-grid intro-stats">
             <div class="stat primary"><span>Best</span><strong id="introBestValue">0</strong></div>
           </div>
-          <p class="intro-note">Basic keeps standard chess pieces readable. Chaos gradually mixes in variant pieces.</p>
+          <p class="intro-note">Basic keeps standard pieces readable. Chaos mixes in variants. Time Attack ends your turn after 3 seconds.</p>
           <div class="intro-action-row">
             <button id="startGameBtn" class="button button-large" type="button">Start</button>
             <button id="introLeaderboardToggle" class="button secondary button-large" type="button">Ranking</button>
@@ -154,6 +156,7 @@
             <div class="stat primary"><span>Score</span><strong id="scoreValue">0</strong></div>
             <div class="stat"><span>Best</span><strong id="bestValue">0</strong></div>
             <div class="stat"><span>Level</span><strong id="levelValue">1</strong></div>
+            <div id="timerStat" class="stat timer-stat hidden"><span>Time</span><strong id="timerValue">3.0</strong></div>
             <div class="stat"><span>Combo</span><strong id="comboValue">0</strong></div>
             <div class="stat"><span>Current</span><strong id="currentValue">K king</strong></div>
           </div>
