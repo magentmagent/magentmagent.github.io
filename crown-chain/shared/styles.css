@@ -374,6 +374,17 @@ h1 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.share-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.share-actions .button {
+  min-width: 0;
+  padding-inline: 8px;
+}
+
 .side-panel {
   display: grid;
   gap: 12px;

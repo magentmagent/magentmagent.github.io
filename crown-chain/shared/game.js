@@ -164,6 +164,10 @@
       gameOverOverlay: document.querySelector("#gameOverOverlay"),
       playerName: document.querySelector("#playerNameInput"),
       submitScore: document.querySelector("#submitScoreBtn"),
+      shareX: document.querySelector("#shareXBtn"),
+      shareNative: document.querySelector("#shareNativeBtn"),
+      copyResult: document.querySelector("#copyResultBtn"),
+      shareStatus: document.querySelector("#shareStatus"),
       leaderboardScope: document.querySelector("#leaderboardScope"),
       leaderboardList: document.querySelector("#leaderboardList"),
       leaderboardStatus: document.querySelector("#leaderboardStatus")
@@ -329,6 +333,10 @@
       setStatusText(els.introLeaderboardStatus, message, isError);
     }
 
+    function setShareStatus(message, isError = false) {
+      setStatusText(els.shareStatus, message, isError);
+    }
+
     function restartClass(el, className) {
       if (!el) return;
       el.classList.remove(className);
@@ -454,6 +462,7 @@
     function hideGameOverOverlay() {
       els.gameOverOverlay?.classList.add("hidden");
       els.boardPanel?.classList.remove("game-over");
+      setShareStatus("");
     }
 
     function showGameOverOverlay() {
@@ -559,6 +568,209 @@
         setLeaderboardStatus(error.message || t.uploadFailed, true);
       } finally {
         els.submitScore.disabled = state.scoreUploaded;
+      }
+    }
+
+    function shareUrl() {
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        return `${location.origin}/crown-chain/${lang}/`;
+      }
+      return `https://magentmagent.github.io/crown-chain/${lang}/`;
+    }
+
+    function shareSummary() {
+      return `${modeLabel(t, state.mode)} · ${t.score}: ${state.score.toLocaleString()} · ${t.level}: ${state.level} · ${t.bestCombo}: ${state.bestCombo}`;
+    }
+
+    function shareText() {
+      if (lang === "ko") return `Crown Chain 결과\n${shareSummary()}\n${shareUrl()}`;
+      if (lang === "ja") return `Crown Chain 結果\n${shareSummary()}\n${shareUrl()}`;
+      return `Crown Chain result\n${shareSummary()}\n${shareUrl()}`;
+    }
+
+    function xShareText() {
+      if (lang === "ko") return `${shareSummary()}\n말을 잡을 때마다 변신하는 체스 체인 게임`;
+      if (lang === "ja") return `${shareSummary()}\n駒を取るたびに変身するチェス連鎖ゲーム`;
+      return `${shareSummary()}\nA chess-chain game where every capture transforms you`;
+    }
+
+    function trackShare(channel) {
+      trackGameEvent("share_result", {
+        mode: state.mode,
+        score: state.score,
+        level: state.level,
+        bestCombo: state.bestCombo,
+        channel
+      });
+    }
+
+    function drawRoundedRect(ctx, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + width - r, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+      ctx.lineTo(x + width, y + height - r);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+      ctx.lineTo(x + r, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = String(text).split(/\s+/);
+      let line = "";
+      for (const word of words) {
+        const next = line ? `${line} ${word}` : word;
+        if (line && ctx.measureText(next).width > maxWidth) {
+          ctx.fillText(line, x, y);
+          line = word;
+          y += lineHeight;
+        } else {
+          line = next;
+        }
+      }
+      if (line) ctx.fillText(line, x, y);
+      return y + lineHeight;
+    }
+
+    function resultImageCanvas() {
+      render();
+      const scale = 3;
+      const pad = 34;
+      const boardPx = 560;
+      const width = boardPx + (pad * 2);
+      const height = pad + 92 + boardPx + 88;
+      const out = document.createElement("canvas");
+      out.width = width * scale;
+      out.height = height * scale;
+      const ctx = out.getContext("2d");
+      ctx.scale(scale, scale);
+
+      ctx.fillStyle = "#f6f3ea";
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = "#202327";
+      ctx.font = "900 28px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText("Crown Chain", pad, pad + 30);
+      ctx.fillStyle = "#5f6872";
+      ctx.font = "800 17px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText(shareSummary(), pad, pad + 60);
+
+      const boardY = pad + 92;
+      ctx.fillStyle = "#5e6472";
+      drawRoundedRect(ctx, pad - 6, boardY - 6, boardPx + 12, boardPx + 12, 12);
+      ctx.fill();
+      ctx.drawImage(canvas, pad, boardY, boardPx, boardPx);
+
+      ctx.fillStyle = "#202327";
+      ctx.font = "900 19px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText(`${t.score}: ${state.score.toLocaleString()} · ${t.level}: ${state.level} · ${t.combo}: ${state.bestCombo}`, pad, boardY + boardPx + 38);
+      ctx.fillStyle = "#68707a";
+      ctx.font = "800 14px system-ui, -apple-system, Segoe UI, sans-serif";
+      drawWrappedText(ctx, shareUrl(), pad, boardY + boardPx + 66, width - pad * 2, 18);
+      return out;
+    }
+
+    function canvasToBlob(sourceCanvas) {
+      return new Promise((resolve, reject) => {
+        sourceCanvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("image")), "image/png");
+      });
+    }
+
+    async function resultImageFile() {
+      const blob = await canvasToBlob(resultImageCanvas());
+      return new File([blob], "crown-chain-result.png", { type: "image/png" });
+    }
+
+    async function copyResultImage() {
+      const file = await resultImageFile();
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({ [file.type]: file })]);
+        return true;
+      }
+      return false;
+    }
+
+    function shareToX() {
+      if (!state?.gameOver) return;
+      const params = new URLSearchParams({
+        text: xShareText(),
+        url: shareUrl(),
+        hashtags: "CrownChain"
+      });
+      window.open(`https://twitter.com/intent/tweet?${params.toString()}`, "_blank", "noopener,noreferrer");
+      copyResultImage()
+        .then(copied => setShareStatus(copied ? shareMessage("xCopied") : shareMessage("xOpened")))
+        .catch(() => setShareStatus(shareMessage("xOpened")));
+      trackShare("x");
+    }
+
+    function shareMessage(type) {
+      const messages = {
+        en: {
+          xOpened: "Opened X share window.",
+          xCopied: "Opened X share window and copied the image.",
+          shared: "Shared.",
+          imageCopied: "Result image copied to clipboard.",
+          textCopied: "Result copied to clipboard.",
+          failed: "Could not share."
+        },
+        ko: {
+          xOpened: "X 공유 창을 열었습니다.",
+          xCopied: "X 공유 창을 열고 이미지를 복사했습니다.",
+          shared: "공유했습니다.",
+          imageCopied: "결과 이미지를 클립보드에 복사했습니다.",
+          textCopied: "결과를 클립보드에 복사했습니다.",
+          failed: "공유할 수 없습니다."
+        },
+        ja: {
+          xOpened: "Xの共有画面を開きました。",
+          xCopied: "Xの共有画面を開き、画像をコピーしました。",
+          shared: "共有しました。",
+          imageCopied: "結果画像をクリップボードにコピーしました。",
+          textCopied: "結果をクリップボードにコピーしました。",
+          failed: "共有できませんでした。"
+        }
+      };
+      return (messages[lang] || messages.en)[type] || messages.en.failed;
+    }
+
+    async function shareNative() {
+      if (!state?.gameOver) return;
+      try {
+        const file = await resultImageFile();
+        if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+          await navigator.share({ title: "Crown Chain", text: shareText(), url: shareUrl(), files: [file] });
+          setShareStatus(shareMessage("shared"));
+        } else if (navigator.share) {
+          await navigator.share({ title: "Crown Chain", text: shareText(), url: shareUrl() });
+          setShareStatus(shareMessage("shared"));
+        } else {
+          await copyResult();
+          return;
+        }
+        trackShare("native");
+      } catch (error) {
+        if (error && error.name === "AbortError") return;
+        setShareStatus(shareMessage("failed"), true);
+      }
+    }
+
+    async function copyResult() {
+      if (!state?.gameOver) return;
+      try {
+        const copiedImage = await copyResultImage();
+        if (copiedImage) {
+          setShareStatus(shareMessage("imageCopied"));
+        } else {
+          await navigator.clipboard.writeText(shareText());
+          setShareStatus(shareMessage("textCopied"));
+        }
+        trackShare("copy");
+      } catch {
+        setShareStatus(shareMessage("failed"), true);
       }
     }
 
@@ -1314,6 +1526,9 @@
       });
     }
     if (els.submitScore) els.submitScore.addEventListener("click", submitScore);
+    els.shareX?.addEventListener("click", shareToX);
+    els.shareNative?.addEventListener("click", shareNative);
+    els.copyResult?.addEventListener("click", copyResult);
 
     trackGameEvent("page_view", { mode: selectedMode() });
     showIntroScreen();
