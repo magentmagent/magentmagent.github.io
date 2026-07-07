@@ -802,7 +802,7 @@ a {
   }
 
   .tower {
-    --tower-column-size: minmax(22px, 28px);
+    --tower-column-size: minmax(34px, 42px);
     grid-auto-columns: var(--tower-column-size);
     justify-self: center;
     width: fit-content;
@@ -827,10 +827,10 @@ a {
 
   .drop-zone {
     aspect-ratio: auto;
-    min-height: 18px;
-    max-height: 20px;
+    min-height: 24px;
+    max-height: 28px;
     border-width: 1px;
-    font-size: 0.72rem;
+    font-size: 0.9rem;
   }
 
   .drop-zone.full {
