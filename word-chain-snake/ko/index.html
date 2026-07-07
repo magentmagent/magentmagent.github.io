@@ -2654,6 +2654,7 @@
     function trackGameEvent(type, detail = {}) {
       if (!SUGGEST_API) return;
       const payload = {
+        game: "word-chain-snake",
         type,
         lang: GAME_LANG,
         boardSize: Number(state.board && state.board.length) || boardSize || DEFAULT_SIZE,
@@ -2861,6 +2862,7 @@
     }
     loadBlockedDictionary();
     loadDefaultDictionary();
+    trackGameEvent("page_view", { mode: selectedIntroMode(), boardSize: selectedIntroBoardSize() });
   </script>
 </body>
 </html>

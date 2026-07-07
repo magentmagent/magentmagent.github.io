@@ -75,6 +75,51 @@
       gap: 8px;
     }
 
+    .chart-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) 64px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .chart-label {
+      min-width: 0;
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: 900;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chart-track {
+      min-width: 0;
+      height: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e9e1d3;
+    }
+
+    .chart-bar {
+      width: var(--bar-width, 0%);
+      height: 100%;
+      min-width: 2px;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 180ms ease;
+    }
+
+    .chart-value {
+      text-align: right;
+      color: var(--ink);
+      font-weight: 900;
+    }
+
     .stat-row {
       display: grid;
       grid-template-columns: 120px 72px 64px minmax(0, 1fr) auto;
@@ -157,8 +202,13 @@
     @media (max-width: 520px) {
       .auth,
       .item,
-      .stat-row {
+      .stat-row,
+      .chart-row {
         grid-template-columns: 1fr;
+      }
+
+      .chart-value {
+        text-align: left;
       }
     }
   </style>
@@ -294,13 +344,118 @@
       }
     }
 
+    const STAT_LANGS = ["en", "ko", "ja"];
+    const STAT_GAMES = {
+      "word-chain-snake": {
+        label: "word chain snake",
+        boardSizes: [6, 7, 8, 9, 10, 11, 12],
+        modes: ["classic", "snake"],
+        types: ["page_view", "game_start", "game_finish_clear", "game_finish_surrender", "share_result"]
+      },
+      "crown-chain": {
+        label: "crown chain",
+        boardSizes: [8],
+        modes: ["basic", "chaos"],
+        types: ["page_view", "game_start", "game_finish_gameover", "share_result"]
+      },
+      "tower-cut": {
+        label: "tower cut",
+        boardSizes: [6],
+        modes: ["60", "180"],
+        types: ["page_view", "game_start", "game_finish_manual", "game_finish_timeout", "share_result"]
+      }
+    };
+
+    function statKey(item) {
+      return `${item.game || "word-chain-snake"}:${item.lang || "ko"}:${item.boardSize || 8}:${item.mode || "classic"}:${item.type || ""}`;
+    }
+
+    function defaultStats() {
+      const out = [];
+      for (const [game, config] of Object.entries(STAT_GAMES)) {
+        for (const lang of STAT_LANGS) {
+          for (const boardSize of config.boardSizes) {
+            for (const mode of config.modes) {
+              for (const type of config.types) {
+                out.push({ game, lang, boardSize, mode, type, count: 0 });
+              }
+            }
+          }
+        }
+      }
+      return out;
+    }
+
+    function withDefaultStats(items) {
+      const map = new Map(defaultStats().map(item => [statKey(item), item]));
+      for (const item of items || []) {
+        const normalized = {
+          game: item.game || "word-chain-snake",
+          lang: item.lang || "ko",
+          boardSize: Number(item.boardSize || 8),
+          mode: item.mode || "classic",
+          type: item.type || "",
+          count: Number(item.count || 0)
+        };
+        map.set(statKey(normalized), normalized);
+      }
+      return [...map.values()].sort((a, b) => statKey(a).localeCompare(statKey(b)));
+    }
+
+    function aggregateStats(items) {
+      const map = new Map();
+      for (const item of items) {
+        const game = item.game || "word-chain-snake";
+        const type = item.type || "";
+        const key = `${game}:${type}`;
+        map.set(key, {
+          game,
+          type,
+          count: (map.get(key)?.count || 0) + Number(item.count || 0)
+        });
+      }
+      return [...map.values()].sort((a, b) => `${a.game}:${a.type}`.localeCompare(`${b.game}:${b.type}`));
+    }
+
+    function renderStatsChart(items) {
+      const panel = document.createElement("section");
+      panel.className = "panel chart-grid";
+      const title = document.createElement("h2");
+      title.textContent = "이벤트 그래프";
+      panel.appendChild(title);
+
+      const rows = aggregateStats(items);
+      const max = Math.max(1, ...rows.map(item => Number(item.count || 0)));
+      for (const item of rows) {
+        const row = document.createElement("div");
+        row.className = "chart-row";
+        const label = document.createElement("span");
+        label.className = "chart-label";
+        label.textContent = `${gameLabel(item.game)} · ${eventLabel(item.type)}`;
+        const track = document.createElement("span");
+        track.className = "chart-track";
+        const bar = document.createElement("span");
+        bar.className = "chart-bar";
+        bar.style.setProperty("--bar-width", `${Math.max(0, Math.round((Number(item.count || 0) / max) * 100))}%`);
+        track.appendChild(bar);
+        const value = document.createElement("strong");
+        value.className = "chart-value";
+        value.textContent = Number(item.count || 0).toLocaleString("ko-KR");
+        row.append(label, track, value);
+        panel.appendChild(row);
+      }
+      els.statsList.appendChild(panel);
+    }
+
     function renderStats(items) {
       els.statsList.innerHTML = "";
-      if (!items.length) {
-        els.statsList.innerHTML = '<p class="panel">기록된 이벤트가 없습니다.</p>';
-        return;
-      }
-      for (const item of items) {
+      const normalizedItems = withDefaultStats(items);
+      renderStatsChart(normalizedItems);
+      const detail = document.createElement("section");
+      detail.className = "stats-grid";
+      detail.setAttribute("aria-label", "game event stat details");
+      els.statsList.appendChild(detail);
+      for (const item of normalizedItems) {
         const row = document.createElement("article");
         row.className = "item stat-row";
         row.innerHTML = `
@@ -310,10 +465,14 @@
           <span></span>
           <strong>${Number(item.count || 0).toLocaleString("ko-KR")}</strong>
         `;
-        row.querySelector("strong").textContent = item.game === "crown-chain" ? "crown-chain" : "word-chain-snake";
+        row.querySelector("strong").textContent = gameLabel(item.game);
         row.querySelector("span:nth-of-type(2)").textContent = `${item.mode || "-"} · ${eventLabel(item.type)}`;
-        els.statsList.appendChild(row);
+        detail.appendChild(row);
       }
+    }
+
+    function gameLabel(game) {
+      return STAT_GAMES[game]?.label || game || "word chain snake";
     }
 
     function eventLabel(type) {
@@ -323,6 +482,8 @@
         game_finish_clear: "클리어",
         game_finish_surrender: "항복",
         game_finish_gameover: "게임 오버",
+        game_finish_manual: "수동 종료",
+        game_finish_timeout: "시간 종료",
         share_result: "결과 공유"
       }[type] || type;
     }

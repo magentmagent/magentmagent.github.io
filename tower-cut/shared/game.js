@@ -208,6 +208,7 @@
     showStart(false);
     timerId = setInterval(tick, 250);
     setMessage(T.msgDrag);
+    trackGameEvent("game_start", { mode: modeForDuration(state.durationSeconds), durationSeconds: state.durationSeconds });
     render();
   }
 
@@ -225,6 +226,7 @@
     clearInterval(timerId);
     playSfx("end");
     showResult(true, reason);
+    trackGameEvent("game_finish", resultPayload(reason));
     renderHud();
   }
 
@@ -596,6 +598,34 @@
     setStatus(els.shareStatus, message, isError);
   }
 
+  function trackGameEvent(type, detail = {}) {
+    if (!SUGGEST_API) return;
+    const durationSeconds = Number(detail.durationSeconds || state?.durationSeconds || selectedDuration());
+    const payload = {
+      game: GAME_NAME,
+      type,
+      lang,
+      boardSize: SCORE_SCOPE,
+      mode: modeForDuration(durationSeconds),
+      ...detail
+    };
+    const body = JSON.stringify(payload);
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: "application/json" });
+        if (navigator.sendBeacon(`${SUGGEST_API}/events`, blob)) return;
+      }
+      fetch(`${SUGGEST_API}/events`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        keepalive: true
+      }).catch(() => {});
+    } catch {
+      // Analytics should never interrupt play.
+    }
+  }
+
   function renderLeaderboard(listEl, items, ownRank = null, ownItem = null) {
     if (!listEl) return;
     listEl.innerHTML = "";
@@ -720,6 +750,7 @@
     const params = new URLSearchParams({ text: shareSummary(), url: shareUrl(), hashtags: "TowerCut" });
     window.open(`https://twitter.com/intent/tweet?${params.toString()}`, "_blank", "noopener,noreferrer");
     setShareStatus(T.shareOpened);
+    trackGameEvent("share_result", { score: state.score, finishType: state.finishType || "timeout", channel: "x" });
   }
 
   async function shareNative() {
@@ -728,6 +759,7 @@
       if (navigator.share) {
         await navigator.share({ title: "Tower Cut", text: shareText(), url: shareUrl() });
         setShareStatus(T.shareShared);
+        trackGameEvent("share_result", { score: state.score, finishType: state.finishType || "timeout", channel: "native" });
       } else {
         await copyResult();
       }
@@ -742,6 +774,7 @@
     try {
       await navigator.clipboard.writeText(shareText());
       setShareStatus(T.shareCopied);
+      trackGameEvent("share_result", { score: state.score, finishType: state.finishType || "timeout", channel: "copy" });
     } catch {
       setShareStatus(T.shareFailed, true);
     }
@@ -816,4 +849,5 @@
   });
 
   newGame();
+  trackGameEvent("page_view", { mode: modeForDuration(selectedDuration()) });
 }());
