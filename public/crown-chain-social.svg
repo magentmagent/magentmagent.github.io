@@ -1,38 +1,109 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Crown Chain preview">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Crown Chain screenshot preview">
   <rect width="1200" height="630" fill="#f6f3ea"/>
-  <rect x="58" y="58" width="1084" height="514" rx="24" fill="#fffdf8" stroke="#d8d0c3" stroke-width="3"/>
-  <text x="120" y="170" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="82" font-weight="900">Crown</text>
-  <text x="120" y="255" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="82" font-weight="900">Chain</text>
-  <text x="122" y="315" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="800">capture, transform, combo</text>
-  <g transform="translate(665 98)">
-    <rect x="0" y="0" width="380" height="380" rx="18" fill="#5e6472"/>
-    <g>
-      <rect x="16" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
-      <rect x="62" y="16" width="43" height="43" rx="6" fill="#eadfca"/>
-      <rect x="108" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
-      <rect x="154" y="16" width="43" height="43" rx="6" fill="#eadfca"/>
-      <rect x="200" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
-      <rect x="246" y="16" width="43" height="43" rx="6" fill="#eadfca"/>
-      <rect x="292" y="16" width="43" height="43" rx="6" fill="#fffaf0"/>
-      <rect x="16" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
-      <rect x="62" y="62" width="43" height="43" rx="6" fill="#fffaf0"/>
-      <rect x="108" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
-      <rect x="154" y="62" width="43" height="43" rx="6" fill="#fffaf0"/>
-      <rect x="200" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
-      <rect x="246" y="62" width="43" height="43" rx="6" fill="#fffaf0"/>
-      <rect x="292" y="62" width="43" height="43" rx="6" fill="#eadfca"/>
-    </g>
-    <g font-family="system-ui, -apple-system, Segoe UI, sans-serif" text-anchor="middle" dominant-baseline="middle" font-weight="900">
-      <circle cx="176" cy="245" r="35" fill="#197278" stroke="#0d4f54" stroke-width="4"/>
-      <text x="176" y="246" font-size="32" fill="#fffdf8">K</text>
-      <circle cx="82" cy="82" r="31" fill="#fffdf8" stroke="#b9ae9f" stroke-width="4"/>
-      <text x="82" y="83" font-size="30" fill="#202327">Q</text>
-      <circle cx="268" cy="128" r="31" fill="#fffdf8" stroke="#c44536" stroke-width="6"/>
-      <text x="268" y="129" font-size="30" fill="#202327">R</text>
-      <circle cx="222" cy="314" r="31" fill="#fffdf8" stroke="#b9ae9f" stroke-width="4"/>
-      <text x="222" y="315" font-size="30" fill="#202327">N</text>
-    </g>
+  <rect x="38" y="38" width="1124" height="554" rx="28" fill="#fffdf8" stroke="#d8d0c3" stroke-width="3"/>
+
+  <rect x="74" y="80" width="720" height="470" rx="20" fill="#ffffff" stroke="#ddd4c7" stroke-width="2"/>
+  <rect x="824" y="80" width="302" height="470" rx="20" fill="#fffaf2" stroke="#ddd4c7" stroke-width="2"/>
+
+  <rect x="96" y="102" width="676" height="426" rx="18" fill="#5e6472"/>
+
+  <g>
+    <rect x="111" y="117" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="194" y="117" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="277" y="117" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="360" y="117" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="443" y="117" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="526" y="117" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="609" y="117" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="692" y="117" width="77" height="77" rx="10" fill="#eadfca"/>
+
+    <rect x="111" y="200" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="194" y="200" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="277" y="200" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="360" y="200" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="443" y="200" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="526" y="200" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="609" y="200" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="692" y="200" width="77" height="77" rx="10" fill="#fffaf0"/>
+
+    <rect x="111" y="283" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="194" y="283" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="277" y="283" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="360" y="283" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="443" y="283" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="526" y="283" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="609" y="283" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="692" y="283" width="77" height="77" rx="10" fill="#eadfca"/>
+
+    <rect x="111" y="366" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="194" y="366" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="277" y="366" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="360" y="366" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="443" y="366" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="526" y="366" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="609" y="366" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="692" y="366" width="77" height="77" rx="10" fill="#fffaf0"/>
+
+    <rect x="111" y="449" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="194" y="449" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="277" y="449" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="360" y="449" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="443" y="449" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="526" y="449" width="77" height="77" rx="10" fill="#eadfca"/>
+    <rect x="609" y="449" width="77" height="77" rx="10" fill="#fffaf0"/>
+    <rect x="692" y="449" width="77" height="77" rx="10" fill="#eadfca"/>
   </g>
-  <rect x="120" y="395" width="235" height="62" rx="10" fill="#197278"/>
-  <text x="238" y="436" fill="#fffdf8" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="900" text-anchor="middle">Play now</text>
+
+  <g fill="none" stroke="#1b8a95" stroke-width="5" stroke-dasharray="13 10" opacity="0.9">
+    <rect x="281" y="287" width="69" height="69" rx="10"/>
+    <rect x="364" y="287" width="69" height="69" rx="10"/>
+    <rect x="447" y="287" width="69" height="69" rx="10"/>
+    <rect x="281" y="370" width="69" height="69" rx="10"/>
+    <rect x="447" y="370" width="69" height="69" rx="10"/>
+  </g>
+
+  <g opacity="0.96">
+    <circle cx="482" cy="405" r="33" fill="#197278" stroke="#0d4f54" stroke-width="5"/>
+    <text x="482" y="408" fill="#fffdf8" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="33" font-weight="900" text-anchor="middle">K</text>
+
+    <path d="M217 446h37v-18l-4-4v-46l4-4v-18h-37v18l4 4v46l-4 4z" fill="#202327"/>
+    <rect x="225" y="351" width="21" height="10" fill="#202327"/>
+    <rect x="221" y="340" width="8" height="14" fill="#202327"/>
+    <rect x="242" y="340" width="8" height="14" fill="#202327"/>
+
+    <path d="M579 243h36v-18l-4-4v-43l4-4v-18h-36v18l4 4v43l-4 4z" fill="#202327"/>
+    <rect x="586" y="149" width="22" height="10" fill="#202327"/>
+    <rect x="582" y="138" width="8" height="14" fill="#202327"/>
+    <rect x="603" y="138" width="8" height="14" fill="#202327"/>
+
+    <path d="M324 232c13-3 22-15 22-30 0-17-13-30-30-30-19 0-31 15-30 34h10c0 0 5-11 17-11 8 0 14 6 14 14 0 6-4 12-9 15l-10 6 1 8-10 20h51l-9-19 1-10z" fill="#202327"/>
+
+    <circle cx="650" cy="406" r="30" fill="#fffdf8" stroke="#c44536" stroke-width="6"/>
+    <text x="650" y="409" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="900" text-anchor="middle">Q</text>
+  </g>
+
+  <text x="852" y="126" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="22" font-weight="800">Mode</text>
+  <rect x="852" y="142" width="246" height="54" rx="14" fill="#ffffff" stroke="#ddd4c7" stroke-width="2"/>
+  <text x="876" y="177" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="24" font-weight="800">Chaos</text>
+
+  <rect x="852" y="218" width="246" height="84" rx="14" fill="#e6f5f6" stroke="#b9e2e4" stroke-width="2"/>
+  <text x="872" y="248" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="800">Score</text>
+  <text x="872" y="287" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="48" font-weight="900">1,143</text>
+
+  <rect x="852" y="324" width="118" height="72" rx="14" fill="#ffffff" stroke="#ddd4c7" stroke-width="2"/>
+  <rect x="980" y="324" width="118" height="72" rx="14" fill="#ffffff" stroke="#ddd4c7" stroke-width="2"/>
+  <rect x="852" y="406" width="118" height="72" rx="14" fill="#ffffff" stroke="#ddd4c7" stroke-width="2"/>
+  <rect x="980" y="406" width="118" height="72" rx="14" fill="#ffffff" stroke="#ddd4c7" stroke-width="2"/>
+
+  <text x="870" y="351" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800">Best</text>
+  <text x="870" y="386" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="900">1,143</text>
+  <text x="998" y="351" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800">Life</text>
+  <text x="998" y="386" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="900">3/3</text>
+  <text x="870" y="433" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800">Level</text>
+  <text x="870" y="468" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="900">2</text>
+  <text x="998" y="433" fill="#68707a" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800">Combo</text>
+  <text x="998" y="468" fill="#202327" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="900">2</text>
+
+  <rect x="852" y="498" width="246" height="52" rx="14" fill="#e6f5f6" stroke="#c8eaec" stroke-width="2"/>
+  <text x="873" y="531" fill="#197278" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="900">Captured: Big Rook +28 / 1/2</text>
 </svg>

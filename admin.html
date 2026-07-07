@@ -77,7 +77,7 @@
 
     .stat-row {
       display: grid;
-      grid-template-columns: 72px 64px minmax(0, 1fr) auto;
+      grid-template-columns: 120px 72px 64px minmax(0, 1fr) auto;
       gap: 8px;
       align-items: center;
     }
@@ -304,21 +304,25 @@
         const row = document.createElement("article");
         row.className = "item stat-row";
         row.innerHTML = `
+          <strong></strong>
           <strong>${String(item.lang || "").toUpperCase()}</strong>
           <span>${item.boardSize}x${item.boardSize}</span>
           <span></span>
           <strong>${Number(item.count || 0).toLocaleString("ko-KR")}</strong>
         `;
-        row.querySelector("span:nth-of-type(2)").textContent = eventLabel(item.type);
+        row.querySelector("strong").textContent = item.game === "crown-chain" ? "crown-chain" : "word-chain-snake";
+        row.querySelector("span:nth-of-type(2)").textContent = `${item.mode || "-"} · ${eventLabel(item.type)}`;
         els.statsList.appendChild(row);
       }
     }
 
     function eventLabel(type) {
       return {
+        page_view: "페이지 조회",
         game_start: "게임 시작",
         game_finish_clear: "클리어",
         game_finish_surrender: "항복",
+        game_finish_gameover: "게임 오버",
         share_result: "결과 공유"
       }[type] || type;
     }

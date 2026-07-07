@@ -16,11 +16,11 @@
   <meta property="og:description" content="駒を取り、自分の駒を変えながらチェーンをつなぐチェスパズル。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://magentmagent.github.io/crown-chain/ja/">
-  <meta property="og:image" content="https://magentmagent.github.io/public/crown-chain-social.svg">
+  <meta property="og:image" content="https://magentmagent.github.io/public/crown-chain-social.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Crown Chain">
   <meta name="twitter:description" content="駒を取りながら変身していく小さなブラウザパズルです。">
-  <meta name="twitter:image" content="https://magentmagent.github.io/public/crown-chain-social.svg">
+  <meta name="twitter:image" content="https://magentmagent.github.io/public/crown-chain-social.png">
   <link rel="stylesheet" href="../shared/styles.css">
   <title>Crown Chain</title>
 </head>
@@ -65,6 +65,19 @@
           <button id="endTurnBtn" class="button secondary" type="button">ターン終了</button>
           <button id="restartBtn" class="button warn" type="button">再開</button>
         </div>
+        <section class="leaderboard-block" aria-label="基本/カオスのリーダーボード">
+          <div class="leaderboard-title">
+            <strong>リーダーボード</strong>
+            <span id="leaderboardScope">基本</span>
+          </div>
+          <label class="field">名前
+            <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="Player">
+          </label>
+          <button id="submitScoreBtn" class="button" type="button">得点を登録</button>
+          <p id="leaderboardStatus" class="status-note" aria-live="polite">ゲーム終了後に登録できます。</p>
+          <ol id="leaderboardList" class="leaderboard-list"></ol>
+          <p id="leaderboardHint" class="leaderboard-hint">基本モードとカオスモードは別々に集計されます。</p>
+        </section>
       </aside>
     </main>
 
@@ -95,6 +108,7 @@
   <script src="../shared/rules.js"></script>
   <script src="../shared/i18n.js"></script>
   <script src="../shared/renderer.js"></script>
+  <script src="../../public/suggest-config.js"></script>
   <script src="../shared/game.js"></script>
   <script>window.CrownChainGame.init({ lang: "ja" });</script>
 </body>

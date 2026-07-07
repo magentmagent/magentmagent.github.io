@@ -204,6 +204,17 @@ h1 {
   font-weight: 850;
 }
 
+.field input {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0 10px;
+  font: inherit;
+  font-weight: 850;
+}
+
 .button-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -277,6 +288,97 @@ h1 {
   padding: 4px 8px;
   font-size: 0.74rem;
   font-weight: 850;
+}
+
+.leaderboard-block {
+  display: grid;
+  gap: 8px;
+  padding-top: 2px;
+  border-top: 1px solid rgba(216, 208, 195, 0.8);
+}
+
+.leaderboard-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+  margin: 0;
+}
+
+.leaderboard-title strong {
+  font-size: 0.96rem;
+}
+
+.leaderboard-title span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.leaderboard-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.leaderboard-list li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 7px 9px;
+}
+
+.leaderboard-list .rank,
+.leaderboard-list .score-value {
+  font-weight: 900;
+}
+
+.leaderboard-list .rank {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.leaderboard-list .name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 850;
+}
+
+.leaderboard-list .score-value {
+  font-size: 0.88rem;
+}
+
+.leaderboard-list .own {
+  border-color: rgba(25, 114, 120, 0.35);
+  background: #edf7f5;
+}
+
+.status-note {
+  min-height: 1.2em;
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.status-note.error {
+  color: var(--danger);
+}
+
+.leaderboard-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 750;
+  line-height: 1.45;
 }
 
 .rules-panel {
@@ -379,9 +481,74 @@ h1 {
 
   .game-shell {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .side-panel {
-    gap: 10px;
+    gap: 8px;
+    padding: 10px;
+    margin-top: -2px;
+  }
+
+  .board-panel {
+    padding: 8px;
+  }
+
+  .button-row {
+    order: 1;
+    position: sticky;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    z-index: 3;
+    padding: 6px;
+    border: 1px solid rgba(216, 208, 195, 0.92);
+    border-radius: 8px;
+    background: rgba(255, 253, 248, 0.96);
+    box-shadow: 0 10px 20px rgba(36, 38, 43, 0.08);
+  }
+
+  .field {
+    order: 2;
+  }
+
+  .message {
+    order: 3;
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .stat-grid.compact {
+    order: 4;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .stat {
+    padding: 7px;
+  }
+
+  .stat.primary {
+    grid-column: span 3;
+  }
+
+  .stat.primary strong {
+    font-size: 1.35rem;
+  }
+
+  .stat strong {
+    font-size: 0.96rem;
+  }
+
+  .leaderboard-block {
+    order: 5;
+    gap: 7px;
+  }
+
+  .leaderboard-list li {
+    padding: 7px 8px;
+  }
+
+  .rules-panel {
+    margin-top: 10px;
   }
 }

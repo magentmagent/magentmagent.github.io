@@ -16,11 +16,11 @@
   <meta property="og:description" content="Capture chess pieces, transform into them, and keep the combo alive.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://magentmagent.github.io/crown-chain/en/">
-  <meta property="og:image" content="https://magentmagent.github.io/public/crown-chain-social.svg">
+  <meta property="og:image" content="https://magentmagent.github.io/public/crown-chain-social.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Crown Chain">
   <meta name="twitter:description" content="A compact chess-chain browser game.">
-  <meta name="twitter:image" content="https://magentmagent.github.io/public/crown-chain-social.svg">
+  <meta name="twitter:image" content="https://magentmagent.github.io/public/crown-chain-social.png">
   <link rel="stylesheet" href="../shared/styles.css">
   <title>Crown Chain</title>
 </head>
@@ -65,6 +65,19 @@
           <button id="endTurnBtn" class="button secondary" type="button">End Turn</button>
           <button id="restartBtn" class="button warn" type="button">Restart</button>
         </div>
+        <section class="leaderboard-block" aria-label="Basic and Chaos leaderboards">
+          <div class="leaderboard-title">
+            <strong>Leaderboard</strong>
+            <span id="leaderboardScope">Basic</span>
+          </div>
+          <label class="field">Name
+            <input id="playerNameInput" type="text" maxlength="16" autocomplete="nickname" placeholder="Player">
+          </label>
+          <button id="submitScoreBtn" class="button" type="button">Upload score</button>
+          <p id="leaderboardStatus" class="status-note" aria-live="polite">Upload is available after game over.</p>
+          <ol id="leaderboardList" class="leaderboard-list"></ol>
+          <p id="leaderboardHint" class="leaderboard-hint">Basic and Chaos use separate leaderboards.</p>
+        </section>
       </aside>
     </main>
 
@@ -95,6 +108,7 @@
   <script src="../shared/rules.js"></script>
   <script src="../shared/i18n.js"></script>
   <script src="../shared/renderer.js"></script>
+  <script src="../../public/suggest-config.js"></script>
   <script src="../shared/game.js"></script>
   <script>window.CrownChainGame.init({ lang: "en" });</script>
 </body>

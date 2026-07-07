@@ -133,6 +133,8 @@
     const lang = options.lang || "en";
     const t = I18n.t(lang);
     const canvas = document.querySelector("#boardCanvas");
+    const SUGGEST_API = String(window.WORDSNAKE_SUGGEST_API || "").trim();
+    const GAME_NAME = "crown-chain";
     const els = {
       boardPanel: document.querySelector(".board-panel"),
       score: document.querySelector("#scoreValue"),
@@ -150,7 +152,13 @@
       endTurn: document.querySelector("#endTurnBtn"),
       restart: document.querySelector("#restartBtn"),
       message: document.querySelector("#message"),
-      pieceList: document.querySelector("#pieceList")
+      pieceList: document.querySelector("#pieceList"),
+      playerName: document.querySelector("#playerNameInput"),
+      submitScore: document.querySelector("#submitScoreBtn"),
+      leaderboardScope: document.querySelector("#leaderboardScope"),
+      leaderboardList: document.querySelector("#leaderboardList"),
+      leaderboardStatus: document.querySelector("#leaderboardStatus"),
+      leaderboardHint: document.querySelector("#leaderboardHint")
     };
 
     const stats = {
@@ -160,7 +168,7 @@
       current: els.current ? els.current.closest(".stat") : null
     };
 
-    const storageKey = `crownChainBest:${lang}`;
+    const playerNameKey = `crownChainPlayerName:${lang}`;
     let state = null;
     let legalCaptures = [];
     let legalMoves = [];
@@ -196,6 +204,16 @@
       }),
       restartWithQueryDebug: () => newGame(els.mode.value || "basic")
     };
+
+    if (els.playerName) els.playerName.value = localStorage.getItem(playerNameKey) || "";
+
+    function normalizedMode(mode) {
+      return mode === "chaos" ? "chaos" : "basic";
+    }
+
+    function bestStorageKey(mode = "basic") {
+      return `crownChainBest:${lang}:${normalizedMode(mode)}`;
+    }
 
     function isLocalDebugAllowed() {
       const host = String(window.location.hostname || "").toLowerCase();
@@ -276,12 +294,19 @@
       return performance.now();
     }
 
-    function bestScore() {
-      return Number(localStorage.getItem(storageKey) || "0");
+    function bestScore(mode = state?.mode || els.mode.value || "basic") {
+      return Number(localStorage.getItem(bestStorageKey(mode)) || "0");
     }
 
     function saveBest() {
-      if (state.score > bestScore()) localStorage.setItem(storageKey, String(state.score));
+      const key = bestStorageKey(state.mode);
+      if (state.score > bestScore(state.mode)) localStorage.setItem(key, String(state.score));
+    }
+
+    function setLeaderboardStatus(message, isError = false) {
+      if (!els.leaderboardStatus) return;
+      els.leaderboardStatus.textContent = message;
+      els.leaderboardStatus.classList.toggle("error", isError);
     }
 
     function restartClass(el, className) {
@@ -297,6 +322,151 @@
       els.message.classList.remove("pulse-note", "pulse-combo", "pulse-heal", "pulse-damage");
       const effectClass = tone || (isError ? "pulse-damage" : "pulse-note");
       if (effectClass) restartClass(els.message, effectClass);
+    }
+
+    function leaderboardModeLabel(mode) {
+      return `${modeLabel(t, mode)} ${t.leaderboard}`;
+    }
+
+    function renderLeaderboard(items, ownRank = null, ownItem = null) {
+      if (!els.leaderboardList) return;
+      els.leaderboardList.innerHTML = "";
+      if (!items.length) {
+        const empty = document.createElement("li");
+        empty.innerHTML = `<span class="rank">-</span><span class="name">${t.leaderboardEmpty}</span><span class="score-value">0</span>`;
+        els.leaderboardList.appendChild(empty);
+        return;
+      }
+      items.forEach((item, index) => {
+        const row = document.createElement("li");
+        const isOwn = ownItem && item.id === ownItem.id;
+        if (isOwn) row.classList.add("own");
+        row.innerHTML = `
+          <span class="rank">${index + 1}</span>
+          <span class="name"></span>
+          <span class="score-value">${Number(item.score || 0).toLocaleString()}</span>
+        `;
+        row.querySelector(".name").textContent = `${item.name || t.namePlaceholder}${isOwn ? ` · ${t.myRank}` : ""}`;
+        els.leaderboardList.appendChild(row);
+      });
+      if (!ownItem || !ownRank || ownRank <= items.length) return;
+      const row = document.createElement("li");
+      row.classList.add("own");
+      row.innerHTML = `
+        <span class="rank">${ownRank}</span>
+        <span class="name"></span>
+        <span class="score-value">${Number(ownItem.score || 0).toLocaleString()}</span>
+      `;
+      row.querySelector(".name").textContent = `${ownItem.name || t.namePlaceholder} · ${t.myRank}`;
+      els.leaderboardList.appendChild(row);
+    }
+
+    async function loadLeaderboard(mode = state?.mode || els.mode.value || "basic", ownId = "") {
+      if (els.leaderboardScope) els.leaderboardScope.textContent = leaderboardModeLabel(mode);
+      if (!SUGGEST_API) {
+        renderLeaderboard([]);
+        setLeaderboardStatus(t.rankingsUnavailable, true);
+        return;
+      }
+      setLeaderboardStatus(t.rankingsLoading);
+      try {
+        const params = new URLSearchParams({
+          game: GAME_NAME,
+          boardSize: String(SIZE),
+          limit: "10",
+          lang,
+          mode: normalizedMode(mode)
+        });
+        if (ownId) params.set("id", ownId);
+        const response = await fetch(`${SUGGEST_API}/scores?${params.toString()}`, { cache: "no-store" });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || t.rankingsFailed);
+        renderLeaderboard(Array.isArray(data.items) ? data.items : [], data.ownRank, data.ownItem);
+        setLeaderboardStatus(state?.scoreUploaded ? t.scoreUploaded : state?.gameOver ? t.gameOverToSubmit : t.submitHint);
+      } catch (error) {
+        renderLeaderboard([]);
+        setLeaderboardStatus(error.message || t.rankingsFailed, true);
+      }
+    }
+
+    function currentPlayerName() {
+      return String(els.playerName?.value || "").trim().slice(0, 16) || t.namePlaceholder;
+    }
+
+    function trackGameEvent(type, detail = {}) {
+      if (!SUGGEST_API) return;
+      const payload = {
+        game: GAME_NAME,
+        type,
+        lang,
+        boardSize: SIZE,
+        mode: normalizedMode(detail.mode || state?.mode || els.mode.value || "basic"),
+        ...detail
+      };
+      const body = JSON.stringify(payload);
+      try {
+        if (navigator.sendBeacon) {
+          const blob = new Blob([body], { type: "application/json" });
+          if (navigator.sendBeacon(`${SUGGEST_API}/events`, blob)) return;
+        }
+        fetch(`${SUGGEST_API}/events`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body,
+          keepalive: true
+        }).catch(() => {});
+      } catch {
+        // Analytics should never interrupt play.
+      }
+    }
+
+    function scorePayload() {
+      return {
+        game: GAME_NAME,
+        lang,
+        mode: normalizedMode(state.mode),
+        score: state.score,
+        boardSize: SIZE,
+        total: SIZE * SIZE,
+        filled: SIZE * SIZE,
+        turns: state.turn,
+        finishType: "gameover",
+        level: state.level,
+        bestCombo: state.bestCombo,
+        name: currentPlayerName()
+      };
+    }
+
+    async function submitScore() {
+      if (!state?.gameOver || state.scoreUploaded || !els.submitScore) return;
+      if (!SUGGEST_API) {
+        setLeaderboardStatus(t.rankingsUnavailable, true);
+        return;
+      }
+      const payload = scorePayload();
+      if (els.playerName) {
+        els.playerName.value = payload.name;
+        localStorage.setItem(playerNameKey, payload.name);
+      }
+      els.submitScore.disabled = true;
+      setLeaderboardStatus(t.uploadingScore);
+      try {
+        const response = await fetch(`${SUGGEST_API}/scores`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || t.uploadFailed);
+        state.scoreUploaded = true;
+        state.scoreId = data.item && data.item.id ? data.item.id : "";
+        setLeaderboardStatus(t.scoreUploaded);
+        await loadLeaderboard(state.mode, state.scoreId);
+      } catch (error) {
+        setLeaderboardStatus(error.message || t.uploadFailed, true);
+      } finally {
+        els.submitScore.disabled = state.scoreUploaded;
+      }
     }
 
     function ensureAudio() {
@@ -718,7 +888,17 @@
     function endGame() {
       state.gameOver = true;
       saveBest();
+      trackGameEvent("game_finish", {
+        mode: state.mode,
+        finishType: "gameover",
+        score: state.score,
+        level: state.level,
+        turns: state.turn,
+        bestCombo: state.bestCombo
+      });
       setMessage(`${t.gameOver}. ${t.score}: ${state.score.toLocaleString()}`, true, "pulse-damage");
+      setLeaderboardStatus(t.gameOverToSubmit);
+      render();
     }
 
     function updateLegal() {
@@ -735,7 +915,7 @@
     function renderStats() {
       const currentDef = Rules.getPieceDef(state.player.type);
       els.score.textContent = state.score.toLocaleString();
-      els.best.textContent = Math.max(bestScore(), state.score).toLocaleString();
+      els.best.textContent = Math.max(bestScore(state.mode), state.score).toLocaleString();
       els.life.textContent = `${state.life}/${state.maxLife}`;
       if (els.level) els.level.textContent = String(state.level);
       if (els.combo) els.combo.textContent = String(state.combo);
@@ -747,6 +927,7 @@
         : `${currentDef.label} ${displayName(state.player.type)}`;
       if (els.legal) els.legal.textContent = String(legalCaptures.length || legalMoves.length);
       els.mode.disabled = !state.gameOver && state.turn > 0;
+      if (els.submitScore) els.submitScore.disabled = !state.gameOver || !!state.scoreUploaded;
     }
 
     function renderPieceList() {
@@ -783,7 +964,9 @@
         turnActionTaken: false,
         freeMoveAvailable: true,
         bag: { drawPile: createBagFromComposition(MODES[selectedMode].startingBag) },
-        gameOver: false
+        gameOver: false,
+        scoreUploaded: false,
+        scoreId: ""
       };
       fx.playerMotion = null;
       fx.enemyAttackMotion = null;
@@ -807,6 +990,8 @@
         setMessage(`${t.title} - ${modeLabel(t, selectedMode)}`);
       }
       render();
+      loadLeaderboard(selectedMode);
+      trackGameEvent("game_start", { mode: selectedMode, level: 1 });
     }
 
     function finishCaptureAt(x, y) {
@@ -932,7 +1117,7 @@
 
       if (Rules.isBoardClear(state)) awardClearBonus();
       if (state.life <= 0) endGame();
-      render();
+      else render();
     }
 
     function moveTo(x, y) {
@@ -1062,7 +1247,15 @@
     els.mode.addEventListener("change", () => {
       if (!state || state.gameOver || state.turn === 0) newGame(els.mode.value);
     });
+    if (els.playerName) {
+      els.playerName.addEventListener("change", () => {
+        localStorage.setItem(playerNameKey, currentPlayerName());
+        els.playerName.value = currentPlayerName();
+      });
+    }
+    if (els.submitScore) els.submitScore.addEventListener("click", submitScore);
 
+    trackGameEvent("page_view", { mode: els.mode.value || "basic" });
     newGame(els.mode.value || "basic");
   }
 
