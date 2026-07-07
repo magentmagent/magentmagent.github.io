@@ -254,6 +254,10 @@ a {
   transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
 }
 
+.block span {
+  display: none;
+}
+
 .tower.editable .block {
   cursor: pointer;
 }
@@ -289,20 +293,8 @@ a {
 
 .block.diamond {
   background: #8a5fbf;
-  border-radius: 6px;
-}
-
-.block.diamond::before {
-  content: "";
-  width: 56%;
-  aspect-ratio: 1;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.92);
-  transform: rotate(45deg);
-}
-
-.block.diamond span {
-  display: none;
+  border-radius: 0;
+  clip-path: polygon(50% 4%, 96% 50%, 50% 96%, 4% 50%);
 }
 
 .palette {

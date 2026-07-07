@@ -65,20 +65,21 @@
     );
   }
 
-  function commonPrefix(a, b) {
-    let i = 0;
-    while (i < a.length && i < b.length && a[i] === b[i]) i += 1;
-    return i;
-  }
-
   function optimalClicks(target, current) {
     return target.reduce((sum, targetStack, col) => {
       const currentStack = current[col] || [];
-      const keep = commonPrefix(targetStack, currentStack);
-      const cut = currentStack.length > keep ? 1 : 0;
-      const place = targetStack.length - keep;
-      return sum + cut + place;
+      const keep = longestTargetPrefixSubsequence(targetStack, currentStack);
+      return sum + (currentStack.length - keep) + (targetStack.length - keep);
     }, 0);
+  }
+
+  function longestTargetPrefixSubsequence(targetStack, currentStack) {
+    let keep = 0;
+    for (const block of currentStack) {
+      if (block === targetStack[keep]) keep += 1;
+      if (keep >= targetStack.length) break;
+    }
+    return keep;
   }
 
   function makeStage(stage) {
@@ -236,7 +237,7 @@
     const stack = state.stageData.current[col];
     if (!stack || row < 0 || row >= stack.length) return;
     const nodes = [...document.querySelectorAll(`#currentTower [data-col="${col}"]`)]
-      .filter(node => Number(node.dataset.row) >= row);
+      .filter(node => Number(node.dataset.row) === row);
     nodes.forEach((node, index) => {
       node.style.setProperty("--cut-delay", `${index * 24}ms`);
       node.classList.add("cutting");
@@ -245,7 +246,7 @@
     setMessage(T.msgCut);
     playSfx("cut");
     setTimeout(() => {
-      stack.splice(row);
+      stack.splice(row, 1);
       render();
       if (towersEqual(state.stageData.target, state.stageData.current)) clearStage();
     }, 190);
@@ -343,7 +344,7 @@
 
   function previewCut(column, row) {
     [...column.querySelectorAll(".block")].forEach(node => {
-      node.classList.toggle("cut-preview", Number(node.dataset.row) >= row && row >= 0);
+      node.classList.toggle("cut-preview", Number(node.dataset.row) === row && row >= 0);
     });
   }
 
@@ -380,7 +381,7 @@
   }
 
   function startPointerDrag(event, id) {
-    if (event.pointerType === "mouse") return;
+    if (!state.started || state.finished) return;
     ensureAudio();
     state.selected = id;
     const ghost = blockNode(id);
@@ -411,7 +412,11 @@
     const id = pointerDrag.id;
     pointerDrag.ghost.remove();
     pointerDrag = null;
-    if (target) placeBlock(Number(target.dataset.col), id);
+    if (target) {
+      placeBlock(Number(target.dataset.col), id);
+    } else {
+      selectBlock(id);
+    }
   });
 
   function setMessage(text) {
