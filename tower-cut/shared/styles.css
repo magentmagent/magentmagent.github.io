@@ -802,8 +802,12 @@ a {
   }
 
   .tower {
-    --tower-column-size: minmax(18px, 24px);
+    --tower-column-size: minmax(22px, 28px);
     grid-auto-columns: var(--tower-column-size);
+    justify-self: center;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
     gap: 4px;
     height: min(42dvh, 280px);
     min-height: 258px;
