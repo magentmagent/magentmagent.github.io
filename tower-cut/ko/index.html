@@ -41,7 +41,27 @@
         <option value="ja">日本語</option>
       </select>
     </nav>
-    <section class="game-shell" aria-label="타워컷 게임">
+    <section id="startView" class="start-screen" aria-labelledby="startTitle">
+      <div class="start-copy">
+        <p class="eyebrow">스택 편집 퍼즐</p>
+        <h1 id="startTitle" class="start-title">타워컷</h1>
+        <p class="lead">60초 안에 가능한 한 많은 망가진 탑을 복원하세요.</p>
+        <ul class="start-rules">
+          <li>목표 탑과 현재 탑을 비교합니다.</li>
+          <li>팔레트의 층 블록을 원하는 줄 위로 끌어다 놓거나, 선택 후 줄을 누릅니다.</li>
+          <li>잘못된 층을 누르면 그 층만 제거되고 위층은 아래로 내려옵니다.</li>
+        </ul>
+        <button id="startBtn" class="button" type="button">시작</button>
+      </div>
+      <div class="mini-demo" aria-hidden="true">
+        <div class="mini-towers">
+          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+        </div>
+        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
+      </div>
+    </section>
+    <section id="gameView" class="game-shell is-hidden" aria-label="타워컷 게임">
       <div class="play-area">
         <div class="hud" aria-label="게임 상태">
           <div class="stat"><span>시간</span><strong id="timeValue">60</strong></div>
@@ -63,13 +83,7 @@
         </div>
         <div id="palette" class="palette" aria-label="블록 팔레트"></div>
       </div>
-      <aside class="side-panel">
-        <h1 class="panel-title">타워컷</h1>
-        <ul class="rules">
-          <li>목표 탑과 현재 탑이 같아지도록 만드세요.</li>
-          <li>아래 팔레트의 층 블록을 줄 위로 끌어다 놓으세요.</li>
-          <li>잘못된 층을 누르면 그 층만 빠지고 위층이 내려옵니다.</li>
-        </ul>
+      <aside class="side-panel" aria-label="조작">
         <div id="message" class="message" aria-live="polite"></div>
         <div class="button-row">
           <button id="endBtn" class="button secondary" type="button">종료</button>
@@ -85,27 +99,6 @@
       <a href="/contact.html">문의</a>
     </footer>
   </main>
-  <div id="startModal" class="modal-backdrop show">
-    <section class="modal-card start-card" role="dialog" aria-modal="true" aria-labelledby="startTitle">
-      <div>
-        <h1 id="startTitle" class="start-title">타워컷</h1>
-        <p>60초 안에 가능한 한 많은 망가진 탑을 복원하세요.</p>
-        <ul class="start-rules">
-          <li>목표 탑과 현재 탑을 비교합니다.</li>
-          <li>팔레트의 층 블록을 원하는 줄 위로 끌어다 놓습니다.</li>
-          <li>잘못된 층을 누르면 그 층만 제거되고 위층은 아래로 내려옵니다.</li>
-        </ul>
-        <button id="startBtn" class="button" type="button">시작</button>
-      </div>
-      <div class="mini-demo" aria-hidden="true">
-        <div class="mini-towers">
-          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-        </div>
-        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
-      </div>
-    </section>
-  </div>
   <div id="resultModal" class="modal-backdrop">
     <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
       <h2 id="resultTitle">결과</h2>

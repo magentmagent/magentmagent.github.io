@@ -20,7 +20,8 @@
     currentLabels: document.querySelector("#currentLabels"),
     palette: document.querySelector("#palette"),
     message: document.querySelector("#message"),
-    startModal: document.querySelector("#startModal"),
+    startView: document.querySelector("#startView"),
+    gameView: document.querySelector("#gameView"),
     resultModal: document.querySelector("#resultModal"),
     startBtn: document.querySelector("#startBtn"),
     restartBtns: document.querySelectorAll("[data-action='restart']"),
@@ -34,6 +35,7 @@
   let timerId = 0;
   let audioCtx = null;
   let pointerDrag = null;
+  let suppressPaletteClick = false;
 
   function rnd(max) {
     return Math.floor(Math.random() * max);
@@ -329,6 +331,10 @@
   }
 
   function wireDropColumn(column, col) {
+    column.addEventListener("click", event => {
+      if (event.target.closest(".block") || event.target.closest(".drop-zone")) return;
+      placeBlock(col, state.selected);
+    });
     column.addEventListener("dragover", event => {
       event.preventDefault();
       column.classList.add("drop-hover");
@@ -355,20 +361,20 @@
       const button = document.createElement("button");
       button.className = "palette-button";
       button.type = "button";
-      button.draggable = true;
+      button.draggable = false;
       button.setAttribute("aria-pressed", String(state.selected === block.id));
       button.setAttribute("aria-label", T.blockName[block.id]);
       button.dataset.block = block.id;
       button.appendChild(blockNode(block.id));
-      button.addEventListener("click", () => selectBlock(block.id));
-      button.addEventListener("dragstart", event => {
-        ensureAudio();
-        state.selected = block.id;
-        event.dataTransfer.effectAllowed = "copy";
-        event.dataTransfer.setData("text/plain", block.id);
-        renderPalette();
+      button.addEventListener("click", event => {
+        if (suppressPaletteClick) {
+          event.preventDefault();
+          return;
+        }
+        selectBlock(block.id);
       });
       button.addEventListener("pointerdown", event => startPointerDrag(event, block.id));
+      button.addEventListener("mousedown", event => startMouseDrag(event, block.id));
       els.palette.appendChild(button);
     });
   }
@@ -382,14 +388,27 @@
 
   function startPointerDrag(event, id) {
     if (!state.started || state.finished) return;
+    if (pointerDrag) return;
     ensureAudio();
     state.selected = id;
     const ghost = blockNode(id);
     ghost.classList.add("drag-ghost");
     document.body.appendChild(ghost);
-    pointerDrag = { id, ghost };
+    pointerDrag = { id, ghost, startX: event.clientX, startY: event.clientY, moved: false };
     moveGhost(event.clientX, event.clientY);
     event.currentTarget.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+  }
+
+  function startMouseDrag(event, id) {
+    if (!state.started || state.finished || pointerDrag) return;
+    ensureAudio();
+    state.selected = id;
+    const ghost = blockNode(id);
+    ghost.classList.add("drag-ghost");
+    document.body.appendChild(ghost);
+    pointerDrag = { id, ghost, startX: event.clientX, startY: event.clientY, moved: false };
+    moveGhost(event.clientX, event.clientY);
     event.preventDefault();
   }
 
@@ -399,32 +418,59 @@
   }
 
   window.addEventListener("pointermove", event => {
-    if (!pointerDrag) return;
-    moveGhost(event.clientX, event.clientY);
-    const col = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("#currentTower .column");
-    document.querySelectorAll("#currentTower .column").forEach(node => node.classList.toggle("drop-hover", node === col));
+    handleDragMove(event.clientX, event.clientY);
   });
 
-  window.addEventListener("pointerup", event => {
+  window.addEventListener("mousemove", event => {
+    handleDragMove(event.clientX, event.clientY);
+  });
+
+  function handleDragMove(clientX, clientY) {
     if (!pointerDrag) return;
-    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("#currentTower .column");
+    if (Math.hypot(clientX - pointerDrag.startX, clientY - pointerDrag.startY) > 8) {
+      pointerDrag.moved = true;
+    }
+    moveGhost(clientX, clientY);
+    const col = document.elementFromPoint(clientX, clientY)?.closest?.("#currentTower .column");
+    document.querySelectorAll("#currentTower .column").forEach(node => node.classList.toggle("drop-hover", node === col));
+  }
+
+  window.addEventListener("pointerup", event => {
+    handleDragEnd(event.clientX, event.clientY);
+  });
+
+  window.addEventListener("mouseup", event => {
+    handleDragEnd(event.clientX, event.clientY);
+  });
+
+  function handleDragEnd(clientX, clientY) {
+    if (!pointerDrag) return;
+    const target = document.elementFromPoint(clientX, clientY)?.closest?.("#currentTower .column");
     document.querySelectorAll("#currentTower .column").forEach(node => node.classList.remove("drop-hover"));
     const id = pointerDrag.id;
+    const moved = pointerDrag.moved;
     pointerDrag.ghost.remove();
     pointerDrag = null;
-    if (target) {
+    if (moved) {
+      suppressPaletteClick = true;
+      setTimeout(() => {
+        suppressPaletteClick = false;
+      }, 0);
+    }
+    if (target && moved) {
       placeBlock(Number(target.dataset.col), id);
     } else {
       selectBlock(id);
     }
-  });
+  }
 
   function setMessage(text) {
     els.message.textContent = text;
   }
 
   function showStart(show) {
-    els.startModal.classList.toggle("show", show);
+    els.startView.classList.toggle("is-hidden", !show);
+    els.gameView.classList.toggle("is-hidden", show);
   }
 
   function showResult(show, reason) {

@@ -63,10 +63,28 @@ a {
   font-weight: 850;
 }
 
+.screen,
+.is-hidden {
+  display: none !important;
+}
+
+.start-screen {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 18px;
+  padding: clamp(16px, 4vw, 28px);
+  border: 1px solid #d7cfbf;
+  border-radius: 8px;
+  background: rgba(255, 253, 248, 0.94);
+  box-shadow: 0 14px 32px rgba(42, 42, 48, 0.08);
+}
+
 .game-shell {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 1fr) 210px;
   gap: 12px;
   align-items: start;
 }
@@ -150,7 +168,8 @@ a {
   gap: 8px;
   align-items: end;
   justify-content: center;
-  min-height: min(42vh, 330px);
+  height: 344px;
+  min-height: 344px;
   padding: 10px 10px 8px;
   border-radius: 8px;
   background:
@@ -164,6 +183,7 @@ a {
   flex-direction: column;
   justify-content: flex-end;
   min-height: 100%;
+  height: 100%;
   gap: 4px;
   padding: 6px 5px 5px;
   border: 2px dashed transparent;
@@ -251,6 +271,7 @@ a {
   box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.08), 0 4px 8px rgba(55, 48, 38, 0.08);
   user-select: none;
   touch-action: none;
+  flex: 0 0 auto;
   transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
 }
 
@@ -349,29 +370,7 @@ a {
   display: grid;
   gap: 10px;
   padding: 12px;
-}
-
-.panel-title {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.rules {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: #4f5965;
-  font-size: 0.92rem;
-  font-weight: 720;
-}
-
-.rules li {
-  padding: 9px 10px;
-  border: 1px solid #d7cfbf;
-  border-radius: 8px;
-  background: #fffdf8;
+  align-content: start;
 }
 
 .message {
@@ -425,19 +424,17 @@ a {
   display: grid;
 }
 
-.modal-card {
-  width: min(100%, 760px);
-  padding: 18px;
-}
-
-.start-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.72fr);
-  gap: 16px;
-}
-
 .start-title {
+  margin: 0 0 10px;
   font-size: clamp(2.2rem, 8vw, 4rem);
+  line-height: 0.95;
+}
+
+.start-copy .lead {
+  margin: 0;
+  color: #4f5965;
+  font-size: clamp(1rem, 2.5vw, 1.18rem);
+  font-weight: 780;
 }
 
 .start-rules {
@@ -457,7 +454,6 @@ a {
 }
 
 .mini-demo {
-  align-self: stretch;
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -550,21 +546,33 @@ a {
 
 @media (max-width: 760px) {
   .app {
-    width: min(100% - 14px, 560px);
-    padding-top: 6px;
+    width: min(100% - 10px, 560px);
+    padding-top: 4px;
+  }
+
+  .app:has(#gameView:not(.is-hidden)) .top-nav,
+  .app:has(#gameView:not(.is-hidden)) .page-footer {
+    display: none;
   }
 
   .game-shell {
     grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .start-screen {
+    grid-template-columns: 1fr;
+    padding: 14px;
   }
 
   .hud {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 5px;
+    gap: 4px;
+    margin-bottom: 6px;
   }
 
   .stat {
-    padding: 7px 6px;
+    padding: 5px 6px;
   }
 
   .stat span {
@@ -572,23 +580,33 @@ a {
   }
 
   .tower-board {
-    gap: 6px;
+    gap: 5px;
   }
 
   .play-area,
   .side-panel {
-    padding: 8px;
+    padding: 6px;
   }
 
   .tower-card {
-    padding: 7px;
+    padding: 5px;
+  }
+
+  .tower-card h2 {
+    margin-bottom: 4px;
+    font-size: 0.66rem;
   }
 
   .tower {
-    grid-auto-columns: minmax(36px, 52px);
+    grid-auto-columns: minmax(30px, 36px);
     gap: 4px;
-    min-height: min(40vh, 315px);
+    height: 258px;
+    min-height: 258px;
     padding: 5px;
+  }
+
+  .column-labels {
+    display: none;
   }
 
   .column {
@@ -603,28 +621,61 @@ a {
   }
 
   .palette {
-    margin-top: 8px;
+    margin-top: 6px;
+    padding: 5px;
+    gap: 5px;
   }
 
   .palette-button {
-    min-height: 48px;
+    min-height: 42px;
+  }
+
+  .palette-button .block {
+    width: 30px;
   }
 
   .side-panel {
-    gap: 8px;
-  }
-
-  .rules {
-    font-size: 0.84rem;
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 0.9fr);
+    align-items: stretch;
+    gap: 6px;
+    box-shadow: none;
   }
 
   .top-nav strong {
     flex-basis: 100%;
   }
 
-  .start-card {
-    grid-template-columns: 1fr;
+  .top-nav {
+    margin-bottom: 6px;
+    gap: 5px 9px;
+    font-size: 0.78rem;
   }
+
+  .message {
+    min-height: 38px;
+    padding: 8px;
+    font-size: 0.86rem;
+  }
+
+  .button {
+    min-height: 40px;
+  }
+
+  .modal-card {
+    max-height: calc(100dvh - 24px);
+    overflow: auto;
+    padding: 14px;
+  }
+
+  .result-grid {
+    gap: 6px;
+    margin: 8px 0;
+  }
+
+  .result-grid div {
+    padding: 8px;
+  }
+
 }
 
 @keyframes placePop {

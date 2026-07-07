@@ -41,7 +41,27 @@
         <option value="ja">日本語</option>
       </select>
     </nav>
-    <section class="game-shell" aria-label="Tower Cut game">
+    <section id="startView" class="start-screen" aria-labelledby="startTitle">
+      <div class="start-copy">
+        <p class="eyebrow">スタック編集パズル</p>
+        <h1 id="startTitle" class="start-title">Tower Cut</h1>
+        <p class="lead">60秒でできるだけ多くの壊れた塔を復元しましょう。</p>
+        <ul class="start-rules">
+          <li>目標の塔と現在の塔を見比べます。</li>
+          <li>パレットの層ブロックを列へドラッグするか、選んで列を押します。</li>
+          <li>間違った層を押すと、その層だけを取り除き、上の層は下へ落ちます。</li>
+        </ul>
+        <button id="startBtn" class="button" type="button">スタート</button>
+      </div>
+      <div class="mini-demo" aria-hidden="true">
+        <div class="mini-towers">
+          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+        </div>
+        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
+      </div>
+    </section>
+    <section id="gameView" class="game-shell is-hidden" aria-label="Tower Cut game">
       <div class="play-area">
         <div class="hud" aria-label="ゲーム状況">
           <div class="stat"><span>時間</span><strong id="timeValue">60</strong></div>
@@ -63,13 +83,7 @@
         </div>
         <div id="palette" class="palette" aria-label="ブロックパレット"></div>
       </div>
-      <aside class="side-panel">
-        <h1 class="panel-title">Tower Cut</h1>
-        <ul class="rules">
-          <li>現在の塔を目標の塔と同じ形にしましょう。</li>
-          <li>下のパレットから層ブロックを列へドラッグします。</li>
-          <li>間違った層を押すと、その層だけが消えて上の層が下がります。</li>
-        </ul>
+      <aside class="side-panel" aria-label="操作">
         <div id="message" class="message" aria-live="polite"></div>
         <div class="button-row">
           <button id="endBtn" class="button secondary" type="button">終了</button>
@@ -85,27 +99,6 @@
       <a href="/contact.html">連絡</a>
     </footer>
   </main>
-  <div id="startModal" class="modal-backdrop show">
-    <section class="modal-card start-card" role="dialog" aria-modal="true" aria-labelledby="startTitle">
-      <div>
-        <h1 id="startTitle" class="start-title">Tower Cut</h1>
-        <p>60秒でできるだけ多くの壊れた塔を復元しましょう。</p>
-        <ul class="start-rules">
-          <li>目標の塔と現在の塔を見比べます。</li>
-          <li>パレットの層ブロックを列の上へドラッグします。</li>
-          <li>間違った層を押すと、その層だけを取り除き、上の層は下へ落ちます。</li>
-        </ul>
-        <button id="startBtn" class="button" type="button">スタート</button>
-      </div>
-      <div class="mini-demo" aria-hidden="true">
-        <div class="mini-towers">
-          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-        </div>
-        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
-      </div>
-    </section>
-  </div>
   <div id="resultModal" class="modal-backdrop">
     <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
       <h2 id="resultTitle">結果</h2>

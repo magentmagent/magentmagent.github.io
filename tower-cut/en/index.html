@@ -41,7 +41,27 @@
         <option value="ja">日本語</option>
       </select>
     </nav>
-    <section class="game-shell" aria-label="Tower Cut game">
+    <section id="startView" class="start-screen" aria-labelledby="startTitle">
+      <div class="start-copy">
+        <p class="eyebrow">Stack editing puzzle</p>
+        <h1 id="startTitle" class="start-title">Tower Cut</h1>
+        <p class="lead">Restore as many broken towers as possible in 60 seconds.</p>
+        <ul class="start-rules">
+          <li>Compare the target tower and your tower.</li>
+          <li>Drag a layer from the palette onto a column, or select a layer and tap a column.</li>
+          <li>Click one wrong layer to remove only that layer. Upper layers fall down.</li>
+        </ul>
+        <button id="startBtn" class="button" type="button">Start</button>
+      </div>
+      <div class="mini-demo" aria-hidden="true">
+        <div class="mini-towers">
+          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
+        </div>
+        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
+      </div>
+    </section>
+    <section id="gameView" class="game-shell is-hidden" aria-label="Tower Cut game">
       <div class="play-area">
         <div class="hud" aria-label="Game status">
           <div class="stat"><span>Time</span><strong id="timeValue">60</strong></div>
@@ -63,13 +83,7 @@
         </div>
         <div id="palette" class="palette" aria-label="Block palette"></div>
       </div>
-      <aside class="side-panel">
-        <h1 class="panel-title">Tower Cut</h1>
-        <ul class="rules">
-          <li>Match your tower to the target tower.</li>
-          <li>Drag a block layer onto a column to stack it.</li>
-          <li>Click one wrong layer to remove it. Upper layers fall down.</li>
-        </ul>
+      <aside class="side-panel" aria-label="Actions">
         <div id="message" class="message" aria-live="polite"></div>
         <div class="button-row">
           <button id="endBtn" class="button secondary" type="button">End</button>
@@ -85,27 +99,6 @@
       <a href="/contact.html">Contact</a>
     </footer>
   </main>
-  <div id="startModal" class="modal-backdrop show">
-    <section class="modal-card start-card" role="dialog" aria-modal="true" aria-labelledby="startTitle">
-      <div>
-        <h1 id="startTitle" class="start-title">Tower Cut</h1>
-        <p>Restore as many broken towers as possible in 60 seconds.</p>
-        <ul class="start-rules">
-          <li>Compare the target tower and your tower.</li>
-          <li>Drag a layer from the palette onto a column.</li>
-          <li>Click a wrong layer to remove only that layer. Upper layers fall down.</li>
-        </ul>
-        <button id="startBtn" class="button" type="button">Start</button>
-      </div>
-      <div class="mini-demo" aria-hidden="true">
-        <div class="mini-towers">
-          <div class="mini-stack"><span class="block triangle"><span>▲</span></span><span class="block circle"><span>●</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-          <div class="mini-stack"><span class="block circle"><span>●</span></span><i class="mini-cut"></i><span class="block triangle"><span>▲</span></span><span class="block square"><span>■</span></span><i class="tower-base"></i></div>
-        </div>
-        <div class="mini-palette"><span class="block square"><span>■</span></span><span class="block circle"><span>●</span></span><span class="block triangle"><span>▲</span></span></div>
-      </div>
-    </section>
-  </div>
   <div id="resultModal" class="modal-backdrop">
     <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
       <h2 id="resultTitle">Result</h2>
