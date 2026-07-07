@@ -46,10 +46,6 @@
         <p class="eyebrow">Stack editing puzzle</p>
         <h1 id="startTitle" class="start-title">Tower Cut</h1>
         <p class="lead">Restore as many broken towers as possible in 60 seconds.</p>
-        <div class="intro-action-row">
-          <button id="startBtn" class="button" type="button">Start</button>
-          <button id="introLeaderboardToggle" class="button secondary" type="button">Ranking</button>
-        </div>
       </div>
       <div class="rule-column">
         <article class="rule-card">
@@ -76,15 +72,19 @@
           </div>
           <p><b>Cut and fall</b><span>Tap a wrong layer to remove only that layer. Upper layers fall down.</span></p>
         </article>
-        <article id="introLeaderboardPanel" class="leaderboard-panel is-hidden">
-          <div class="leaderboard-title">
-            <strong>Ranking</strong>
-            <span id="introLeaderboardScope">Tower Cut</span>
-          </div>
-          <ol id="introLeaderboardList" class="leaderboard-list"></ol>
-          <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
-        </article>
       </div>
+      <div class="intro-action-row">
+        <button id="startBtn" class="button" type="button">Start</button>
+        <button id="introLeaderboardToggle" class="button secondary" type="button">Ranking</button>
+      </div>
+      <article id="introLeaderboardPanel" class="leaderboard-panel is-hidden">
+        <div class="leaderboard-title">
+          <strong>Ranking</strong>
+          <span id="introLeaderboardScope">Tower Cut</span>
+        </div>
+        <ol id="introLeaderboardList" class="leaderboard-list"></ol>
+        <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
+      </article>
     </section>
     <section id="gameView" class="game-shell is-hidden" aria-label="Tower Cut game">
       <div class="play-area">

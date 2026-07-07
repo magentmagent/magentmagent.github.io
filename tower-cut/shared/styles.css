@@ -70,8 +70,8 @@ a {
 
 .start-screen {
   display: grid;
-  grid-template-columns: minmax(250px, 0.72fr) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 12px;
   align-items: start;
   margin-bottom: 18px;
   padding: clamp(16px, 4vw, 28px);
@@ -435,7 +435,7 @@ a {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 0;
 }
 
 .share-actions {
@@ -446,6 +446,11 @@ a {
 .rule-column {
   display: grid;
   gap: 8px;
+}
+
+.start-screen > .leaderboard-panel {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .rule-card,
@@ -460,9 +465,10 @@ a {
 
 .rule-card {
   display: grid;
-  grid-template-columns: 106px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 10px;
   align-items: center;
+  padding: 8px;
 }
 
 .rule-card p {
@@ -486,11 +492,11 @@ a {
   position: relative;
   display: grid;
   place-items: end center;
-  width: 92px;
-  min-height: 118px;
+  width: 72px;
+  min-height: 92px;
   margin: 0 auto;
-  padding: 8px 7px 7px;
-  border: 4px solid #5e6472;
+  padding: 6px 5px 5px;
+  border: 3px solid #5e6472;
   border-radius: 8px;
   background:
     linear-gradient(90deg, rgba(94, 100, 114, 0.16) 1px, transparent 1px) 0 0 / 33.333% 25%,
@@ -501,12 +507,12 @@ a {
 
 .compare-art,
 .cut-art {
-  grid-template-columns: 1fr 18px 1fr;
+  grid-template-columns: 1fr 14px 1fr;
   gap: 3px;
 }
 
 .place-art {
-  grid-template-rows: auto 18px auto;
+  grid-template-rows: auto 14px auto;
   align-content: center;
   gap: 4px;
 }
@@ -516,7 +522,7 @@ a {
   align-content: end;
   justify-items: center;
   gap: 3px;
-  min-height: 70px;
+  min-height: 50px;
   padding: 2px;
   border-radius: 6px;
   background: rgba(255, 253, 248, 0.66);
@@ -524,7 +530,7 @@ a {
 
 .rule-tower .block,
 .rule-palette .block {
-  width: 18px;
+  width: 13px;
   box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.08), 0 2px 4px rgba(55, 48, 38, 0.08);
 }
 
@@ -541,7 +547,7 @@ a {
 .rule-arrow,
 .rule-drop {
   color: #17767c;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   font-weight: 950;
   align-self: center;
   justify-self: center;
@@ -713,26 +719,36 @@ a {
   .start-screen {
     grid-template-columns: 1fr;
     padding: 14px;
-  }
-
-  .rule-card {
-    grid-template-columns: 96px minmax(0, 1fr);
     gap: 10px;
   }
 
+  .rule-card {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 9px;
+  }
+
   .rule-art {
-    width: 82px;
-    min-height: 108px;
-    padding: 7px 6px 6px;
+    width: 64px;
+    min-height: 82px;
+    padding: 5px 4px 4px;
   }
 
   .rule-tower {
-    min-height: 62px;
+    min-height: 42px;
   }
 
   .rule-tower .block,
   .rule-palette .block {
-    width: 16px;
+    width: 12px;
+  }
+
+  .start-title {
+    margin-bottom: 6px;
+    font-size: clamp(1.95rem, 11vw, 2.6rem);
+  }
+
+  .start-copy .lead {
+    font-size: 0.95rem;
   }
 
   .rule-card b {

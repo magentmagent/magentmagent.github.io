@@ -46,10 +46,6 @@
         <p class="eyebrow">スタック編集パズル</p>
         <h1 id="startTitle" class="start-title">Tower Cut</h1>
         <p class="lead">60秒でできるだけ多くの壊れた塔を復元しましょう。</p>
-        <div class="intro-action-row">
-          <button id="startBtn" class="button" type="button">スタート</button>
-          <button id="introLeaderboardToggle" class="button secondary" type="button">ランキング</button>
-        </div>
       </div>
       <div class="rule-column">
         <article class="rule-card">
@@ -76,15 +72,19 @@
           </div>
           <p><b>切って落とす</b><span>間違った層を押すと、その層だけ消え、上の層が下へ落ちます。</span></p>
         </article>
-        <article id="introLeaderboardPanel" class="leaderboard-panel is-hidden">
-          <div class="leaderboard-title">
-            <strong>ランキング</strong>
-            <span id="introLeaderboardScope">Tower Cut</span>
-          </div>
-          <ol id="introLeaderboardList" class="leaderboard-list"></ol>
-          <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
-        </article>
       </div>
+      <div class="intro-action-row">
+        <button id="startBtn" class="button" type="button">スタート</button>
+        <button id="introLeaderboardToggle" class="button secondary" type="button">ランキング</button>
+      </div>
+      <article id="introLeaderboardPanel" class="leaderboard-panel is-hidden">
+        <div class="leaderboard-title">
+          <strong>ランキング</strong>
+          <span id="introLeaderboardScope">Tower Cut</span>
+        </div>
+        <ol id="introLeaderboardList" class="leaderboard-list"></ol>
+        <p id="introLeaderboardStatus" class="status-note" aria-live="polite"></p>
+      </article>
     </section>
     <section id="gameView" class="game-shell is-hidden" aria-label="Tower Cut game">
       <div class="play-area">
