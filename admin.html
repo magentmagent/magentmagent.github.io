@@ -80,9 +80,52 @@
       gap: 10px;
     }
 
+    .stats-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .stats-tab {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      background: #fffaf1;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .stats-tab.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .chart-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .chart-summary strong,
+    .chart-summary span {
+      display: block;
+    }
+
+    .chart-summary strong {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .chart-summary span {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
     .chart-row {
       display: grid;
-      grid-template-columns: 150px minmax(0, 1fr) 64px;
+      grid-template-columns: 132px minmax(0, 1fr) 64px;
       gap: 10px;
       align-items: center;
     }
@@ -99,9 +142,9 @@
 
     .chart-track {
       min-width: 0;
-      height: 14px;
+      height: 22px;
       overflow: hidden;
-      border-radius: 999px;
+      border-radius: 6px;
       background: #e9e1d3;
     }
 
@@ -365,6 +408,8 @@
         types: ["page_view", "game_start", "game_finish_manual", "game_finish_timeout", "share_result"]
       }
     };
+    let activeStatsGame = "word-chain-snake";
+    let latestStatsItems = [];
 
     function statKey(item) {
       return `${item.game || "word-chain-snake"}:${item.lang || "ko"}:${item.boardSize || 8}:${item.mode || "classic"}:${item.type || ""}`;
@@ -402,36 +447,72 @@
       return [...map.values()].sort((a, b) => statKey(a).localeCompare(statKey(b)));
     }
 
-    function aggregateStats(items) {
+    function itemsForGame(items, game) {
+      return items.filter(item => (item.game || "word-chain-snake") === game);
+    }
+
+    function aggregateStats(items, groupBy = "type") {
       const map = new Map();
       for (const item of items) {
-        const game = item.game || "word-chain-snake";
-        const type = item.type || "";
-        const key = `${game}:${type}`;
+        const key = item[groupBy] || "";
         map.set(key, {
-          game,
-          type,
+          key,
           count: (map.get(key)?.count || 0) + Number(item.count || 0)
         });
       }
-      return [...map.values()].sort((a, b) => `${a.game}:${a.type}`.localeCompare(`${b.game}:${b.type}`));
+      return [...map.values()].sort((a, b) => String(a.key).localeCompare(String(b.key)));
+    }
+
+    function renderStatsTabs(items) {
+      const tabs = document.createElement("nav");
+      tabs.className = "stats-tabs";
+      tabs.setAttribute("aria-label", "game stats tabs");
+      for (const game of Object.keys(STAT_GAMES)) {
+        const button = document.createElement("button");
+        button.className = `stats-tab${game === activeStatsGame ? " active" : ""}`;
+        button.type = "button";
+        const total = itemsForGame(items, game).reduce((sum, item) => sum + Number(item.count || 0), 0);
+        button.textContent = `${gameLabel(game)} (${total.toLocaleString("ko-KR")})`;
+        button.addEventListener("click", () => {
+          activeStatsGame = game;
+          renderStats(latestStatsItems);
+        });
+        tabs.appendChild(button);
+      }
+      els.statsList.appendChild(tabs);
     }
 
     function renderStatsChart(items) {
       const panel = document.createElement("section");
       panel.className = "panel chart-grid";
       const title = document.createElement("h2");
-      title.textContent = "이벤트 그래프";
+      title.textContent = `${gameLabel(activeStatsGame)} stats`;
       panel.appendChild(title);
 
-      const rows = aggregateStats(items);
+      const total = items.reduce((sum, item) => sum + Number(item.count || 0), 0);
+      const starts = items
+        .filter(item => item.type === "game_start")
+        .reduce((sum, item) => sum + Number(item.count || 0), 0);
+      const finishes = items
+        .filter(item => String(item.type || "").startsWith("game_finish"))
+        .reduce((sum, item) => sum + Number(item.count || 0), 0);
+      const summary = document.createElement("div");
+      summary.className = "chart-summary";
+      summary.innerHTML = `
+        <article class="item"><strong>${total.toLocaleString("ko-KR")}</strong><span>Total events</span></article>
+        <article class="item"><strong>${starts.toLocaleString("ko-KR")}</strong><span>Game starts</span></article>
+        <article class="item"><strong>${finishes.toLocaleString("ko-KR")}</strong><span>Finishes</span></article>
+      `;
+      panel.appendChild(summary);
+
+      const rows = aggregateStats(items, "type");
       const max = Math.max(1, ...rows.map(item => Number(item.count || 0)));
       for (const item of rows) {
         const row = document.createElement("div");
         row.className = "chart-row";
         const label = document.createElement("span");
         label.className = "chart-label";
-        label.textContent = `${gameLabel(item.game)} · ${eventLabel(item.type)}`;
+        label.textContent = eventLabel(item.key);
         const track = document.createElement("span");
         track.className = "chart-track";
         const bar = document.createElement("span");
@@ -450,12 +531,16 @@
     function renderStats(items) {
       els.statsList.innerHTML = "";
       const normalizedItems = withDefaultStats(items);
-      renderStatsChart(normalizedItems);
+      latestStatsItems = normalizedItems;
+      if (!STAT_GAMES[activeStatsGame]) activeStatsGame = Object.keys(STAT_GAMES)[0];
+      const gameItems = itemsForGame(normalizedItems, activeStatsGame);
+      renderStatsTabs(normalizedItems);
+      renderStatsChart(gameItems);
       const detail = document.createElement("section");
       detail.className = "stats-grid";
       detail.setAttribute("aria-label", "game event stat details");
       els.statsList.appendChild(detail);
-      for (const item of normalizedItems) {
+      for (const item of gameItems) {
         const row = document.createElement("article");
         row.className = "item stat-row";
         row.innerHTML = `
@@ -466,11 +551,10 @@
           <strong>${Number(item.count || 0).toLocaleString("ko-KR")}</strong>
         `;
         row.querySelector("strong").textContent = gameLabel(item.game);
-        row.querySelector("span:nth-of-type(2)").textContent = `${item.mode || "-"} · ${eventLabel(item.type)}`;
+        row.querySelector("span:nth-of-type(2)").textContent = `${item.mode || "-"} / ${eventLabel(item.type)}`;
         detail.appendChild(row);
       }
     }
-
     function gameLabel(game) {
       return STAT_GAMES[game]?.label || game || "word chain snake";
     }
