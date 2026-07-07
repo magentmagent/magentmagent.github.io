@@ -337,10 +337,12 @@ h1 {
   place-items: center;
   padding: 12px;
   background: rgba(246, 243, 234, 0.42);
+  overflow: auto;
 }
 
 .overlay-card {
   width: min(100%, 360px);
+  max-height: 100%;
   display: grid;
   gap: 10px;
   border: 1px solid rgba(216, 208, 195, 0.96);
@@ -348,6 +350,7 @@ h1 {
   background: rgba(255, 253, 248, 0.96);
   box-shadow: 0 14px 32px rgba(36, 38, 43, 0.16);
   padding: 14px;
+  overflow: auto;
 }
 
 .overlay-card h2 {
@@ -603,6 +606,12 @@ h1 {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.overlay-card .leaderboard-list {
+  max-height: min(240px, 34vh);
+  overflow-y: auto;
+  padding-right: 2px;
 }
 
 .leaderboard-list li {

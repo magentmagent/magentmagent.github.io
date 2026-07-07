@@ -560,19 +560,19 @@
         ...detail
       };
       const body = JSON.stringify(payload);
+      const sendBeaconFallback = () => {
+        if (!navigator.sendBeacon) return false;
+        return navigator.sendBeacon(`${SUGGEST_API}/events`, new Blob([body], { type: "text/plain" }));
+      };
       try {
-        if (navigator.sendBeacon) {
-          const blob = new Blob([body], { type: "application/json" });
-          if (navigator.sendBeacon(`${SUGGEST_API}/events`, blob)) return;
-        }
         fetch(`${SUGGEST_API}/events`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "text/plain" },
           body,
           keepalive: true
-        }).catch(() => {});
+        }).catch(sendBeaconFallback);
       } catch {
-        // Analytics should never interrupt play.
+        sendBeaconFallback();
       }
     }
 
