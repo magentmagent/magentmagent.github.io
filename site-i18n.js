@@ -38,6 +38,12 @@
     return "/crown-chain/en/";
   }
 
+  function towerCutPath(lang) {
+    if (lang === "ko") return "/tower-cut/ko/";
+    if (lang === "ja") return "/tower-cut/ja/";
+    return "/tower-cut/en/";
+  }
+
   function content(lang, key) {
     const t = TEXT[lang] || TEXT.en;
     const common = t.common;
@@ -119,6 +125,11 @@
           <a href="${crownChainPath(lang)}">${t.home.play}</a>
         </article>
         <article class="card">
+          <h2>Tower Cut</h2>
+          <p>${TOWER_TEXT[lang].body}</p>
+          <a href="${towerCutPath(lang)}">${t.home.play}</a>
+        </article>
+        <article class="card">
           <h2>word chain snake</h2>
           <p>${t.home.cardGame}</p>
           <a href="${gamePath(lang)}">${t.home.play}</a>
@@ -143,6 +154,14 @@
           <p>${CROWN_TEXT[lang].support}</p>
           <p>${CROWN_TEXT[lang].note}</p>
           <a class="button" href="${crownChainPath(lang)}">${t.home.play}</a>
+        </article>
+        <article class="card">
+          <img class="game-thumb" src="/public/tower-cut-social.png" alt="${TOWER_TEXT[lang].preview}">
+          <h2>Tower Cut</h2>
+          <p>${TOWER_TEXT[lang].body}</p>
+          <p>${TOWER_TEXT[lang].support}</p>
+          <p>${TOWER_TEXT[lang].note}</p>
+          <a class="button" href="${towerCutPath(lang)}">${t.home.play}</a>
         </article>
         <article class="card">
           <img class="game-thumb" src="/public/social-card-v2.png" alt="${t.home.preview}">
@@ -228,6 +247,27 @@
       body: "駒を取るたびに現在の駒が変わる、短く遊べるチェス連鎖パズルです。",
       support: "標準駒だけの基本モードと、レベルに応じて変則駒が増えるカオスモードがあります。",
       note: "基本とカオスは別々のリーダーボードで集計され、最高得点も別々に保存されます。"
+    }
+  };
+
+  const TOWER_TEXT = {
+    en: {
+      preview: "Tower Cut tower puzzle preview",
+      body: "A quick stack-editing puzzle where you cut broken towers and rebuild them to match the target.",
+      support: "Blocks can only be placed on top of a column, and cutting one block removes everything above it.",
+      note: "Score comes from speed, efficient clicks, PERFECT clears, and combo streaks."
+    },
+    ko: {
+      preview: "타워컷 탑 퍼즐 미리보기",
+      body: "망가진 탑을 잘라내고 다시 쌓아 목표 탑과 맞추는 짧은 스택 편집 퍼즐입니다.",
+      support: "블록은 각 줄의 맨 위에만 쌓을 수 있고, 블록을 자르면 그 위까지 한 번에 제거됩니다.",
+      note: "속도, 클릭 효율, PERFECT 완성, 콤보 연속으로 점수를 얻습니다."
+    },
+    ja: {
+      preview: "Tower Cut 塔パズルプレビュー",
+      body: "壊れた塔を切って積み直し、目標の塔に合わせる短時間のスタック編集パズルです。",
+      support: "ブロックは列の一番上にだけ置けます。ブロックを切ると、その上のブロックもまとめて消えます。",
+      note: "速さ、クリック効率、PERFECT クリア、コンボ継続で得点が伸びます。"
     }
   };
 

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Tower Cut は、目標の塔に合わせて壊れた塔を切って積み直す短時間ブラウザパズルです。">
+  <meta name="theme-color" content="#f4f1e8">
+  <meta name="google-adsense-account" content="ca-pub-9708655184984227">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+  <link rel="canonical" href="https://magentmagent.github.io/tower-cut/ja/">
+  <link rel="alternate" hreflang="en" href="https://magentmagent.github.io/tower-cut/en/">
+  <link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/tower-cut/ko/">
+  <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/tower-cut/ja/">
+  <link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/tower-cut/en/">
+  <meta property="og:title" content="Tower Cut">
+  <meta property="og:description" content="目標の塔に合わせて、壊れた塔を切って積み直しましょう。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://magentmagent.github.io/tower-cut/ja/">
+  <meta property="og:image" content="https://magentmagent.github.io/public/tower-cut-social.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tower Cut">
+  <meta name="twitter:description" content="目標の塔に合わせて、壊れた塔を切って積み直しましょう。">
+  <meta name="twitter:image" content="https://magentmagent.github.io/public/tower-cut-social.png">
+  <link rel="stylesheet" href="../shared/styles.css">
+  <title>Tower Cut</title>
+</head>
+<body>
+  <main class="app">
+    <nav class="top-nav" aria-label="サイトナビゲーション">
+      <strong><a class="brand-link" href="/">magentmagent games</a></strong>
+      <a href="/">ホーム</a>
+      <a href="/games.html">ゲーム</a>
+      <a href="/about.html">概要</a>
+      <a href="/privacy.html">プライバシー</a>
+      <a href="/contact.html">連絡</a>
+      <select id="langSelect" class="lang-select" aria-label="言語">
+        <option value="en">English</option>
+        <option value="ko">한국어</option>
+        <option value="ja">日本語</option>
+      </select>
+    </nav>
+    <section class="game-shell" aria-label="Tower Cut game">
+      <div class="play-area">
+        <div class="hud" aria-label="ゲーム状況">
+          <div class="stat"><span>時間</span><strong id="timeValue">60</strong></div>
+          <div class="stat"><span>得点</span><strong id="scoreValue">0</strong></div>
+          <div class="stat"><span>コンボ</span><strong id="comboValue">x1</strong></div>
+          <div class="stat"><span>ステージ</span><strong id="stageValue">1</strong></div>
+        </div>
+        <div class="tower-board">
+          <article class="tower-card">
+            <h2>目標の塔</h2>
+            <div id="targetTower" class="tower" aria-label="目標の塔"></div>
+            <div id="targetLabels" class="column-labels" aria-hidden="true"></div>
+          </article>
+          <article class="tower-card">
+            <h2>現在の塔</h2>
+            <div id="currentTower" class="tower editable" aria-label="現在の塔"></div>
+            <div id="currentLabels" class="column-labels" aria-hidden="true"></div>
+          </article>
+        </div>
+        <div id="palette" class="palette" aria-label="ブロックパレット"></div>
+      </div>
+      <aside class="side-panel">
+        <h1 class="panel-title">Tower Cut</h1>
+        <ul class="rules">
+          <li>現在の塔を目標の塔と同じ形にしましょう。</li>
+          <li>ブロックは各列の一番上にだけ置けます。</li>
+          <li>ブロックを押すと、そのブロックと上のブロックがまとめて切られます。</li>
+        </ul>
+        <div id="message" class="message" aria-live="polite"></div>
+        <div class="button-row">
+          <button id="endBtn" class="button secondary" type="button">終了</button>
+          <button class="button danger" data-action="restart" type="button">再スタート</button>
+        </div>
+      </aside>
+    </section>
+    <footer class="page-footer">
+      <a href="/">ホーム</a>
+      <a href="/games.html">ゲーム</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシー</a>
+      <a href="/contact.html">連絡</a>
+    </footer>
+  </main>
+  <div id="startModal" class="modal-backdrop show">
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="startTitle">
+      <h1 id="startTitle">Tower Cut</h1>
+      <p>60秒でできるだけ多くの塔を復元しましょう。間違った上部を切り、必要なブロックを積み直します。</p>
+      <button id="startBtn" class="button" type="button">スタート</button>
+    </section>
+  </div>
+  <div id="resultModal" class="modal-backdrop">
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <h2 id="resultTitle">結果</h2>
+      <div id="resultStats" class="result-grid"></div>
+      <button class="button" data-action="restart" type="button">もう一度</button>
+    </section>
+  </div>
+  <script>
+    window.TOWER_CUT_LANG = "ja";
+    window.TOWER_CUT_TEXT = {
+      score: "得点", cleared: "クリア", perfect: "PERFECT", maxCombo: "最大コンボ", totalClicks: "クリック", highestStage: "ステージ",
+      placeColumn: "列に置く",
+      resultTimeout: "時間切れ", resultManual: "終了",
+      blockName: { square: "四角", circle: "丸", triangle: "三角", diamond: "ひし形" },
+      msgNext: "次の塔です。",
+      msgFull: "この列にはもう置けません。",
+      msgPlaced: "ブロックを置きました。",
+      msgCut: "塔を切りました。",
+      msgSelected: name => `${name}を選択`,
+      msgPerfect: score => `PERFECT +${score}`,
+      msgClear: (score, over) => `CLEAR +${score} / 追加クリック ${over}`
+    };
+  </script>
+  <script src="../shared/game.js"></script>
+</body>
+</html>

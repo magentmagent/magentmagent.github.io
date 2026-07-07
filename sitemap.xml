@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Static sitemap for GitHub Pages indexing. Refreshed after arrowhead removal. -->
+<!-- Static sitemap for GitHub Pages indexing. Refreshed after Tower Cut launch. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://magentmagent.github.io/</loc>
@@ -28,6 +28,18 @@
   <url>
     <loc>https://magentmagent.github.io/crown-chain/ja/</loc>
     <lastmod>2026-07-06</lastmod>
+  </url>
+  <url>
+    <loc>https://magentmagent.github.io/tower-cut/en/</loc>
+    <lastmod>2026-07-07</lastmod>
+  </url>
+  <url>
+    <loc>https://magentmagent.github.io/tower-cut/ko/</loc>
+    <lastmod>2026-07-07</lastmod>
+  </url>
+  <url>
+    <loc>https://magentmagent.github.io/tower-cut/ja/</loc>
+    <lastmod>2026-07-07</lastmod>
   </url>
   <url>
     <loc>https://magentmagent.github.io/games.html</loc>

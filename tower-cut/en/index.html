@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Tower Cut is a quick browser puzzle where you cut and rebuild broken block towers to match the target.">
+  <meta name="theme-color" content="#f4f1e8">
+  <meta name="google-adsense-account" content="ca-pub-9708655184984227">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+  <link rel="canonical" href="https://magentmagent.github.io/tower-cut/en/">
+  <link rel="alternate" hreflang="en" href="https://magentmagent.github.io/tower-cut/en/">
+  <link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/tower-cut/ko/">
+  <link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/tower-cut/ja/">
+  <link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/tower-cut/en/">
+  <meta property="og:title" content="Tower Cut">
+  <meta property="og:description" content="Cut and rebuild broken block towers before time runs out.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://magentmagent.github.io/tower-cut/en/">
+  <meta property="og:image" content="https://magentmagent.github.io/public/tower-cut-social.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tower Cut">
+  <meta name="twitter:description" content="Cut and rebuild broken block towers before time runs out.">
+  <meta name="twitter:image" content="https://magentmagent.github.io/public/tower-cut-social.png">
+  <link rel="stylesheet" href="../shared/styles.css">
+  <title>Tower Cut</title>
+</head>
+<body>
+  <main class="app">
+    <nav class="top-nav" aria-label="Site navigation">
+      <strong><a class="brand-link" href="/">magentmagent games</a></strong>
+      <a href="/">Home</a>
+      <a href="/games.html">Games</a>
+      <a href="/about.html">About</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/contact.html">Contact</a>
+      <select id="langSelect" class="lang-select" aria-label="Language">
+        <option value="en">English</option>
+        <option value="ko">한국어</option>
+        <option value="ja">日本語</option>
+      </select>
+    </nav>
+    <section class="game-shell" aria-label="Tower Cut game">
+      <div class="play-area">
+        <div class="hud" aria-label="Game status">
+          <div class="stat"><span>Time</span><strong id="timeValue">60</strong></div>
+          <div class="stat"><span>Score</span><strong id="scoreValue">0</strong></div>
+          <div class="stat"><span>Combo</span><strong id="comboValue">x1</strong></div>
+          <div class="stat"><span>Stage</span><strong id="stageValue">1</strong></div>
+        </div>
+        <div class="tower-board">
+          <article class="tower-card">
+            <h2>Target Tower</h2>
+            <div id="targetTower" class="tower" aria-label="Target tower"></div>
+            <div id="targetLabels" class="column-labels" aria-hidden="true"></div>
+          </article>
+          <article class="tower-card">
+            <h2>Your Tower</h2>
+            <div id="currentTower" class="tower editable" aria-label="Your tower"></div>
+            <div id="currentLabels" class="column-labels" aria-hidden="true"></div>
+          </article>
+        </div>
+        <div id="palette" class="palette" aria-label="Block palette"></div>
+      </div>
+      <aside class="side-panel">
+        <h1 class="panel-title">Tower Cut</h1>
+        <ul class="rules">
+          <li>Match your tower to the target tower.</li>
+          <li>New blocks can only be placed on top of a column.</li>
+          <li>Click a block to cut that block and everything above it.</li>
+        </ul>
+        <div id="message" class="message" aria-live="polite"></div>
+        <div class="button-row">
+          <button id="endBtn" class="button secondary" type="button">End</button>
+          <button class="button danger" data-action="restart" type="button">Restart</button>
+        </div>
+      </aside>
+    </section>
+    <footer class="page-footer">
+      <a href="/">Home</a>
+      <a href="/games.html">Games</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/contact.html">Contact</a>
+    </footer>
+  </main>
+  <div id="startModal" class="modal-backdrop show">
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="startTitle">
+      <h1 id="startTitle">Tower Cut</h1>
+      <p>Restore as many towers as possible in 60 seconds. Cut wrong upper blocks, then rebuild from the top.</p>
+      <button id="startBtn" class="button" type="button">Start</button>
+    </section>
+  </div>
+  <div id="resultModal" class="modal-backdrop">
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <h2 id="resultTitle">Result</h2>
+      <div id="resultStats" class="result-grid"></div>
+      <button class="button" data-action="restart" type="button">Play again</button>
+    </section>
+  </div>
+  <script>
+    window.TOWER_CUT_LANG = "en";
+    window.TOWER_CUT_TEXT = {
+      score: "Score", cleared: "Cleared", perfect: "Perfect", maxCombo: "Max combo", totalClicks: "Clicks", highestStage: "Stage",
+      placeColumn: "Place on column",
+      resultTimeout: "Time up", resultManual: "Run ended",
+      blockName: { square: "Square", circle: "Circle", triangle: "Triangle", diamond: "Diamond" },
+      msgNext: "Next tower.",
+      msgFull: "That column is full.",
+      msgPlaced: "Block placed.",
+      msgCut: "Tower cut.",
+      msgSelected: name => `${name} selected.`,
+      msgPerfect: score => `PERFECT +${score}`,
+      msgClear: (score, over) => `CLEAR +${score} / ${over} extra click${over === 1 ? "" : "s"}`
+    };
+  </script>
+  <script src="../shared/game.js"></script>
+</body>
+</html>
