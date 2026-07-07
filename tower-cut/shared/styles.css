@@ -373,7 +373,7 @@ a {
   width: 34px;
 }
 
-@media (hover: hover) and (pointer: fine) {
+@media (min-width: 761px) {
   .palette-button {
     grid-template-rows: 1fr auto;
     gap: 5px;
