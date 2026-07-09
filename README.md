@@ -1,1 +1,1 @@
-# magentmagent.github.io
+# magentmagent.com

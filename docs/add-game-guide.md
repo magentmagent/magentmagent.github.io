@@ -1,6 +1,6 @@
 # magentmagent games 게임 추가 가이드
 
-이 문서는 `magentmagent.github.io` 사이트에 새 브라우저 게임을 추가할 때 참고하는 작업 규칙입니다. 현재 사이트는 GitHub Pages에서 정적 파일로 배포되며, 게임별 HTML은 게임 전용 경로 아래에 둡니다.
+이 문서는 `magentmagent.com` 사이트에 새 브라우저 게임을 추가할 때 참고하는 작업 규칙입니다. 현재 사이트는 GitHub Pages에서 정적 파일로 배포되며, 게임별 HTML은 게임 전용 경로 아래에 둡니다.
 
 ## 기본 원칙
 
@@ -104,11 +104,11 @@ CSS를 바꾸지 않았더라도, 배포 캐시를 확실히 피하고 싶으면
 예:
 
 ```html
-<link rel="canonical" href="https://magentmagent.github.io/tile-path/en/">
-<link rel="alternate" hreflang="en" href="https://magentmagent.github.io/tile-path/en/">
-<link rel="alternate" hreflang="ko" href="https://magentmagent.github.io/tile-path/ko/">
-<link rel="alternate" hreflang="ja" href="https://magentmagent.github.io/tile-path/ja/">
-<link rel="alternate" hreflang="x-default" href="https://magentmagent.github.io/">
+<link rel="canonical" href="https://magentmagent.com/tile-path/en/">
+<link rel="alternate" hreflang="en" href="https://magentmagent.com/tile-path/en/">
+<link rel="alternate" hreflang="ko" href="https://magentmagent.com/tile-path/ko/">
+<link rel="alternate" hreflang="ja" href="https://magentmagent.com/tile-path/ja/">
+<link rel="alternate" hreflang="x-default" href="https://magentmagent.com/">
 ```
 
 게임 페이지가 `/{game}/{lang}/`에 있으면 `public` 자산은 보통 `../../public/...`로 참조합니다.
@@ -204,8 +204,8 @@ public/tile-path-social.png
 각 게임 HTML의 OG/Twitter 이미지를 해당 이미지로 연결합니다.
 
 ```html
-<meta property="og:image" content="https://magentmagent.github.io/public/tile-path-social.png">
-<meta name="twitter:image" content="https://magentmagent.github.io/public/tile-path-social.png">
+<meta property="og:image" content="https://magentmagent.com/public/tile-path-social.png">
+<meta name="twitter:image" content="https://magentmagent.com/public/tile-path-social.png">
 ```
 
 공유 문구는 기본 영어를 우선하고, 한국어/일본어 게임에서 공유할 때만 해당 언어 문구를 사용합니다. 공유 URL은 언어별로 달라도 되지만, 불필요하게 이미지 생성 URL을 따로 만들지 않습니다.

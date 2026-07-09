@@ -630,7 +630,7 @@
       if (location.protocol === "http:" || location.protocol === "https:") {
         return `${location.origin}/crown-chain/${lang}/`;
       }
-      return `https://magentmagent.github.io/crown-chain/${lang}/`;
+      return `https://magentmagent.com/crown-chain/${lang}/`;
     }
 
     function shareSummary() {

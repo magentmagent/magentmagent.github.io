@@ -751,7 +751,7 @@
 
   function shareUrl() {
     if (location.protocol === "http:" || location.protocol === "https:") return `${location.origin}/tower-cut/${lang}/`;
-    return `https://magentmagent.github.io/tower-cut/${lang}/`;
+    return `https://magentmagent.com/tower-cut/${lang}/`;
   }
 
   function shareSummary() {
