@@ -157,6 +157,10 @@ li {
   max-width: 8.2em;
 }
 
+.feature-title {
+  max-width: 8.4em;
+}
+
 .stack-title {
   display: grid;
   gap: 0.02em;
@@ -168,6 +172,34 @@ li {
 
 .hero .lead {
   max-width: 23em;
+}
+
+.hero-points {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0 0;
+  padding: 0;
+  color: #3c434b;
+  font-weight: 780;
+  list-style: none;
+}
+
+.hero-points li {
+  margin: 0;
+  padding-left: 18px;
+  position: relative;
+}
+
+.hero-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f6bd60;
+  box-shadow: 0 0 0 3px rgba(246, 189, 96, 0.22);
 }
 
 .game-thumb {
