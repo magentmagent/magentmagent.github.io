@@ -957,11 +957,13 @@
             <select id="modeSelect">
               <option value="classic" selected>通常</option>
               <option value="snake">スネーク</option>
+              <option value="daily">デイリー</option>
             </select>
           </label>
         </div>
         <div class="action-row">
           <button id="startBtn" class="button primary" type="button">開始</button>
+          <button id="dailyBtn" class="button" type="button">デイリー</button>
           <button id="introRankingBtn" class="button" type="button">ランキング</button>
         </div>
         <div id="introRankingPanel" class="result-panel intro-ranking hidden">
@@ -1099,11 +1101,14 @@
     }
 
     function normalizeMode(value) {
-      return value === "snake" ? "snake" : "classic";
+      if (value === "snake" || value === "daily") return value;
+      return "classic";
     }
 
     function modeLabel(mode = gameMode) {
-      return normalizeMode(mode) === "snake" ? "スネーク" : "通常";
+      const normalized = normalizeMode(mode);
+      if (normalized === "daily") return "デイリー";
+      return normalized === "snake" ? "スネーク" : "基本";
     }
 
     function appleCountForSize(size) {
@@ -1132,22 +1137,54 @@
       return [...letters];
     }
 
-    function randomItem(items) {
-      return items[Math.floor(Math.random() * items.length)];
+    function dailyChallengeKey(date = new Date()) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function hashSeed(text) {
+      let hash = 2166136261;
+      for (const char of String(text)) {
+        hash ^= char.charCodeAt(0);
+        hash = Math.imul(hash, 16777619);
+      }
+      return hash >>> 0;
+    }
+
+    function seededRandom(seed) {
+      let value = seed >>> 0;
+      return () => {
+        value += 0x6D2B79F5;
+        let next = value;
+        next = Math.imul(next ^ (next >>> 15), next | 1);
+        next ^= next + Math.imul(next ^ (next >>> 7), next | 61);
+        return ((next ^ (next >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function appleRandom(size, mode) {
+      const normalized = normalizeMode(mode);
+      if (normalized !== "daily") return Math.random;
+      return seededRandom(hashSeed(`${GAME_LANG}:${dailyChallengeKey()}:${size}:${normalized}`));
+    }
+
+    function randomItem(items, rng = Math.random) {
+      return items[Math.floor(rng() * items.length)];
     }
 
     function generateApples(size, mode) {
-      if (normalizeMode(mode) !== "snake") return [];
+      const normalized = normalizeMode(mode);
+      if (normalized === "classic") return [];
+      const rng = appleRandom(size, normalized);
       const letters = availableAppleLetters();
       if (!letters.length) return [];
       const target = appleCountForSize(size);
       const apples = [];
       const attempts = size * size * 8;
       for (let i = 0; i < attempts && apples.length < target; i += 1) {
-        const x = Math.floor(Math.random() * size);
-        const y = Math.floor(Math.random() * size);
+        const x = Math.floor(rng() * size);
+        const y = Math.floor(rng() * size);
         if (isNearApple(apples, x, y)) continue;
-        apples.push({ x, y, letter: randomItem(letters) });
+        apples.push({ x, y, letter: randomItem(letters, rng) });
       }
       return apples;
     }
@@ -1352,6 +1389,7 @@
       sizeSelect: document.querySelector("#sizeSelect"),
       modeSelect: document.querySelector("#modeSelect"),
       startBtn: document.querySelector("#startBtn"),
+      dailyBtn: document.querySelector("#dailyBtn"),
       introScreen: document.querySelector("#introScreen"),
       gameScreen: document.querySelector("#gameScreen"),
       dictStatus: document.querySelector("#dictStatus"),
@@ -1368,6 +1406,7 @@
       return {
         board,
         gameMode,
+        dailyKey: gameMode === "daily" ? dailyChallengeKey() : "",
         apples,
         collectedApples: [],
         appleCount: 0,
@@ -1758,7 +1797,7 @@
     }
 
     function updateIntroRules() {
-      const snakeMode = normalizeMode(els.modeSelect.value) === "snake";
+      const snakeMode = normalizeMode(els.modeSelect.value) !== "classic";
       els.classicRuleList.classList.toggle("hidden", snakeMode);
       els.snakeRuleList.classList.toggle("hidden", !snakeMode);
     }
@@ -1842,6 +1881,10 @@
       setMessage("端のマスを押して開始位置を選んでください。", "ok");
       trackGameEvent("game_start", { boardSize, mode: gameMode });
       render();
+    }
+
+    function startDailyChallenge() {
+      startGame(DEFAULT_SIZE, "daily");
     }
 
     function startFromUrlParams() {
@@ -2243,6 +2286,8 @@
         total,
         boardSize: state.board.length,
         mode: normalizeMode(state.gameMode),
+        daily: normalizeMode(state.gameMode) === "daily",
+        dailyKey: state.dailyKey || "",
         turns: state.turn,
         finishType: state.finishType || "surrender",
         lang: GAME_LANG
@@ -2307,28 +2352,38 @@
     }
 
     function shareUrl() {
-      return "https://magentmagent.com/word-chain-snake/ja/";
+      const result = resultSnapshot();
+      const params = new URLSearchParams({
+        size: String(result.boardSize),
+        mode: normalizeMode(result.mode),
+        challenge: String(result.score),
+        utm_source: "share",
+        utm_medium: "result",
+        utm_campaign: "word_chain_snake"
+      });
+      return `https://magentmagent.com/word-chain-snake/ja/?${params.toString()}`;
     }
 
     function shareSummary() {
       const result = resultSnapshot();
       const finish = result.finishType === "clear" ? "クリア" : "降参";
-      const mode = result.mode === "snake" ? " スネーク" : "";
-      return `${result.boardSize}x${result.boardSize}${mode} 日本語 ${finish} ${result.score.toLocaleString("ja-JP")}点`;
+      return `${result.boardSize}x${result.boardSize} ${modeLabel(result.mode)} 日本語 ${finish} ${result.score.toLocaleString("ja-JP")}点`;
     }
 
     function shareText() {
       const result = resultSnapshot();
       return [
-        `Word Chain Snake - ${shareSummary()}`,
-        `${result.filled} / ${result.total}マス, ${result.turns}単語`,
-        "長い単語と交差で得点を伸ばしましょう。",
+        `Word Chain Snakeで${result.score.toLocaleString("ja-JP")}点を取りました。`,
+        `挑戦条件: ${result.boardSize}x${result.boardSize} ${modeLabel(result.mode)}ボード`,
+        `${result.filled} / ${result.total}マス、${result.turns}語。`,
+        "長い単語と交差配置で高得点を狙えます。",
         shareUrl()
       ].join("\n");
     }
 
     function xShareText() {
-      return `${shareSummary()}\nしりとりとスネークを組み合わせた単語パズル`;
+      const result = resultSnapshot();
+      return `Word Chain Snakeで${result.score.toLocaleString("ja-JP")}点を取りました。\n${result.boardSize}x${result.boardSize} ${modeLabel(result.mode)}ボードで超えられますか？`;
     }
 
     function trackShare(channel) {
@@ -2634,6 +2689,7 @@
         lang: GAME_LANG,
         boardSize: Number(state.board && state.board.length) || boardSize || DEFAULT_SIZE,
         mode: normalizeMode(detail.mode || state.gameMode || gameMode),
+        dailyKey: state.dailyKey || "",
         ...detail
       };
       const body = JSON.stringify(payload);
@@ -2790,6 +2846,7 @@
     }
 
     els.startBtn.addEventListener("click", startGame);
+    els.dailyBtn.addEventListener("click", startDailyChallenge);
     els.introRankingBtn.addEventListener("click", toggleIntroRanking);
     els.languageSelect.addEventListener("change", switchLanguage);
     els.sizeSelect.addEventListener("change", () => {
