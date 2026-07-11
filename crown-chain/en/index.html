@@ -57,10 +57,15 @@
   <div class="app">
     <nav class="top-nav" aria-label="Site navigation">
       <strong><a class="brand-link" href="/?lang=en">magentmagent games</a></strong>
+      <a href="/?lang=en">Home</a>
       <a href="/games.html?lang=en">Games</a>
-      <a href="/crown-chain/ko/">한국어</a>
-      <a href="/crown-chain/ja/">日本語</a>
-      <a href="/word-chain-snake/en/">word chain snake</a>
+      <a href="/about.html?lang=en">About</a>
+      <a href="/contact.html?lang=en">Contact</a>
+      <select id="navLangSelect" class="lang-select" aria-label="Language">
+        <option value="en" selected>English</option>
+        <option value="ko">한국어</option>
+        <option value="ja">日本語</option>
+      </select>
     </nav>
 
     <section id="introScreen" class="intro-screen">
@@ -210,6 +215,11 @@
   <script src="../shared/renderer.js"></script>
   <script src="../../public/suggest-config.js"></script>
   <script src="../shared/game.js"></script>
-  <script>window.CrownChainGame.init({ lang: "en" });</script>
+  <script>
+    document.querySelector("#navLangSelect")?.addEventListener("change", event => {
+      window.location.href = `/crown-chain/${event.target.value}/`;
+    });
+    window.CrownChainGame.init({ lang: "en" });
+  </script>
 </body>
 </html>

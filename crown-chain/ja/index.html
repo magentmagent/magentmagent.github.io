@@ -37,10 +37,15 @@
   <div class="app">
     <nav class="top-nav" aria-label="サイトナビゲーション">
       <strong><a class="brand-link" href="/?lang=ja">magentmagent games</a></strong>
+      <a href="/?lang=ja">ホーム</a>
       <a href="/games.html?lang=ja">ゲーム</a>
-      <a href="/crown-chain/en/">English</a>
-      <a href="/crown-chain/ko/">한국어</a>
-      <a href="/word-chain-snake/ja/">word chain snake</a>
+      <a href="/about.html?lang=ja">紹介</a>
+      <a href="/contact.html?lang=ja">連絡</a>
+      <select id="navLangSelect" class="lang-select" aria-label="言語">
+        <option value="en">English</option>
+        <option value="ko">한국어</option>
+        <option value="ja" selected>日本語</option>
+      </select>
     </nav>
 
     <section id="introScreen" class="intro-screen">
@@ -190,6 +195,11 @@
   <script src="../shared/renderer.js"></script>
   <script src="../../public/suggest-config.js"></script>
   <script src="../shared/game.js"></script>
-  <script>window.CrownChainGame.init({ lang: "ja" });</script>
+  <script>
+    document.querySelector("#navLangSelect")?.addEventListener("change", event => {
+      window.location.href = `/crown-chain/${event.target.value}/`;
+    });
+    window.CrownChainGame.init({ lang: "ja" });
+  </script>
 </body>
 </html>

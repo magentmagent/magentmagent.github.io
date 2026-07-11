@@ -64,6 +64,16 @@ a {
   text-decoration: none;
 }
 
+.lang-select {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 850;
+}
+
 .hero-line {
   display: grid;
   gap: 5px;
@@ -71,13 +81,14 @@ a {
 }
 
 .intro-screen {
-  width: min(100%, 430px);
+  width: min(100%, 760px);
   min-height: calc(100vh - 118px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 12px;
+  padding-top: clamp(8px, 3vh, 28px);
 }
 
 .intro-screen .hero-line {
@@ -85,7 +96,7 @@ a {
 }
 
 .intro-screen h1 {
-  font-size: clamp(2.3rem, 13vw, 4rem);
+  font-size: clamp(2.45rem, 9vw, 4rem);
 }
 
 .intro-screen .lead {
@@ -134,11 +145,11 @@ h1 {
   padding: 14px;
 }
 
-.intro-grid > .intro-card:not(.intro-primary):not(.intro-ranking-panel) {
+.intro-primary {
   order: 1;
 }
 
-.intro-primary {
+.intro-grid > .intro-card:not(.intro-primary):not(.intro-ranking-panel) {
   order: 2;
 }
 
@@ -216,6 +227,22 @@ h1 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+
+@media (min-width: 680px) {
+  .intro-grid {
+    grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.18fr);
+    align-items: start;
+  }
+
+  .intro-primary {
+    position: sticky;
+    top: 12px;
+  }
+
+  .rules-list li {
+    min-height: 104px;
+  }
 }
 
 .intro-ranking-panel {
@@ -768,6 +795,10 @@ h1 {
 
   .top-nav strong {
     flex-basis: 100%;
+  }
+
+  .intro-screen h1 {
+    font-size: clamp(2.7rem, 13vw, 3.45rem);
   }
 
   .intro-grid,

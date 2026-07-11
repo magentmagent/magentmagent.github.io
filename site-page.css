@@ -10,6 +10,8 @@ body {
   color: #202327;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -222,7 +224,7 @@ li {
 }
 
 .home-grid {
-  grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.9fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .card {
@@ -230,6 +232,24 @@ li {
   border-radius: 8px;
   background: #fffdf8;
   padding: 16px;
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-card .description {
+  flex: 1;
+}
+
+.game-card .description p:last-child {
+  margin-bottom: 0;
+}
+
+.game-card .cta {
+  align-self: flex-start;
+  margin-top: 16px;
 }
 
 .feature-list {
@@ -273,6 +293,14 @@ li {
   border: 1px solid #197278;
 }
 
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #197278;
+  font-weight: 900;
+}
+
 .note {
   border-left: 4px solid #197278;
   background: #fffdf8;
@@ -292,5 +320,18 @@ li {
 
   .top-nav strong {
     flex-basis: 100%;
+  }
+
+  .top-nav {
+    gap: 8px 12px;
+    font-size: 0.86rem;
+  }
+
+  h1 {
+    font-size: clamp(2.35rem, 12vw, 3.35rem);
+  }
+
+  .card {
+    padding: 14px;
   }
 }

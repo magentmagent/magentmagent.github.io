@@ -384,6 +384,21 @@ a {
   .palette-shortcut {
     display: block;
   }
+
+  .rule-column {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .rule-card {
+    grid-template-columns: 1fr;
+    align-content: start;
+    min-height: 150px;
+  }
+
+  .rule-art {
+    width: 76px;
+    min-height: 96px;
+  }
 }
 
 .drag-ghost {

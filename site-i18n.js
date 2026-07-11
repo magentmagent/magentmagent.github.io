@@ -118,13 +118,12 @@
           </ul>
           <div class="button-row">
             <a class="button" href="${gamePath("word", lang)}">${t.home.playWord}</a>
-            <a class="button secondary" href="/games.html">${t.common.games}</a>
+            <a class="text-link" href="/games.html">${t.common.games}</a>
           </div>
         </div>
         <img class="hero-image" src="/public/social-card-v2.png" alt="${t.word.preview}">
       </section>
       <section class="grid home-grid" aria-label="${t.home.sections}">
-        ${gameCard(t.word, gamePath("word", lang), t.home.play)}
         ${gameCard(t.crown, gamePath("crown", lang), t.home.play)}
         ${gameCard(t.tower, gamePath("tower", lang), t.home.play)}
         <article class="card">
@@ -147,9 +146,22 @@
     about: (t, nav, footer) => `${nav}
       <h1>${t.common.about}</h1>
       <p class="lead">${t.about.lead}</p>
-      <p>${t.about.body1}</p>
-      <p>${t.about.body2}</p>
-      <p>${t.about.body3}</p>
+      <section class="grid about-grid">
+        <article class="card">
+          <h2>${t.home.cardSiteTitle}</h2>
+          <ul class="feature-list">
+            <li>${t.home.feature1}</li>
+            <li>${t.home.feature2}</li>
+            <li>${t.home.feature3}</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>${t.common.games}</h2>
+          <p>${t.about.body1}</p>
+          <p>${t.about.body2}</p>
+        </article>
+      </section>
+      <p class="note">${t.about.body3}</p>
       ${footer}`,
     privacy: (t, nav, footer) => `${nav}
       <h1>${t.common.privacy}</h1>
@@ -173,13 +185,14 @@
   };
 
   function gameCard(game, href, button, image = "") {
-    return `<article class="card">
+    return `<article class="card game-card">
       ${image ? `<img class="game-thumb" src="${image}" alt="${game.preview}">` : ""}
       <h2>${game.title}</h2>
-      <p>${game.body}</p>
-      <p>${game.support}</p>
-      <p>${game.note}</p>
-      <a class="button" href="${href}">${button}</a>
+      <div class="description">
+        <p>${game.body}</p>
+        <p>${game.support}</p>
+      </div>
+      <a class="button cta" href="${href}">${button}</a>
     </article>`;
   }
 
