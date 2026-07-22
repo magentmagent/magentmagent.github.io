@@ -14,6 +14,15 @@ https://magentmagent.com/guides/word-chain-snake-rules.html
 https://magentmagent.com/guides/word-chain-snake-strategy.html
 https://magentmagent.com/guides/crown-chain-rules.html
 https://magentmagent.com/guides/tower-cut-guide.html
+https://magentmagent.com/guides/ko/word-chain-snake-rules.html
+https://magentmagent.com/guides/ko/word-chain-snake-strategy.html
+https://magentmagent.com/guides/ko/crown-chain-rules.html
+https://magentmagent.com/guides/ko/tower-cut-guide.html
+https://magentmagent.com/guides/ja/word-chain-snake-rules.html
+https://magentmagent.com/guides/ja/word-chain-snake-strategy.html
+https://magentmagent.com/guides/ja/crown-chain-rules.html
+https://magentmagent.com/guides/ja/tower-cut-guide.html
+https://magentmagent.com/source.html
 https://magentmagent.com/about.html
 https://magentmagent.com/privacy.html
 https://magentmagent.com/terms.html

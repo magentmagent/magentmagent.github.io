@@ -14,6 +14,27 @@
     tower: { en: "/tower-cut/en/", ko: "/tower-cut/ko/", ja: "/tower-cut/ja/" }
   };
 
+  const GUIDE_LINKS = {
+    en: [
+      { key: "wordRules", title: "Word Chain Snake rules", href: "/guides/word-chain-snake-rules.html" },
+      { key: "wordStrategy", title: "Word Chain Snake strategy", href: "/guides/word-chain-snake-strategy.html" },
+      { key: "crownRules", title: "Crown Chain rules", href: "/guides/crown-chain-rules.html" },
+      { key: "towerGuide", title: "Tower Cut guide", href: "/guides/tower-cut-guide.html" }
+    ],
+    ko: [
+      { key: "wordRules", title: "Word Chain Snake 규칙", href: "/guides/ko/word-chain-snake-rules.html" },
+      { key: "wordStrategy", title: "Word Chain Snake 전략", href: "/guides/ko/word-chain-snake-strategy.html" },
+      { key: "crownRules", title: "Crown Chain 규칙", href: "/guides/ko/crown-chain-rules.html" },
+      { key: "towerGuide", title: "Tower Cut 가이드", href: "/guides/ko/tower-cut-guide.html" }
+    ],
+    ja: [
+      { key: "wordRules", title: "Word Chain Snake ルール", href: "/guides/ja/word-chain-snake-rules.html" },
+      { key: "wordStrategy", title: "Word Chain Snake 攻略", href: "/guides/ja/word-chain-snake-strategy.html" },
+      { key: "crownRules", title: "Crown Chain ルール", href: "/guides/ja/crown-chain-rules.html" },
+      { key: "towerGuide", title: "Tower Cut ガイド", href: "/guides/ja/tower-cut-guide.html" }
+    ]
+  };
+
   function browserLang() {
     const lang = String(navigator.language || "").toLowerCase();
     if (lang.startsWith("ko")) return "ko";
@@ -42,6 +63,12 @@
     return (GAME_LINKS[game] || GAME_LINKS.word)[lang] || GAME_LINKS.word.en;
   }
 
+  function guideList(t, lang) {
+    return (GUIDE_LINKS[lang] || GUIDE_LINKS.en)
+      .map(item => `<li><h2><a href="${item.href}">${item.title}</a></h2><p>${t.guides[item.key]}</p></li>`)
+      .join("");
+  }
+
   function navHtml(t) {
     return `
       <nav class="top-nav" aria-label="${t.common.navLabel}">
@@ -49,6 +76,7 @@
         <a href="/">${t.common.home}</a>
         <a href="/games.html">${t.common.games}</a>
         <a href="/guides.html">${t.common.guides}</a>
+        <a href="/source.html">${t.common.source || "Sources"}</a>
         <a href="/about.html">${t.common.about}</a>
         <a href="/privacy.html">${t.common.privacy}</a>
         <a href="/contact.html">${t.common.contact}</a>
@@ -66,6 +94,7 @@
         <a href="/">${t.common.home}</a>
         <a href="/games.html">${t.common.games}</a>
         <a href="/guides.html">${t.common.guides}</a>
+        <a href="/source.html">${t.common.source || "Sources"}</a>
         <a href="/terms.html">${t.common.terms}</a>
         <a href="/privacy.html">${t.common.privacy}</a>
         <a href="/contact.html">${t.common.contact}</a>
@@ -152,15 +181,27 @@
       </section>
       <p class="note">${t.games.guideNote} <a href="/guides.html">${t.common.guides}</a></p>
       ${footer}`,
-    guides: (t, nav, footer) => `${nav}
+    guides: (t, nav, footer, lang) => `${nav}
       <h1>${t.guides.title}</h1>
       <p class="lead">${t.guides.lead}</p>
       <ul class="article-list">
-        <li><h2><a href="/guides/word-chain-snake-rules.html">Word Chain Snake rules</a></h2><p>${t.guides.wordRules}</p></li>
-        <li><h2><a href="/guides/word-chain-snake-strategy.html">Word Chain Snake strategy</a></h2><p>${t.guides.wordStrategy}</p></li>
-        <li><h2><a href="/guides/crown-chain-rules.html">Crown Chain rules</a></h2><p>${t.guides.crownRules}</p></li>
-        <li><h2><a href="/guides/tower-cut-guide.html">Tower Cut guide</a></h2><p>${t.guides.towerGuide}</p></li>
+        ${guideList(t, lang)}
       </ul>
+      ${footer}`,
+    source: (t, nav, footer) => `${nav}
+      <h1>${t.source.title}</h1>
+      <p class="lead">${t.source.lead}</p>
+      <h2>${t.source.originalTitle}</h2>
+      <p>${t.source.original1}</p>
+      <ul>
+        <li><a href="https://github.com/magentmagent/magentmagent.github.io">${t.source.siteRepo}</a></li>
+        <li><a href="https://github.com/magentmagent/wordsnake">${t.source.gameRepo}</a></li>
+      </ul>
+      <h2>${t.source.dataTitle}</h2>
+      <p>${t.source.data1}</p>
+      <p>${t.source.data2}</p>
+      <h2>${t.source.embedTitle}</h2>
+      <p>${t.source.embed}</p>
       ${footer}`,
     about: (t, nav, footer) => `${nav}
       <h1>${t.common.about}</h1>
