@@ -223,6 +223,11 @@ li {
   margin: 20px 0;
 }
 
+.content-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.55fr);
+  align-items: start;
+}
+
 .home-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -269,6 +274,42 @@ li {
   font-weight: 750;
 }
 
+.article-list {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article-list li {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid #d8d0c3;
+  border-radius: 8px;
+  background: #fffdf8;
+}
+
+.article-list h2,
+.article-list h3 {
+  margin: 0 0 6px;
+}
+
+.prose {
+  max-width: 760px;
+}
+
+.prose h2 {
+  margin-top: 30px;
+}
+
+.guide-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 18px 0 24px;
+}
+
 .card h2,
 .card h3 {
   margin-top: 0;
@@ -309,7 +350,8 @@ li {
 
 @media (max-width: 720px) {
   .hero,
-  .home-grid {
+  .home-grid,
+  .content-grid {
     grid-template-columns: 1fr;
   }
 

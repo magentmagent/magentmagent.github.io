@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rules for Word Chain Snake, including word chaining, movement, crossing, backtracking, repeated words, scoring, and Snake mode apples.">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="canonical" href="https://magentmagent.com/guides/word-chain-snake-rules.html">
+  <link rel="stylesheet" href="/site-page.css?v=20260722-guides">
+  <title>Word Chain Snake Rules | MagentMagent Games</title>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"Word Chain Snake Rules","url":"https://magentmagent.com/guides/word-chain-snake-rules.html","publisher":{"@type":"Organization","name":"MagentMagent Games","url":"https://magentmagent.com/"}}
+  </script>
+</head>
+<body>
+  <main class="page prose">
+    <nav class="top-nav" aria-label="Site navigation">
+      <strong><a class="brand-link" href="/">magentmagent games</a></strong>
+      <a href="/">Home</a>
+      <a href="/games.html">Games</a>
+      <a href="/guides.html">Guides</a>
+      <a href="/word-chain-snake/en/">Play</a>
+    </nav>
+
+    <h1>Word Chain Snake rules</h1>
+    <p class="lead">Word Chain Snake combines a last-letter word chain with a board path. The goal is not only to submit valid words, but to keep the path alive long enough to fill more cells.</p>
+
+    <h2>Basic chain</h2>
+    <p>Every new word must begin with the final letter of the previous word. The first matching letter is already supplied by the board, so the player only enters the remaining letters. If the current head is <strong>E</strong>, typing <strong>AGLE</strong> places EAGLE. This keeps the board readable and makes the chain feel continuous instead of starting a separate word each turn.</p>
+    <p>Words are checked against the selected language list. English, Korean, and Japanese games have separate dictionaries and language rules. The same word cannot be used twice in a run, even if there is enough room on the board.</p>
+
+    <h2>Movement and crossings</h2>
+    <p>Letters are placed along adjacent cells. The path behaves like a snake: each submitted word extends the current route from the current head. A new word may cross an older word when the crossing cell already contains the exact letter needed at that position. This makes crossings valuable because they let one cell serve two words without breaking either spelling.</p>
+    <p>Backtracking is allowed when the word follows the route back through cells that were just used. It is different from turning into an unrelated old path. A good backtrack preserves the feeling that the snake is retracing its own body rather than teleporting to a convenient square.</p>
+
+    <h2>Scoring</h2>
+    <p>Longer words are worth more than short words, and newly filled cells add extra value. Crossings can add bonus points because they require fitting a new word through existing letters. This means the best score is usually not achieved by simply typing the first valid word that appears. Strong plays balance word length, new territory, and future exits.</p>
+
+    <h2>Snake mode apples</h2>
+    <p>Snake mode places bonus letters on the board before the run starts. These letters are part of valid words and are not placed next to each other. When a submitted word passes through one of them, the player collects an apple bonus. The bonus grows with the number of apples collected so far, so later apples are more valuable.</p>
+    <p>Because the apple letters are fixed, Snake mode rewards planning. A short word that reaches an apple can be stronger than a long word that blocks the route, but a long word that reaches an apple and leaves a new exit is usually better.</p>
+
+    <footer class="page-footer">
+      <a href="/guides.html">Guides</a>
+      <a href="/guides/word-chain-snake-strategy.html">Strategy</a>
+      <a href="/word-chain-snake/en/">Play Word Chain Snake</a>
+    </footer>
+  </main>
+</body>
+</html>

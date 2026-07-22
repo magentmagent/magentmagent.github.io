@@ -48,6 +48,7 @@
         <strong><a class="brand-link" href="/">${t.common.brand}</a></strong>
         <a href="/">${t.common.home}</a>
         <a href="/games.html">${t.common.games}</a>
+        <a href="/guides.html">${t.common.guides}</a>
         <a href="/about.html">${t.common.about}</a>
         <a href="/privacy.html">${t.common.privacy}</a>
         <a href="/contact.html">${t.common.contact}</a>
@@ -64,6 +65,7 @@
       <footer class="page-footer">
         <a href="/">${t.common.home}</a>
         <a href="/games.html">${t.common.games}</a>
+        <a href="/guides.html">${t.common.guides}</a>
         <a href="/terms.html">${t.common.terms}</a>
         <a href="/privacy.html">${t.common.privacy}</a>
         <a href="/contact.html">${t.common.contact}</a>
@@ -134,6 +136,11 @@
             <li>${t.home.feature3}</li>
           </ul>
         </article>
+        <article class="card">
+          <h2>${t.guides.title}</h2>
+          <p>${t.guides.lead}</p>
+          <a class="button secondary" href="/guides.html">${t.guides.open}</a>
+        </article>
       </section>${footer}`,
     games: (t, nav, footer, lang) => `${nav}
       <h1>${t.common.games}</h1>
@@ -142,7 +149,19 @@
         ${gameCard(t.word, gamePath("word", lang), t.home.play, "/public/social-card-v2.png")}
         ${gameCard(t.crown, gamePath("crown", lang), t.home.play, "/public/crown-chain-social.png")}
         ${gameCard(t.tower, gamePath("tower", lang), t.home.play, "/public/tower-cut-social.png")}
-      </section>${footer}`,
+      </section>
+      <p class="note">${t.games.guideNote} <a href="/guides.html">${t.common.guides}</a></p>
+      ${footer}`,
+    guides: (t, nav, footer) => `${nav}
+      <h1>${t.guides.title}</h1>
+      <p class="lead">${t.guides.lead}</p>
+      <ul class="article-list">
+        <li><h2><a href="/guides/word-chain-snake-rules.html">Word Chain Snake rules</a></h2><p>${t.guides.wordRules}</p></li>
+        <li><h2><a href="/guides/word-chain-snake-strategy.html">Word Chain Snake strategy</a></h2><p>${t.guides.wordStrategy}</p></li>
+        <li><h2><a href="/guides/crown-chain-rules.html">Crown Chain rules</a></h2><p>${t.guides.crownRules}</p></li>
+        <li><h2><a href="/guides/tower-cut-guide.html">Tower Cut guide</a></h2><p>${t.guides.towerGuide}</p></li>
+      </ul>
+      ${footer}`,
     about: (t, nav, footer) => `${nav}
       <h1>${t.common.about}</h1>
       <p class="lead">${t.about.lead}</p>
@@ -204,9 +223,10 @@
         about: "About | MagentMagent Games",
         privacy: "Privacy | MagentMagent Games",
         contact: "Contact | MagentMagent Games",
-        terms: "Terms | MagentMagent Games"
+        terms: "Terms | MagentMagent Games",
+        guides: "Game Guides | MagentMagent Games"
       },
-      common: { brand: "magentmagent games", navLabel: "Site navigation", language: "Language", home: "Home", games: "Games", about: "About", privacy: "Privacy", contact: "Contact", terms: "Terms" },
+      common: { brand: "magentmagent games", navLabel: "Site navigation", language: "Language", home: "Home", games: "Games", guides: "Guides", about: "About", privacy: "Privacy", contact: "Contact", terms: "Terms" },
       home: {
         eyebrow: "Featured browser puzzle",
         title: "Word Chain Snake",
@@ -222,7 +242,16 @@
         feature2: "Rankings and suggestions are reviewed for abuse.",
         feature3: "Each game starts directly in the browser."
       },
-      games: { lead: "Choose a free browser puzzle and start playing instantly." },
+      games: { lead: "Choose a free browser puzzle and start playing instantly.", guideNote: "Each game also has written notes for rules, scoring, and strategy:" },
+      guides: {
+        title: "Game guides",
+        lead: "Written notes that explain how each puzzle works, how scoring is calculated, and what makes a strong play.",
+        open: "Read guides",
+        wordRules: "A plain-language explanation of the board, word chaining, crossing, backtracking, repeated-word limits, and Snake mode apples.",
+        wordStrategy: "Practical advice for choosing long words, keeping exits open, using crossings, and recovering from cramped board positions.",
+        crownRules: "A guide to captures, piece transformation, readable move previews, Basic mode, Chaos mode, and time-attack pressure.",
+        towerGuide: "A guide to reading target towers, cutting wrong layers, rebuilding efficiently, and improving score consistency."
+      },
       word: {
         title: "Word Chain Snake",
         preview: "Word Chain Snake board preview",
@@ -261,9 +290,10 @@
         about: "소개 | MagentMagent Games",
         privacy: "개인정보 | MagentMagent Games",
         contact: "문의 | MagentMagent Games",
-        terms: "약관 | MagentMagent Games"
+        terms: "약관 | MagentMagent Games",
+        guides: "게임 가이드 | MagentMagent Games"
       },
-      common: { brand: "magentmagent games", navLabel: "사이트 이동", language: "언어", home: "홈", games: "게임", about: "소개", privacy: "개인정보", contact: "문의", terms: "약관" },
+      common: { brand: "magentmagent games", navLabel: "사이트 이동", language: "언어", home: "홈", games: "게임", guides: "가이드", about: "소개", privacy: "개인정보", contact: "문의", terms: "약관" },
       home: {
         eyebrow: "대표 브라우저 퍼즐",
         title: "Word Chain Snake",
@@ -279,7 +309,16 @@
         feature2: "랭킹과 제안은 악용 여부를 검토합니다.",
         feature3: "각 게임은 브라우저에서 바로 시작됩니다."
       },
-      games: { lead: "무료 브라우저 퍼즐을 고르고 바로 플레이하세요." },
+      games: { lead: "무료 브라우저 퍼즐을 고르고 바로 플레이하세요.", guideNote: "각 게임의 규칙, 점수, 전략 설명도 함께 제공합니다:" },
+      guides: {
+        title: "게임 가이드",
+        lead: "각 퍼즐의 규칙, 점수 계산, 좋은 플레이 방식을 설명하는 글입니다.",
+        open: "가이드 읽기",
+        wordRules: "보드, 끝말잇기, 교차, 되돌아가기, 반복 단어 금지, 스네이크 모드 사과를 설명합니다.",
+        wordStrategy: "긴 단어 선택, 탈출로 확보, 교차 활용, 좁아진 보드에서의 복구 방법을 다룹니다.",
+        crownRules: "말 잡기, 말 변환, 이동 미리보기, 기본 모드, 카오스 모드, 타임어택을 설명합니다.",
+        towerGuide: "목표 탑 읽기, 잘못된 층 자르기, 효율적인 재조립, 안정적인 점수 향상을 다룹니다."
+      },
       word: {
         title: "Word Chain Snake",
         preview: "Word Chain Snake 보드 미리보기",
@@ -318,9 +357,10 @@
         about: "このサイトについて | MagentMagent Games",
         privacy: "プライバシー | MagentMagent Games",
         contact: "お問い合わせ | MagentMagent Games",
-        terms: "利用規約 | MagentMagent Games"
+        terms: "利用規約 | MagentMagent Games",
+        guides: "ゲームガイド | MagentMagent Games"
       },
-      common: { brand: "magentmagent games", navLabel: "サイトナビゲーション", language: "言語", home: "ホーム", games: "ゲーム", about: "このサイトについて", privacy: "プライバシー", contact: "お問い合わせ", terms: "利用規約" },
+      common: { brand: "magentmagent games", navLabel: "サイトナビゲーション", language: "言語", home: "ホーム", games: "ゲーム", guides: "ガイド", about: "このサイトについて", privacy: "プライバシー", contact: "お問い合わせ", terms: "利用規約" },
       home: {
         eyebrow: "注目のブラウザパズル",
         title: "Word Chain Snake",
@@ -336,7 +376,16 @@
         feature2: "ランキングと提案は不正利用を確認します。",
         feature3: "各ゲームはブラウザですぐに始められます。"
       },
-      games: { lead: "無料ブラウザパズルを選んですぐに遊べます。" },
+      games: { lead: "無料ブラウザパズルを選んですぐに遊べます。", guideNote: "各ゲームのルール、得点、考え方も説明しています:" },
+      guides: {
+        title: "ゲームガイド",
+        lead: "各パズルのルール、得点計算、よい進め方を説明する記事です。",
+        open: "ガイドを読む",
+        wordRules: "盤面、しりとり、交差、戻る動き、同じ単語の禁止、スネークモードのリンゴを説明します。",
+        wordStrategy: "長い単語、逃げ道、交差、詰まりそうな盤面からの立て直しを扱います。",
+        crownRules: "駒を取ること、変身、移動プレビュー、Basic、Chaos、Time Attackを説明します。",
+        towerGuide: "目標タワーの読み方、間違った段のカット、効率のよい組み直し、安定した得点を扱います。"
+      },
       word: {
         title: "Word Chain Snake",
         preview: "Word Chain Snakeの盤面プレビュー",
